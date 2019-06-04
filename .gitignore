@@ -1,0 +1,14 @@
+booksofduchesses/settings.py 
+.venv
+__pycache__
+*.pyc
+*.pyo
+.mypy_cache
+
+/static_collected
+*.log
+*.sqlite3
+
+*.swp
+~*
+.DS_Store
