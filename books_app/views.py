@@ -6,7 +6,7 @@ from .models import Book
 
 def index(request):
 
-    f = open('/Users/FreddieGould/Downloads/book_title - Sheet1.csv', 'r')
+    f = open('/File/Path/To/.csv', 'r')
     for line in f:
         line =  line.split(',')
         tmp = Book.objects.create()
