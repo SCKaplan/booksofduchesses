@@ -1,4 +1,5 @@
 from django.db import models
+#from djgeojson.fields import PointField
 import datetime
 
 # Create your models here.
@@ -8,14 +9,14 @@ class Tag(models.Model):
 
 class Book(models.Model):
 	title = models.CharField(max_length=200)
-	author = models.ForeignKey('Author', on_delete=models.SET_NULL, null=True)
+	author = models.ForeignKey('Author', on_delete=models.SET_NULL, null=True, blank=True)
 	owner = models.ManyToManyField('Owner', blank=True)
 	type = models.CharField(max_length=200, blank=True)
 	ex_libris = models.CharField(max_length=200, blank=True) # can link to more books?
 	bibliography = models.CharField(max_length=200, blank=True)
 	library = models.ForeignKey('Location', blank=True, on_delete=models.SET_NULL, null=True) # Should reference a location
 	digital_version = models.CharField(max_length=200, blank=True)
-	date_created= models.DateTimeField(blank=True, null=True)
+	date_created= models.CharField(max_length=200, blank=True, null=True)
 	book_movements = models.CharField(max_length=200, blank=True)
 	scribes = models.CharField(max_length=200, blank=True)
 	illuminators = models.CharField(max_length=200, blank=True)
@@ -42,6 +43,7 @@ class Text(models.Model):
 
 class Location(models.Model):
 	#place = models.CharField(max_length=200) #This can be updated to include a location as a field
+	#geom = models.PointField(null=True, blank=True) #This should point to a location
 	name =  models.CharField(max_length=200)
 	City =  models.CharField(max_length=200)
 	Country =  models.CharField(max_length=200)
