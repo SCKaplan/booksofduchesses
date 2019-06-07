@@ -1,4 +1,6 @@
-from django.db import models
+from django.contrib.gis.db import models
+from djgeojson.fields import PointField
+
 import datetime
 
 # Create your models here.
@@ -42,6 +44,7 @@ class Text(models.Model):
 
 class Location(models.Model):
 	#place = models.CharField(max_length=200) #This can be updated to include a location as a field
+	geom = models.PointField(null=True, blank=True)
 	name =  models.CharField(max_length=200)
 	City =  models.CharField(max_length=200)
 	Country =  models.CharField(max_length=200)
@@ -64,3 +67,6 @@ class DateOwned(models.Model):
 	Poss = 'Possible'
 	conf_choices = [(Conf, "Confirmed"),(Poss, "Possible")]
 	conf_or_possible = models.CharField(max_length=9, choices=conf_choices, default='Possible')
+	class Meta:
+		verbose_name = 'Date owned'
+		verbose_name_plural = 'Dates owned'
