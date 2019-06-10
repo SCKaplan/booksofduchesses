@@ -37,9 +37,11 @@ class Author(models.Model):
 
 class Text(models.Model):
 	name = models.CharField(max_length=200)
+	name_eng = models.CharField(max_length=200, blank=True)
+	tags = models.ManyToManyField(Tag)
 	book = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
 	def __str__(self):
-		return self.name
+		return self.name_eng
 
 class Location(models.Model):
 	#place = models.CharField(max_length=200) #This can be updated to include a location as a field
