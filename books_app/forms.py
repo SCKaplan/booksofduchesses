@@ -10,3 +10,5 @@ class LocationAdminForm(forms.ModelForm):
         widgets = {
             'geom':GooglePointFieldWidget(settings={"GooglePointFieldWidget":(("zoom",8),)}),
         }
+
+

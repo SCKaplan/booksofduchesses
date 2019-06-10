@@ -16,11 +16,25 @@ class LocationAdmin(admin.ModelAdmin):
 
 admin.site.register(Location, LocationAdmin)
 
+class BookAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+    autocomplete_fields = ['language']
+
+admin.site.register(Book, BookAdmin)
+
+class TextAdmin(admin.ModelAdmin):
+    autocomplete_fields = ['book']
+
+admin.site.register(Text, TextAdmin)
+
+
+class TagAdmin(admin.ModelAdmin):
+    search_fields = ['tag']
+
+admin.site.register(Tag, TagAdmin)
 # Register your models here.
-admin.site.register(Tag)
+
 admin.site.register(Author)
 admin.site.register(Owner)
 admin.site.register(DateOwned)
-admin.site.register(Book)
-admin.site.register(Text)
 

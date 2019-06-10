@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from .models import Book
+from .models import Book, Author, Owner, Text
 
 # Create your views here.
 
@@ -10,7 +10,6 @@ def index(request):
     for line in books:
         line =  line.split(',')
         tmp = Book.objects.create()
-        print(line)
         tmp.title = line[0]
         tmp.date_created = line[1]
         tmp.scribes = line[2]

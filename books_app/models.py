@@ -6,6 +6,9 @@ import datetime
 
 class Tag(models.Model):
 	tag = models.CharField(max_length=200)
+	
+	def __str__(self):
+		return self.tag
 
 class Book(models.Model):
 	title = models.CharField(max_length=200)
@@ -20,17 +23,21 @@ class Book(models.Model):
 	book_movements = models.CharField(max_length=200, blank=True)
 	scribes = models.CharField(max_length=200, blank=True)
 	illuminators = models.CharField(max_length=200, blank=True)
-	Latin = 'Latin'
-	French = 'French'
-	English = 'English'
-	lang_choices = [(Latin, "Latin"),(French, "French"),(English, "English")]
-	language = models.CharField(max_length=20, choices=lang_choices, default='Unknown')
+	language = models.ManyToManyField('Tag', blank=True)
 
 	def __str__(self):
 		return self.title
 
 class Author(models.Model):
 	name = models.CharField(max_length=200)
+	abstract = models.TextField(blank=True)
+	birth_date = models.CharField(max_length=200, blank=True)
+	death_date = models.CharField(max_length=200, blank=True)
+	gender = models.CharField(max_length=200, blank=True)
+
+	# Link needed?
+	def __str__(self):
+		return self.name
 	# Link needed?
 	def __str__(self):
 		return self.name
@@ -41,7 +48,7 @@ class Text(models.Model):
 	tags = models.ManyToManyField(Tag)
 	book = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
 	def __str__(self):
-		return self.name_eng
+		return self.name
 
 class Location(models.Model):
 	geom = models.PointField(null=True, blank=True)
@@ -61,7 +68,7 @@ class Owner(models.Model):
 
 class DateOwned(models.Model):
 	#owner = models.ForeignKey(Owner, on_delete=models.CASCADE)
-	#book_owned = models.ForeignKey(Book, on_delete=models.CASCADE)
+	book_owned = models.ForeignKey(Book, on_delete=models.CASCADE, blank=True, null=True) #book_owned = models.ForeignKey(Book, on_delete=models.CASCADE)
 	dateowned = models.DateTimeField()
 	Conf = 'Confirmed'
 	Poss = 'Possible'
