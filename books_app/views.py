@@ -6,10 +6,11 @@ from .models import Book
 
 def index(request):
 
-    f = open('/File/Path/To/.csv', 'r')
-    for line in f:
+    books = open('/srv/booksofduchesses/books_app/csvs/books.csv', 'r')
+    for line in books:
         line =  line.split(',')
         tmp = Book.objects.create()
+        print(line)
         tmp.title = line[0]
         tmp.date_created = line[1]
         tmp.scribes = line[2]
@@ -17,9 +18,9 @@ def index(request):
         tmp.digital_version = line[4]
         tmp.save()
 
-    f.close()
+    books.close()
 
-    authors = open('/File/Path/To Authors/.csv', 'r')
+    authors = open('/srv/booksofduchesses/books_app/csvs/authors.csv', 'r')
     for line in authors:
         line =  line.split(',')
         tmp = Author.objects.create()
@@ -28,7 +29,7 @@ def index(request):
 
     authors.close()
 
-    owners = open('/File/Path/To Owners/.csv', 'r')
+    owners = open('/srv/booksofduchesses/books_app/csvs/owners.csv', 'r')
     for line in owners:
         line =  line.split(',')
         tmp = Owner.objects.create()
@@ -39,7 +40,7 @@ def index(request):
 
     owners.close()
 
-    text = open('/File/Path/To Texts/.csv', 'r')
+    text = open('/srv/booksofduchesses/books_app/csvs/texts.csv', 'r')
     for line in text:
         line =  line.split(',')
         tmp = Text.objects.create()
