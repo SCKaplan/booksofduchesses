@@ -38,9 +38,7 @@ class Author(models.Model):
 	# Link needed?
 	def __str__(self):
 		return self.name
-	# Link needed?
-	def __str__(self):
-		return self.name
+
 
 class Text(models.Model):
 	name = models.CharField(max_length=200)
@@ -60,20 +58,23 @@ class Location(models.Model):
 
 class Owner(models.Model):
 	name = models.CharField(max_length=200)
-	motto = models.CharField(max_length=200, null=True)
-	symbol = models.CharField(max_length=200, null=True)
+	motto = models.CharField(max_length=200, blank=True, null=True)
+	symbol = models.CharField(max_length=200, blank=True, null=True)
 	book_date = models.ManyToManyField('DateOwned', blank=True)
 	def __str__(self):
 		return self.name
 
 class DateOwned(models.Model):
 	#owner = models.ForeignKey(Owner, on_delete=models.CASCADE)
-	book_owned = models.ForeignKey(Book, on_delete=models.CASCADE, blank=True, null=True) #book_owned = models.ForeignKey(Book, on_delete=models.CASCADE)
-	dateowned = models.DateTimeField()
+	book_owned = models.ForeignKey(Book, on_delete=models.SET_NULL, blank=True, null=True) #book_owned = models.ForeignKey(Book, on_delete=models.CASCADE)
+	dateowned = models.CharField(max_length=200, null = True)
 	Conf = 'Confirmed'
 	Poss = 'Possible'
 	conf_choices = [(Conf, "Confirmed"),(Poss, "Possible")]
-	conf_or_possible = models.CharField(max_length=9, choices=conf_choices, default='Possible')
+	conf_or_possible = models.CharField(max_length=9, choices=conf_choices, default='Confirmed')
 	class Meta:
 		verbose_name = 'Date owned'
 		verbose_name_plural = 'Dates owned'
+
+	def __str__(self):
+		return self.dateowned

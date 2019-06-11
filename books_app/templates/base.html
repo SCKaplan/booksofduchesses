@@ -1,0 +1,53 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<title>Books of Duchesses</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Shuffle/5.2.2/shuffle.js"></script>
+ <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+
+<body>
+
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+  <div class="w3-bar w3-white w3-wide w3-padding w3-card">
+    <a href="#home" class="w3-bar-item w3-button">Books of Duchesses</a>
+    <!-- Float links to the right. Hide them on small screens -->
+    <div class="w3-right w3-hide-small">
+      <a href="#owners" class="w3-bar-item w3-button">Books & Book Owners</a>
+      <a href="#map" class="w3-bar-item w3-button">Map</a>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="w3-display-container w3-content w3-wide" style="max-width:1500px;" id="home">
+  <img class="w3-image" src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Woman_in_Medieval_Dress_or_Costume_%2822%29.JPG" alt="Medieval woman reading a book" width="600" height="600">
+  <div class="w3-display-middle w3-margin-top w3-center" style="padding-left: 120px;">
+    <h1 class="w3-xxlarge w3-text-white"><span class="w3-padding w3-black w3-opacity-min"><b>Books of Duchesses</b></span> <span class="w3-hide-small w3-text-dark-grey"><br>Sarah Wilman Watson<br>&<br>S. C. Kaplan</span></h1>
+  </div>
+</header>
+
+{% include 'map.html' %}
+{% include 'shuffle.html' %}
+
+
+
+  
+
+<!-- End page content -->
+</div>
+
+
+<!-- Footer -->
+<footer class="w3-center w3-black w3-padding-16">
+  <p>Haverford College</p><br>
+  <p>Rice University</p>
+</footer>
+
+</body>
+</html>
+

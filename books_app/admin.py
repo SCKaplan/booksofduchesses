@@ -36,5 +36,9 @@ admin.site.register(Tag, TagAdmin)
 
 admin.site.register(Author)
 admin.site.register(Owner)
-admin.site.register(DateOwned)
+
+class DateOwnedAdmin(admin.ModelAdmin):
+    autocomplete_fields = ['book_owned']
+
+admin.site.register(DateOwned, DateOwnedAdmin)
 
