@@ -1,3 +1,6 @@
+{% load geojson_tags %}
+{% block map %}
+
 <style>
     .center {
   margin: auto;
@@ -7,13 +10,21 @@
 }
 </style>
 
-<div class="center w3-content w3-padding" style="max-width:1564px; padding-top: 150px; ">
+
+<form action="/your-name/" method="post">
+    {% csrf_token %}
+    {{ search_form }}
+    <input type="submit" value="Submit">
+</form>
+
+
+<div class="center w3-content w3-padding" id='map' style="max-width:1564px; margin-top: 150px; ">
 
 <div id="mapid" style="width: 100%; height: 400px;"></div>
 </div>
     <script>
 
-	var mymap = L.map('mapid').setView([51.505, -0.09], 13);
+	var mymap = L.map('mapid').setView(49.898173, 2.340088], 13);
 
 	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
 		maxZoom: 18,
@@ -22,9 +33,11 @@
 			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
 		id: 'mapbox.streets'
 	}).addTo(mymap);
+    var data = {{ locations|geojsonfeature }};
+    L.geoJson(data).addTo(mymap);
 
 	L.marker([51.5, -0.09]).addTo(mymap)
-		.bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
+		.bindPopup("<b>This place</b><br />such a place.").openPopup();
 
 	L.circle([51.508, -0.11], 500, {
 		color: 'red',
@@ -51,3 +64,4 @@
 	mymap.on('click', onMapClick);
 
 </script>
+{% endblock %}

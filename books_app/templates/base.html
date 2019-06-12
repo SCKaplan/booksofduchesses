@@ -17,8 +17,8 @@
     <a href="#home" class="w3-bar-item w3-button">Books of Duchesses</a>
     <!-- Float links to the right. Hide them on small screens -->
     <div class="w3-right w3-hide-small">
-      <a href="#owners" class="w3-bar-item w3-button">Books & Book Owners</a>
       <a href="#map" class="w3-bar-item w3-button">Map</a>
+      <a href="#owners" class="w3-bar-item w3-button">Books & Book Owners</a>
     </div>
   </div>
 </div>
@@ -26,12 +26,15 @@
 <!-- Header -->
 <header class="w3-display-container w3-content w3-wide" style="max-width:1500px;" id="home">
   <img class="w3-image" src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Woman_in_Medieval_Dress_or_Costume_%2822%29.JPG" alt="Medieval woman reading a book" width="600" height="600">
-  <div class="w3-display-middle w3-margin-top w3-center" style="padding-left: 120px;">
-    <h1 class="w3-xxlarge w3-text-white"><span class="w3-padding w3-black w3-opacity-min"><b>Books of Duchesses</b></span> <span class="w3-hide-small w3-text-dark-grey"><br>Sarah Wilman Watson<br>&<br>S. C. Kaplan</span></h1>
+  <div class="w3-display-middle w3-margin-top w3-center" style="padding-left: 130px;">
+    <a href="#map"><h1 class="w3-xxlarge w3-text-white"><span class="w3-padding w3-black w3-opacity-min"><b>Books of Duchesses</b></span> <span class="w3-hide-small w3-text-dark-grey"><br>Sarah Wilman Watson<br>&<br>S. C. Kaplan</span></h1></a>
   </div>
 </header>
 
-{% include 'map.html' %}
+
+
+{% block content %}{% endblock %}
+
 {% include 'shuffle.html' %}
 
 

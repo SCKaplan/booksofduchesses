@@ -1,14 +1,23 @@
 from django.contrib.gis.db import models
-from djgeojson.fields import PointField
 import datetime
 
 # Create your models here.
 
 class Tag(models.Model):
+	geom = models.PointField(null=True, blank=True)
 	tag = models.CharField(max_length=200)
 	
 	def __str__(self):
 		return self.tag
+
+
+class BooksLanguage(models.Model):
+	books_language = models.CharField(max_length=200)
+	geom = models.PolygonField(null=True, blank=True)
+
+	def __str__(self):
+		return self.books_language
+
 
 class Book(models.Model):
 	title = models.CharField(max_length=200)
@@ -23,17 +32,23 @@ class Book(models.Model):
 	book_movements = models.CharField(max_length=200, blank=True)
 	scribes = models.CharField(max_length=200, blank=True)
 	illuminators = models.CharField(max_length=200, blank=True)
-	language = models.ManyToManyField('Tag', blank=True)
+	language = models.ManyToManyField('BooksLanguage', blank=True)
 
 	def __str__(self):
 		return self.title
 
+
 class Author(models.Model):
+	geom = models.PointField(null=True, blank=True)
 	name = models.CharField(max_length=200)
 	abstract = models.TextField(blank=True)
 	birth_date = models.CharField(max_length=200, blank=True)
 	death_date = models.CharField(max_length=200, blank=True)
 	gender = models.CharField(max_length=200, blank=True)
+
+	@property
+	def popupcontent(self):
+		return '{} {} {} {} {}'.format(self.name, self.abstract, self.birth_date, self.death_date, self.gender)
 
 	# Link needed?
 	def __str__(self):
@@ -45,6 +60,7 @@ class Text(models.Model):
 	name_eng = models.CharField(max_length=200, blank=True)
 	tags = models.ManyToManyField(Tag)
 	book = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
+
 	def __str__(self):
 		return self.name
 
@@ -53,10 +69,16 @@ class Location(models.Model):
 	name =  models.CharField(max_length=200)
 	City =  models.CharField(max_length=200)
 	Country =  models.CharField(max_length=200)
+
+	@property
+	def popupcontent(self):
+		return '{} {} {}'.format(self.name,self.City,self.Country)
+
 	def __str__(self):
 		return self.name
 
 class Owner(models.Model):
+	geom = models.PointField(null=True, blank=True)
 	name = models.CharField(max_length=200)
 	motto = models.CharField(max_length=200, blank=True, null=True)
 	symbol = models.CharField(max_length=200, blank=True, null=True)
