@@ -87,4 +87,46 @@ def index(request):
     #     tmp.save()
     # 
     # text.close()
+   
+def loadup(request):
+    textinfo = open('/Path/To/CSV/texts2.csv', 'r')
+    texts = Text.objects.all()
+    textsIndex = 0
+    for line in textinfo:
+        line = line.split(',')
+        toEdit = texts[textsIndex + 1]
+        # Text name, Books, name_eng, author, arlima, tags order in csv
+        # name, name_eng, arlima are all charfields
+        toEdit.name = line[0]
+        toEdit.name_eng = line[2]
+        toEdit.arlima = line[4]
+        # Author is a Foreign Key so make an object
+        author = Author.objects.filter(name__contains = line[3])
+        if len(author) != 0:
+            toEdit.author = author[0]
+        # Tags Many to Many Fields
+        allTags = line[5][:-1]
+        allTags = allTags.split('.')
+        for tag in allTags:
+            tag = tag.lstrip()
+            if len(tag) != 0:
+                toAdd = Tag.objects.filter(tag__contains=tag)
+                toEdit.tags.add(toAdd[0])
+        toEdit.save()
+        # Books Many to Many Field
+        allBooks = line[1]
+        allBooks = allBooks.split('!')
+        for book in allBooks:
+            book = book.lstrip()
+            if len(book) != 0:
+                toAdd = Book.objects.filter(title__contains=book)
+                # So that we don't break it, for now
+                if len(toAdd) != 0:
+                    toEdit.book.add(toAdd[0])
+                else:
+                    print("This is a book that is not yet loaded into the db")
+        toEdit.save()
+
+        textsIndex += 1
+    textinfo.close()
 
