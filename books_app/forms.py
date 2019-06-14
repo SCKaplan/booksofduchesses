@@ -49,6 +49,23 @@ class OwnerAdminForm(forms.ModelForm):
         }
 
 
+class AuthorPlaceDateLivedAdminForm(forms.ModelForm):
+    class Meta:
+        model = AuthorPlaceDateLived
+        fields = "__all__"
+        widgets = {
+            'geom':GooglePointFieldWidget(settings={"GooglePointFieldWidget":(("zoom",8),)}),
+        }
+
+
+class OwnerPlaceDateLivedAdminForm(forms.ModelForm):
+    class Meta:
+        model = OwnerPlaceDateLived
+        fields = "__all__"
+        widgets = {
+            'geom':GooglePointFieldWidget(settings={"GooglePointFieldWidget":(("zoom",8),)}),
+        }
+
 class SearchForm(forms.Form):
     search = forms.CharField(label='Search', max_length=100, required=False)
     start_date = forms.CharField(label='Start Date', max_length=100, required=False)

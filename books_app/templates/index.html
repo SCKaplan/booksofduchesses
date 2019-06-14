@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load geojson_tags %}
+
+{% block content %}
+
+
+
+
+<style>
+    .center {
+  margin: auto;
+  width: 80%;
+  border: 3px solid darkblue;
+  padding: 10px;
+}
+    * {
+  box-sizing: border-box;
+}
+
+/* Create two unequal columns that floats next to each other */
+.column {
+  float: left;
+  padding: 10px;
+  height: 820px; /* Should be removed. Only for demonstration */
+}
+
+.left {
+  width: 20%;
+}
+
+.right {
+  width: 80%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+</style>
+
+  <div class="column left" style="background-color:#aaa; margin-top: 100px;">
+    <form action="#map" method="post" style="margin-top: 70px">
+    {% csrf_token %}
+        <p>Search:</p>{{ search_form.search }}<br>
+        <p>Dates:</p>{{ search_form.start_date }} to {{ search_form.end_date }}<br>
+        <p>Female Owner:</p>{{ search_form.owner }}<br>
+        <p>MS Shelfmark:</p>{{ search_form.shelfmark }}<br>
+        <p>Text:</p>{{ search_form.text }}<br>
+        <p>Author:</p>{{ search_form.author }}<br>
+        <p>Genre:</p>{{ search_form.genre }}<br>
+
+    <input type="submit" value="Submit">
+</form>
+  </div>
+
+  <div class="column right" style="background-color:#bbb; margin-top: 100px;">
+<div  id='map'>
+
+<div id="mapid" style="width: 100%; height:800px;"></div>
+</div>
+  </div>
+
+
+    <script>
+     var greenIcon = new L.Icon({
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+       var violetIcon = new L.Icon({
+  iconUrl: 'https://github.com/pointhi/leaflet-color-markers/raw/master/img/marker-icon-2x-violet.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+
+	var mymap = L.map('mapid').setView([50.332721, 1.050860], 5);
+
+	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		id: 'mapbox.streets'
+	}).addTo(mymap);
+
+	var locations = {{ locations|geojsonfeature:'popupcontent'|safe }};
+    L.geoJson(locations, { onEachFeature: function(feature, layer) {
+            var props = feature.properties.popupcontent;
+            var content = `<p>${props}</p>`;
+            layer.bindPopup(content);
+        }}).addTo(mymap);
+
+
+    var authors = {{ authors|geojsonfeature:'popupcontent'|safe }};
+
+    L.geoJSON(authors, {
+  pointToLayer: function (feature, latlng) {
+            return L.marker(latlng, {icon: greenIcon});
+    },
+
+  onEachFeature: function(feature, layer) {
+      var props = feature.properties.popupcontent;
+      var content = `<p>${props}</p>`;
+      layer.bindPopup(content);
+  }}).addTo(mymap);
+
+        var owners = {{ owners|geojsonfeature:'popupcontent'|safe }};
+
+L.geoJSON(owners, {
+  pointToLayer: function (feature, latlng) {
+            return L.marker(latlng, {icon: violetIcon});
+    },
+
+  onEachFeature: function(feature, layer) {
+      var props = feature.properties.popupcontent;
+      var content = `<p>${props}</p>`;
+      layer.bindPopup(content);
+  }}).addTo(mymap);
+
+</script>
+{% endblock %}

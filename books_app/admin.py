@@ -1,6 +1,6 @@
 from django.contrib.gis import admin
 from django.contrib.gis.db import models 
-from .models import Tag, Author, Owner, DateOwned, Book, Location, Text
+from .models import *
 from mapwidgets.widgets import GooglePointFieldWidget
 from books_app.forms import *
 
@@ -83,6 +83,7 @@ class DateOwnedAdmin(admin.ModelAdmin):
 
 admin.site.register(DateOwned, DateOwnedAdmin)
 
+
 class BooksLanguageAdmin(admin.ModelAdmin):
     search_fields = ['books_language']
 
@@ -96,3 +97,29 @@ class BooksLanguageAdmin(admin.ModelAdmin):
 
 
 admin.site.register(BooksLanguage, BooksLanguageAdmin)
+
+
+class AuthorPlaceDateLivedAdmin(admin.ModelAdmin):
+    search_fields = ['place_date_lived']
+
+    def get_form(self, request, obj=None, **kwargs):
+        if not obj:
+            self.form = AuthorPlaceDateLivedAdminForm
+        else:
+            self.form = AuthorPlaceDateLivedAdminForm
+        return super(AuthorPlaceDateLivedAdmin, self).get_form(request, obj, **kwargs)
+
+admin.site.register(AuthorPlaceDateLived, AuthorPlaceDateLivedAdmin)
+
+class OwnerPlaceDateLivedAdmin(admin.ModelAdmin):
+    search_fields = ['place_date_lived']
+
+    def get_form(self, request, obj=None, **kwargs):
+        if not obj:
+            self.form = OwnerPlaceDateLivedAdminForm
+        else:
+            self.form = OwnerPlaceDateLivedAdminForm
+        return super(OwnerPlaceDateLivedAdmin, self).get_form(request, obj, **kwargs)
+
+
+admin.site.register(OwnerPlaceDateLived, OwnerPlaceDateLivedAdmin)
