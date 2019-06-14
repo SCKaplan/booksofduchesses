@@ -97,6 +97,59 @@ class DateOwned(models.Model):
 	class Meta:
 		verbose_name = 'Date owned'
 		verbose_name_plural = 'Dates owned'
+		
+	def date_range(self):
+		from datetime import datetime, timedelta
+		dates = self.dateowned.split('-')
+		month = "January"
+		day = 1
+		year = 1400
+		final = []
+		chop = 0
+		if len(dates[0]) == 0 and len(dates[1]) == 0:
+			# If we just get a dash what do we do?
+			return "undetermined date"
+
+		for date in dates:
+			# How we want to organize uncertain dates
+			if date.find('?') != -1 and len(date) < 2:
+				print("what to do when its just a ?")
+				date = "2019"
+			if date.find('?') != -1:
+				# Maybe add an uncertainty factor to this
+				date = date.replace("?", "")
+			if "c. " in date:
+				# Maybe do a +/- operation to just get a range straight off the bat
+				# For now just chop
+				date = date.replace("c. ", "")
+				date = date.replace("c.", "")
+			if date.find('/') != -1:
+				chop = date.index('/')
+				date = date[:chop]
+			# We now have a certain date
+			date = date.split(' ')
+			# If we have a full date
+			if len(date[0]) < 3:
+				day = date[0]
+				month = date[1]
+				year = date[2]
+			# Just a month and year
+			elif len(date) == 2:
+				month = date[0]
+				year = date[1]
+			# Just a year
+			else:
+				year = date[0]
+
+		stringIt = str(year) + "-" + month + "-" + str(day)
+		final.append(datetime.strptime(stringIt, "%Y-%B-%d"))
+
+		if len(final) == 1:
+			# If we are only given one date, how far do we stretch the window (currently 2 yrs)
+			final.append(final[0] + timedelta(days=731))
+			final[0] = final[0] - timedelta(days=730)
+		return final
+
 
 	def __str__(self):
 		return self.dateowned
