@@ -124,8 +124,10 @@ class DateOwned(models.Model):
 		if len(dates[0]) == 0 and len(dates[1]) == 0:
 			# If we just get a dash what do we do?
 			return "undetermined date"
-
 		for date in dates:
+			print(date)
+			date = date.lstrip()
+			date = date.rstrip()
 			# How we want to organize uncertain dates
 			if date.find('?') != -1 and len(date) < 2:
 				print("what to do when its just a ?")
@@ -133,7 +135,7 @@ class DateOwned(models.Model):
 			if date.find('?') != -1:
 				# Maybe add an uncertainty factor to this
 				date = date.replace("?", "")
-			if "c. " in date:
+			if "c." in date:
 				# Maybe do a +/- operation to just get a range straight off the bat
 				# For now just chop
 				date = date.replace("c. ", "")
@@ -142,8 +144,9 @@ class DateOwned(models.Model):
 				chop = date.index('/')
 				date = date[:chop]
 			# We now have a certain date
-			print(date)
 			date = date.split(' ')
+			print("AHHH DATE")
+			print(date)
 			if len(date[0]) < 3:
 				day = date[0]
 				month = date[1]

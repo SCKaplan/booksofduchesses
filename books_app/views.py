@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-
+from django.db.models import Q
 
 from books_app.models import *
 from books_app.forms import SearchForm
@@ -16,34 +16,38 @@ def index(request):
         search_form = SearchForm(request.POST)
         # check whether it's valid:
         if search_form.is_valid():
-            print(request.POST)
-            search = request.POST.get('search', None)
-            author = request.POST.get('author', None)
-            start_date = request.POST.get('start_date', None)
-            end_date = request.POST.get('end_date', None)
-            owner = request.POST.get('owner', None)
-            genre = request.POST.get('genre', None)
-            text = request.POST.get('text', None)
-            shelfmark = request.POST.get('shelfmark', None)
 
-            books = Book.objects.filter()
-            locations = Location.objects.all()
-            authors = Author.objects.all()
+            # Search queries for books, authors and owners
+            query = request.POST.get('search', '')
 
-            search_form = SearchForm()
+            author_result = Author.objects.filter(name__icontains=query)
+            owners_result = Owner.objects.filter(name__icontains=query)
+
+
+            locations = Location.objects.filter(name__icontains=query)
+
+            author = request.POST.get('author', '')
+            start_date = request.POST.get('start_date', '')
+            end_date = request.POST.get('end_date', '')
+            owner = request.POST.get('owner', '')
+            genre = request.POST.get('genre', '')
+            text = request.POST.get('text', '')
+            shelfmark = request.POST.get('shelfmark', '')
 
             return render(request, 'index.html',
-                          {'books': books, 'locations': locations, 'search_form': search_form, 'authors': authors})
+                          #{'books': books_result, 'locations': locations, 'search_form': search_form, 'authors': author_result, 'owners':owner_result}
+                          {'locations': locations, 'search_form': search_form, 'authors': author_result, 'owners':owners_result, }
+                        )
 
     # if a GET (or any other method) we'll create a blank form
     else:
         books = Book.objects.all()
         locations = Location.objects.all()
         authors = Author.objects.all()
-
+        owners = Owner.objects.all()
         search_form = SearchForm()
 
-        return render(request, 'index.html',{'books':books, 'locations':locations, 'search_form': search_form, 'authors': authors})
+        return render(request, 'index.html',{'books':books, 'locations':locations, 'search_form': search_form, 'authors': authors, 'owners':owners})
     # 
     # f = open('/Users/FreddieGould/Downloads/books.csv', 'r')
     # for line in f:
