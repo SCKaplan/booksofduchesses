@@ -111,6 +111,8 @@ class DateOwned(models.Model):
 			return "undetermined date"
 
 		for date in dates:
+			date = date.lstrip()
+			date = date.rstrip()
 			# How we want to organize uncertain dates
 			if date.find('?') != -1 and len(date) < 2:
 				print("what to do when its just a ?")
@@ -118,7 +120,7 @@ class DateOwned(models.Model):
 			if date.find('?') != -1:
 				# Maybe add an uncertainty factor to this
 				date = date.replace("?", "")
-			if "c. " in date:
+			if "c." in date:
 				# Maybe do a +/- operation to just get a range straight off the bat
 				# For now just chop
 				date = date.replace("c. ", "")
