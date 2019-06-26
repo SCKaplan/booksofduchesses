@@ -6,7 +6,7 @@ import datetime
 class Tag(models.Model):
 	geom = models.PointField(null=True, blank=True)
 	tag = models.CharField(max_length=200)
-	
+
 	def __str__(self):
 		return self.tag
 
@@ -23,30 +23,28 @@ class BooksLanguage(models.Model):
 
 class Book(models.Model):
 	image = models.ImageField(null=True, blank=True)
-	title = models.CharField(max_length=200)
-	author = models.ForeignKey('Author', on_delete=models.SET_NULL, null=True, blank=True)
-	owner = models.ManyToManyField('Owner', blank=True)
+	shelfmark = models.CharField(max_length=200)
+	owner = models.ManyToManyField('Owner', blank=True, verbose_name="Owner(s)")
 	type = models.CharField(max_length=200, blank=True)
 	ex_libris = models.CharField(max_length=200, blank=True) # can link to more books?
-	bibliography = models.CharField(max_length=200, blank=True)
+	bibliography = models.ManyToManyField('Bibliography', blank=True)
 	library = models.ForeignKey('Location', blank=True, on_delete=models.SET_NULL, null=True) # Should reference a location
 	digital_version = models.CharField(max_length=200, blank=True)
 	date_created= models.CharField(max_length=200, blank=True, null=True)
 	book_movements = models.CharField(max_length=200, blank=True)
 	scribes = models.CharField(max_length=200, blank=True)
 	illuminators = models.CharField(max_length=200, blank=True)
-	language = models.ManyToManyField('BooksLanguage', blank=True)
-
+	catalog_entry = models.CharField(max_length=200, blank=True)
 
 	def __str__(self):
-		return self.title
+		return self.shelfmark
 
 
 class Author(models.Model):
 	image = models.ImageField(null=True, blank=True)
 	geom = models.PointField(null=True, blank=True)
 	name = models.CharField(max_length=200)
-	abstract = models.TextField(blank=True)
+	abstract = models.TextField("About", blank=True)
 	birth_date = models.CharField(max_length=200, blank=True)
 	death_date = models.CharField(max_length=200, blank=True)
 	gender = models.CharField(max_length=200, blank=True)
@@ -62,42 +60,65 @@ class Author(models.Model):
 
 
 class Text(models.Model):
-	name = models.CharField(max_length=200)
+	title = models.CharField(max_length=200)
 	name_eng = models.CharField(max_length=200, blank=True)
 	tags = models.ManyToManyField(Tag)
-	book = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
-
+	book = models.ManyToManyField(Book)
+	language = models.ManyToManyField(BooksLanguage, blank=True)
+	author = models.ForeignKey(Author, on_delete=models.CASCADE, blank=True, null=True)
+	arlima_link = models.CharField(max_length=200, blank=True)
+	me_compendium_link = models.CharField(max_length=200, blank=True)
+	ihrt_link = models.CharField(max_length=200, blank=True)
 	def __str__(self):
-		return self.name
+		return self.title
 
 class Location(models.Model):
 	image = models.ImageField( null=True, blank=True)
 	geom = models.PointField(null=True, blank=True)
-	name =  models.CharField(max_length=200)
+	name =  models.CharField(max_length=200, blank=True)
 	City =  models.CharField(max_length=200)
 	Country =  models.CharField(max_length=200)
 
 	@property
 	def popupcontent(self):
-		return '{} {} {}'.format(self.name,self.City,self.Country)
+		str = ""
+		a = OwnerPlaceDateLived.objects.filter(the_place=self)
+		if len(a) == 0:
+			return "This isn't supposed to be here, please let us know if you see this."
+		for owner_loc in a:
+			b = (Owner.objects.filter(owner_location=owner_loc))
+			if len(b) != 0:
+				str =  str + '<a href="owners/{}/">{}</a>, {} <br>'.format(b[0].name, b[0].name, owner_loc.date_at_location)
+		return '<strong>{}, {}</strong><br>{}'.format(self.City, self.Country, str)
 
 	def __str__(self):
 		return self.name
 
 class Owner(models.Model):
 	image = models.ImageField(null=True, blank=True)
-	geom = models.PointField(null=True, blank=True)
 	name = models.CharField(max_length=200)
 	motto = models.CharField(max_length=200, blank=True, null=True)
-	gender = models.CharField(max_length=200, blank=True, null=True)
-	symbol = models.CharField(max_length=200, blank=True, null=True)
+	birth_year = models.CharField(max_length=200, blank=True, null=True)
+	death_year = models.CharField(max_length=200, blank=True, null=True)
+	titles = models.CharField(max_length=200, blank=True, null=True)
+	Female = 'Female'
+	Male = 'Male'
+	gen_choices = [(Female, "Female"),(Male, "Male")]
+	gender = models.CharField(max_length=9, choices=gen_choices, default='Female')
+	symbol = models.CharField("Symbol(s)", max_length=200, blank=True, null=True)
 	book_date = models.ManyToManyField('DateOwned', blank=True)
-	date_place_lived = models.ManyToManyField('OwnerPlaceDateLived', blank=True)
-
+	owner_location = models.ManyToManyField('OwnerPlaceDateLived', blank=True)
+	relation = models.ManyToManyField('Relative', blank=True, verbose_name='Relatives')
 	@property
 	def popupcontent(self):
-		return '{} {} {}'.format(self.name, self.motto, self.gender)
-
+		t = self.owner_location.all()
+		if len(t) == 0:
+			date = "no date"
+			place = "No location"
+		else:
+			date = t[0].date_at_location
+			place = t[0].the_place
+		return '<strong>{}</strong><p>in {} {}</p>'.format(self.name, place, date)
 	def __str__(self):
 		return self.name
 
@@ -172,11 +193,11 @@ class DateOwned(models.Model):
 
 	class Meta:
 		verbose_name = 'Date owned'
-		verbose_name_plural = 'Dates owned'
+		verbose_name_plural = 'Dates Book Owned'
 
 	def __str__(self):
-		return self.dateowned
-
+		return self.book_owned.shelfmark + ", " + self.dateowned
+		#return self.dateowned
 
 class AuthorPlaceDateLived(models.Model):
 	place_date_lived = models.CharField(max_length=200, null=True)
@@ -186,11 +207,42 @@ class AuthorPlaceDateLived(models.Model):
 	def __str__(self):
 		return self.place_date_lived
 
-
 class OwnerPlaceDateLived(models.Model):
-	place_date_lived = models.CharField(max_length=200, null=True)
-	place = models.PointField(null=True, blank=True)
-	place_name = models.CharField(max_length=200, null=True)
+	geom = models.PointField(null=True, blank=True)
+	the_place = models.ForeignKey(Location, on_delete=models.CASCADE, null=True)
+	date_at_location = models.CharField(max_length=200, null=True)
 
 	def __str__(self):
-		return self.place_date_lived
+		return self.the_place.name + ", " + self.date_at_location
+
+	@property
+	def popupcontent(self):
+		str = ""
+		owner = Owner.objects.get(owner_location=self)
+		same_loc = owner.owner_location.filter(the_place=self.the_place)
+		for date in same_loc:
+			str = str + '<a href="owners/{}/">{}</a>, {} <br>'.format(owner.name, owner.name, date.date_at_location)
+		return '<strong>{}, {}</strong><br>{}'.format(self.the_place.City, self.the_place.Country, str)
+
+class Bibliography(models.Model):
+	author_date = models.CharField(max_length=200)
+	source = models.CharField(max_length=10000)
+
+	def __str__(self):
+		return self.author_date
+	class Meta:
+		verbose_name_plural = 'Bibliographies'
+
+class Relative(models.Model):
+	person = models.ForeignKey(Owner,  on_delete=models.SET_NULL, null=True)
+	Father = 'Father'
+	Mother = 'Mother'
+	Spouse = 'Spouse'
+	Son = 'Son'
+	Daughter = 'Daughter'
+	Other = 'Other'
+	rel_choices = [(Father, "Father"),(Mother, "Mother"), (Spouse, "Spouse"), (Son, "Son"), (Daughter, 'Daughter'), (Other, "Other")]
+	relation = models.CharField(max_length=9, choices=rel_choices, default='Father')
+
+	def __str__(self):
+                return self.person.name + ", " + self.relation

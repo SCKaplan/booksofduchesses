@@ -9,4 +9,8 @@ import books_app.views as views
 urlpatterns = [
     path('', views.index, name='index'),
     path('loadup/', views.loadup, name='loadup'),
+    path('bibload/', views.bibload, name='bibload'),
+    #path('owners/', views.owners, name='owners'),
+    # Django will expect a string and send it to the view as var owner_id
+    path('owners/<str:owner_id>/', views.owners, name='owners'),
 ]

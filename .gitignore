@@ -1,4 +1,6 @@
 booksofduchesses/settings.py 
+books_app/media
+
 .venv
 __pycache__
 *.pyc

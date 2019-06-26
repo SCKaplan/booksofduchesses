@@ -41,14 +41,36 @@
 }
 
 </style>
+<header class="w3-display-container w3-content w3-wide" style="max-width:1500px;" id="home">
+  <img class="w3-image" src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Woman_in_Medieval_Dress_or_Costume_%2822%29.JPG" alt="Medieval woman reading a book" width="600" height="600">
+  <div class="w3-display-middle w3-margin-top w3-center" style="padding-left: 130px;">
+    <a href="#map"><h1 class="w3-xxlarge w3-text-white"><span class="w3-padding w3-black w3-opacity-min"><b>Books of Duchesses</b></h1></span><br> <h3><span class="w3-hide-small w3-text-dark-grey">Women Book Owners in Late-Medieval Francophone Europe: 1350-1500</h3><br><br> <a class="w3-text-dark-grey" href=" https://www.haverford.edu/users/swatson
+">Sarah Wilma Watson (Haverford College)</a> <br>&<br> <a class="w3-text-dark-grey" href=" https://clic.rice.edu/people/faculty/sc-kaplan">S.C. Kaplan (Rice University)</a> </span></a>
+  </div>
+</header>
 
-  <div class="column left" style="background-color:#aaa; margin-top: 100px;">
+
+<!-- About section -->
+<div id="about" style="margin-top: 100px">
+<div class="w3-content w3-wide" style="padding-left:10px;padding-right:10px;" id="about">
+  <h2 style="text-align:center;">About</h2>
+  <p>This project collects, organizes, and presents data related to late-medieval laywomen and their books. Through an interactive map of Europe, users are able to visualize networks of manuscripts, texts, and readers and explore the libraries and peregrinations of woman book owners.</p>
+    <br>
+  <p>The data collected in the beta-version of the project has the potential to shift scholarly paradigms by challenging narratives of national literary history and uncovering the active role played  by women in creating, consuming literary and material culture and in circulating texts across national, geographic, and generational borders.</p>
+    <br>
+  <p>The geographic scope of the project is initially limited to England and French-speaking regions on the continent, including France and Burgundy. The time frame of the project is currently bounded between 1350 and 1500, a period of intense political, interfamilial, and interpersonal changes and exchanges due to the Hundred Years War.</p>
+
+</div>
+</div>
+
+
+  <div class="column left" style=" margin-top: 30px; font-family:Verdana,sans-serif; padding-left:25px;">
     <form action="#map" method="post" style="margin-top: 70px">
     {% csrf_token %}
         <p>Search:</p>{{ search_form.search }}<br>
         <p>Dates:</p>{{ search_form.start_date }} to {{ search_form.end_date }}<br>
-        <p>Female Owner:</p>{{ search_form.owner }}<br>
-        <p>MS Shelfmark:</p>{{ search_form.shelfmark }}<br>
+        <p>Owner:</p>{{ search_form.owner }}<br>
+        <p>Shelfmark:</p>{{ search_form.shelfmark }}<br>
         <p>Text:</p>{{ search_form.text }}<br>
         <p>Author:</p>{{ search_form.author }}<br>
         <p>Genre:</p>{{ search_form.genre }}<br>
@@ -57,12 +79,9 @@
 </form>
   </div>
 
-  <div class="column right" style="background-color:#bbb; margin-top: 100px;">
-<div  id='map'>
+  <div class="column right" style="margin-top: 30px; padding-right:25px;">
 
-<div id="mapid" style="width: 100%; height:800px;"></div>
-</div>
-  </div>
+<div id="mapid" style="width: 100%; height:800px;">
 
 
     <script>
@@ -95,26 +114,26 @@
 		id: 'mapbox.streets'
 	}).addTo(mymap);
 
-	var locations = {{ locations|geojsonfeature:'popupcontent'|safe }};
-    L.geoJson(locations, { onEachFeature: function(feature, layer) {
-            var props = feature.properties.popupcontent;
-            var content = `<p>${props}</p>`;
-            layer.bindPopup(content);
-        }}).addTo(mymap);
+//	var locations = {{ locations|geojsonfeature:'popupcontent'|safe }};
+  //  L.geoJson(locations, { onEachFeature: function(feature, layer) {
+    //        var props = feature.properties.popupcontent;
+      //      var content = `<p>${props}</p>`;
+        //    layer.bindPopup(content);
+       // }}).addTo(mymap);
 
 
-    var authors = {{ authors|geojsonfeature:'popupcontent'|safe }};
+   // var authors = {{ authors|geojsonfeature:'popupcontent'|safe }};
 
-    L.geoJSON(authors, {
-  pointToLayer: function (feature, latlng) {
-            return L.marker(latlng, {icon: greenIcon});
-    },
+   // L.geoJSON(authors, {
+ // pointToLayer: function (feature, latlng) {
+   //         return L.marker(latlng, {icon: greenIcon});
+   // },
 
-  onEachFeature: function(feature, layer) {
-      var props = feature.properties.popupcontent;
-      var content = `<p>${props}</p>`;
-      layer.bindPopup(content);
-  }}).addTo(mymap);
+ // onEachFeature: function(feature, layer) {
+   //   var props = feature.properties.popupcontent;
+     // var content = `<p>${props}</p>`;
+      //layer.bindPopup(content);
+ // }}).addTo(mymap);
 
         var owners = {{ owners|geojsonfeature:'popupcontent'|safe }};
 
@@ -130,4 +149,6 @@ L.geoJSON(owners, {
   }}).addTo(mymap);
 
 </script>
+</div>
+</div>
 {% endblock %}
