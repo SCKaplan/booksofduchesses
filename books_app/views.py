@@ -21,22 +21,25 @@ def index(request):
             query = request.POST.get('search', '')
 
             author_result = Author.objects.filter(name__icontains=query)
-            owners_result = Owner.objects.filter(name__icontains=query)
 
-            t = []
-            b = []
-            for owner in owners_result:
-                t.append(owner.owner_location.all())
-            for set in t:
-                for item in set:
-                    b.append(item.the_place)
+            owners_result = Owner.objects.filter(name__icontains=query)
 
             locations = Location.objects.filter(name__icontains=query)
 
             author = request.POST.get('author', '')
             start_date = request.POST.get('start_date', '')
             end_date = request.POST.get('end_date', '')
-            owner = request.POST.get('owner', '')
+
+            owners_search = request.POST.get('owner', '')
+            owners_to_map = Owner.objects.filter(name__icontains=owners_search)
+            t = []
+            b = []
+            for owner in owners_to_map:
+                t.append(owner.owner_location.all().order_by('date_at_location'))
+            for set in t:
+                for item in set:
+                    b.append(item)
+
             genre = request.POST.get('genre', '')
             text = request.POST.get('text', '')
             shelfmark = request.POST.get('shelfmark', '')
@@ -71,8 +74,8 @@ def owners(request, owner_id):
     # owner_id should be the name of an owner if we did this right
     owner = Owner.objects.get(name__contains=owner_id)
     # We need Owner Name, Motto, Title, Locations, Library
-    location = owner.owner_location.all()
-    books = owner.book_date.all()
+    location = owner.owner_location.all().order_by('date_at_location')
+    books = owner.book_date.all().order_by('book_owned__shelfmark')
     relatives = owner.relation.all()
    # places = []
   #  for place in location:

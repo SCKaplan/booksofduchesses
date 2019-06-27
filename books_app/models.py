@@ -139,22 +139,31 @@ class DateOwned(models.Model):
 		print(dates)
 		month = "January"
 		day = 1
-		year = 1400
+		year = 1350
 		final = []
 		chop = 0
+		firstDate = True
 		if len(dates[0]) == 0 and len(dates[1]) == 0:
-			# If we just get a dash what do we do?
-			return "undetermined date"
+			# If we just get a dash return the full possible date range
+			x = []
+			x.append(datetime.datetime(1350, 1, 1))
+			x.append(datetime.datetime(1500, 12, 31))
+			return x
+		# For start date and finish date
 		for date in dates:
 			print(date)
 			date = date.lstrip()
 			date = date.rstrip()
 			# How we want to organize uncertain dates
 			if date.find('?') != -1 and len(date) < 2:
-				print("what to do when its just a ?")
-				date = "2019"
+				# When we get just a "?"
+				if firstDate:
+					date = "1350"
+				else:
+					date = "1500"
 			if date.find('?') != -1:
 				# Maybe add an uncertainty factor to this
+				# If we get a date with a ? i.e. "1460?"
 				date = date.replace("?", "")
 			if "c." in date:
 				# Maybe do a +/- operation to just get a range straight off the bat
@@ -162,35 +171,43 @@ class DateOwned(models.Model):
 				date = date.replace("c. ", "")
 				date = date.replace("c.", "")
 			if date.find('/') != -1:
+				# For now just take the earlier date... maybe change this
 				chop = date.index('/')
-				date = date[:chop]
+				if firstDate:
+					# Take the earlier date- this is most/all of the dates we encounter
+					date = date[:chop]
+				else:
+					# Take the later date when its the second date- widest range
+					# (Makes "1450/60 "into "1460")
+					date = date[:chop-2]+date[chop+1:]
 			# We now have a certain date
 			date = date.split(' ')
 			print("AHHH DATE")
 			print(date)
 			if len(date[0]) < 3:
+				# e.g. 15 December 1443
 				day = date[0]
 				month = date[1]
 				year = date[2]
-			# Review syntax
-			#elif type(date[0]) == 'string':
 			elif len(date) == 2:
+				# e.g. December 1443
 				month = date[0]
 				year = date[1]
 			else:
+				# e.g. 1443
 				year = date[0]
 
 			stringIt = str(year) + "-" + month + "-" + str(day)
 			#print(StringIt)
 			final.append(datetime.strptime(stringIt, "%Y-%B-%d"))
+			firstDate = False
 			print(final)
 
 		if len(final) == 1:
-		# If we are only given one date, how far do we stretch the window (currently 2 yrs)
+		# If we are only given one date (e.g. 1433), how far do we stretch the window (currently 2 yrs)
 			final.append(final[0] + timedelta(days=731))
 			final[0] = final[0] - timedelta(days=730)
 		return final
-
 	class Meta:
 		verbose_name = 'Date owned'
 		verbose_name_plural = 'Dates Book Owned'
@@ -241,7 +258,16 @@ class Relative(models.Model):
 	Son = 'Son'
 	Daughter = 'Daughter'
 	Other = 'Other'
-	rel_choices = [(Father, "Father"),(Mother, "Mother"), (Spouse, "Spouse"), (Son, "Son"), (Daughter, 'Daughter'), (Other, "Other")]
+	Brother = 'Brother'
+	Sister = 'Sister'
+	Aunt = 'Aunt'
+	Uncle = 'Uncle'
+	Cousin = 'Cousin'
+	DiL = 'Daughter-in-law'
+	SiL = 'Son-in-law'
+	MiL = 'Mother-in-law'
+	FiL = 'Father-in-law'
+	rel_choices = [(Father, "Father"),(Mother, "Mother"), (Spouse, "Spouse"), (Son, "Son"), (Daughter, 'Daughter'), (Brother, 'Brother'),(Sister, 'Sister'),(Aunt, 'Aunt'),(Uncle, 'Uncle'),(Cousin, 'Cousin'),(DiL, 'Daughter-in-law'),(SiL, 'Son-in-Law'),(MiL, 'Mother-in-law'), (FiL, 'Father-in-law')]
 	relation = models.CharField(max_length=9, choices=rel_choices, default='Father')
 
 	def __str__(self):

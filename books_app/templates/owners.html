@@ -16,16 +16,17 @@
     <div class="w3-col l3 m6 w3-margin-bottom">
       <h3 style="text-align:center;"><strong>Overview</strong></h3>
       <img src="http://booksofduchesses.com/media/{{owner.image}}" style="object-fit:cover; overflow:hidden; width:100%;height:100%;">
-      <p class="w3-opacity" style="text-align:center;">1415/16-1472</p>
+     <!-- <p class="w3-opacity" style="text-align:center;">Birth Date-Death Date</p> -->
       <p>Motto: {{owner.motto}}</p>
       <p>Title: {{owner.title}}</p>
+      <p>Symbol: {{owner.symbol}}</p>
       <h4 style="text-align:center;"><strong>Family Tree</strong></h4>
-      <!-- <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Staufen_dynasty.JPG/500px-Staufen_dynasty.JPG" style="width:100%;"> -->
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Staufen_dynasty.JPG/500px-Staufen_dynasty.JPG" style="width:100%;"> 
       {% for relative in relatives %}
       	<p><a style="color:blue;" href="owners/{{relative.person.name}}/">{{relative.person.name}}</a>, ({{relative.relation}})</p>
       {% endfor %}
     </div>
-    <div id="mapid" style="width:44%; height:600px; left:40px; float:left;">
+    <div id="mapid" style="width:44%; height:600px; left:40px; float:left; z-index:0;">
       <script>
 
        var violetIcon = new L.Icon({
@@ -72,7 +73,7 @@ L.geoJSON(places, {
       <br>      
       <h3 style="text-align:center;"><strong>{{owner.name}}'s Library</strong></h3></p>
         {% for book in books %}
-      <p><a style="color:blue;" href="http://booksofduchesses.com/books/">{{book.book_owned}}</a> ({{book.dateowned}})</p>
+      <p style="text-align:left;" ><a style="color:blue;" href="http://booksofduchesses.com/books/">{{book.book_owned}}</a> ({{book.dateowned}})</p>
 	{% endfor %}
     </div>
   </div>
