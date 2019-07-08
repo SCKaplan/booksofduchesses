@@ -28,6 +28,7 @@ admin.site.register(Book, BookAdmin)
 
 
 class TextAdmin(admin.ModelAdmin):
+    search_fields = ['title']
     autocomplete_fields = ['book', 'tags', 'author', 'language']
 
 
@@ -133,3 +134,4 @@ class RelativeAdmin(admin.ModelAdmin):
     autocomplete_fields = ['person']
 
 admin.site.register(Relative, RelativeAdmin)
+admin.site.register(Translator)

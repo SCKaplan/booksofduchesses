@@ -20,13 +20,12 @@ class BooksLanguage(models.Model):
 	def __str__(self):
 		return self.books_language
 
-
 class Book(models.Model):
 	image = models.ImageField(null=True, blank=True)
 	shelfmark = models.CharField(max_length=200)
 	owner = models.ManyToManyField('Owner', blank=True, verbose_name="Owner(s)")
 	type = models.CharField(max_length=200, blank=True)
-	ex_libris = models.CharField(max_length=200, blank=True) # can link to more books?
+	ex_libris = models.TextField(blank=True) # can link to more books?
 	bibliography = models.ManyToManyField('Bibliography', blank=True)
 	library = models.ForeignKey('Location', blank=True, on_delete=models.SET_NULL, null=True) # Should reference a location
 	digital_version = models.CharField(max_length=200, blank=True)
@@ -34,8 +33,7 @@ class Book(models.Model):
 	book_movements = models.CharField(max_length=200, blank=True)
 	scribes = models.CharField(max_length=200, blank=True)
 	illuminators = models.CharField(max_length=200, blank=True)
-	catalog_entry = models.CharField(max_length=200, blank=True)
-
+	catalog_entry = models.CharField(max_length=2000, blank=True)
 	def __str__(self):
 		return self.shelfmark
 
@@ -66,6 +64,7 @@ class Text(models.Model):
 	book = models.ManyToManyField(Book)
 	language = models.ManyToManyField(BooksLanguage, blank=True)
 	author = models.ForeignKey(Author, on_delete=models.CASCADE, blank=True, null=True)
+	translator = models.ForeignKey('Translator', on_delete=models.CASCADE, blank=True, null=True)
 	arlima_link = models.CharField(max_length=200, blank=True)
 	me_compendium_link = models.CharField(max_length=200, blank=True)
 	ihrt_link = models.CharField(max_length=200, blank=True)
@@ -96,6 +95,7 @@ class Location(models.Model):
 
 class Owner(models.Model):
 	image = models.ImageField(null=True, blank=True)
+	image_citation = models.CharField(max_length=500, blank=True, null=True)
 	name = models.CharField(max_length=200)
 	motto = models.CharField(max_length=200, blank=True, null=True)
 	birth_year = models.CharField(max_length=200, blank=True, null=True)
@@ -131,6 +131,16 @@ class DateOwned(models.Model):
 	Poss = 'Possible'
 	conf_choices = [(Conf, "Confirmed"),(Poss, "Possible")]
 	conf_or_possible = models.CharField(max_length=9, choices=conf_choices, default='Confirmed')
+
+	inscription = 'Inscription'
+	patron_portrait = 'Patron Portrait'
+	inventory = 'Inventory'
+	archival_mention = 'Archival Mention'
+	arms = 'Arms'
+	will = 'Will'
+	other = 'Other'
+	type_choices = [(inscription, "Inscription"), (patron_portrait, "Patron Portrait"), (inventory,"Inventory"), (archival_mention, "Archival Mention"), (arms, "Arms"), (will, "Will"), (other, "Other")]
+	evidence = models.CharField(max_length=40, choices=type_choices, default='Inscription')
 
 	def date_range(self):
 		from datetime import datetime, timedelta
@@ -267,8 +277,20 @@ class Relative(models.Model):
 	SiL = 'Son-in-law'
 	MiL = 'Mother-in-law'
 	FiL = 'Father-in-law'
-	rel_choices = [(Father, "Father"),(Mother, "Mother"), (Spouse, "Spouse"), (Son, "Son"), (Daughter, 'Daughter'), (Brother, 'Brother'),(Sister, 'Sister'),(Aunt, 'Aunt'),(Uncle, 'Uncle'),(Cousin, 'Cousin'),(DiL, 'Daughter-in-law'),(SiL, 'Son-in-Law'),(MiL, 'Mother-in-law'), (FiL, 'Father-in-law')]
-	relation = models.CharField(max_length=9, choices=rel_choices, default='Father')
+	SiL = 'Sister-in-law'
+	BiL = 'Brother-in-law'
+	God_son = 'God-son'
+	God_parent = 'God-parent'
+	God_daughter = 'God-Daughter'
+	rel_choices = [(Father, "Father"),(Mother, "Mother"), (Spouse, "Spouse"), (Son, "Son"), (Daughter, 'Daughter'), (Brother, 'Brother'),(Sister, 'Sister'),(Aunt, 'Aunt'),(Uncle, 'Uncle'),(Cousin, 'Cousin'),(DiL, 'Daughter-in-law'),(SiL, 'Son-in-Law'),(MiL, 'Mother-in-law'), (FiL, 'Father-in-law'), (SiL, 'Sister-in-law'), (BiL, 'Brother-in-law'), (God_son, 'God-son'), (God_parent, 'God-parent'), (God_parent, 'God-parent'), (God_daughter, 'God-Daughter')]
+	relation = models.CharField(max_length=20, choices=rel_choices, default='Father')
 
 	def __str__(self):
                 return self.person.name + ", " + self.relation
+
+class Translator(models.Model):
+	name = models.CharField(max_length=200)
+	arlima = models.CharField(max_length=200, blank=True, null=True)
+
+	def __str__(self):
+                return self.name

@@ -7,7 +7,7 @@
  <!-- Books Section -->
 <div class="column-left">
   <div class="w3-container w3-padding-32" id="about">
-    <h2 style="text-align:center; padding-top:30px;">Book: BL Royal 14 E III</h2>
+    <h2 style="text-align:center; padding-top:30px;">Book: {{ book.shelfmark }}</h2>
  <hr></hr>
   </div>
 
@@ -15,11 +15,19 @@
     <div class="w3-col l3 m6 w3-margin-bottom">
       <h3 style="text-align:center;"><strong>Overview</strong></h3>
       <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Binding_by_Zaehnsdorf%2C_1896.jpg/621px-Binding_by_Zaehnsdorf%2C_1896.jpg" alt="John" style="width:100%">
-      <p class="w3-opacity">Texts: The Death of King Arthur, The Quest for the Holy Grail, The Story of the Holy Grail</p>
-      <p>Current Location: British Library</p>
-      <p><button class="w3-button w3-light-grey w3-block"><a href="http://www.bl.uk/manuscripts/Viewer.aspx?ref=royal_ms_14_e_iii_fs001r">Digitization</a></button></p>
+	{% if book.digital_version %}
+      <p><button class="w3-button w3-light-grey w3-block"><a href="{{book.digital_version}}">Digitization</a></button></p>
+	{% endif %}
+	{% if book.catalog_entry %}
+      <p><button class="w3-button w3-light-grey w3-block"><a href="{{book.catalog_entry}}">Catalog</a></button></p>
+	{% endif %}
+        <p class="w3-opacity">Texts:
+      {% for text in texts %}
+	<li>{{text.title}}</li> 
+      {% endfor %}
+        </p>
     </div>
-    <div id="mapid" style="width:44%; height:600px; left:40px; float:left;">
+    <div id="mapid" style="width:44%; height:600px; left:40px; float:left; z-index:0;">
 
       <script>
 
@@ -46,13 +54,15 @@
     </div>
     <div class="w3-col l3 m6 w3-margin-bottom" style="float:right; text-align:center;">
       <h3 style="text-align:center;"><strong>Ownership Details</strong></h3>
-      <p><a href="#home">Charles V of France</a> (1401-?)</p>
-      <p><a href="#home">Charles VI of France</a> (1432-1446)</p>
-      <p><a href="#home">Sir Richard Roos</a> (1446-1454)</p>
+      {% for owner in owners %}
+        <p><a href="http://booksofduchesses.com/owners/{{owner.0}}/">{{ owner.0 }}</a> ({{ owner.1 }})</p>
+      {% endfor %}
       <br></br>
       <h3 style="text-align:center;"><strong>Bibliography</strong></h3>
-      <p><a href="#home">Arlima</a>      <a href="#home">Feminae</a></p>
-      <p style="text-align:left; font-size:11px;"><i>A.M. Chazaud, Les Enseignements d'Anne de France, duchesse de Bourbonnais et d'Auvergne, à sa fille Susanne de Bourbon: Texte original publié d'après le ms. unique de Saint-Pétersbourg (Moulins: C. Desroziers, 1878).</i></p>
+      <!-- <p><a href="#home">Arlima</a>      <a href="#home">Feminae</a></p> -->
+      {% for bib in bibs %}
+        <p style="text-align:left; font-size:11px;"><i>{{bib.source}}</i></p>
+      {% endfor %}
     </div>
   </div>
 </div>

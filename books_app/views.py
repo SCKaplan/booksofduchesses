@@ -67,12 +67,23 @@ def index(request):
 
         return render(request, 'index.html',{'books':books, 'locations':locations, 'search_form': search_form, 'authors': authors, 'owners':b})
 
-def books(request):
-    return render(request,'books.html')
+def books(request, book_id):
+    book = Book.objects.get(shelfmark=book_id)
+    texts = Text.objects.filter(book=book)
+    owners = DateOwned.objects.filter(book_owned=book).order_by('dateowned')
+    bibs = book.bibliography.all()
+    l = []
+    for owner in owners:
+        try:
+            # In case some misc dateowned objects appear- if everything has a link and we clean up this isn't necessary
+            l.append((Owner.objects.get(book_date=owner), owner.dateowned))
+        except:
+            pass
+    return render(request,'books.html', {'book': book, 'owners': l, 'texts': texts, 'bibs': bibs})
 
 def owners(request, owner_id):
     # owner_id should be the name of an owner if we did this right
-    owner = Owner.objects.get(name__contains=owner_id)
+    owner = Owner.objects.get(name=owner_id)
     # We need Owner Name, Motto, Title, Locations, Library
     location = owner.owner_location.all().order_by('date_at_location')
     books = owner.book_date.all().order_by('book_owned__shelfmark')
@@ -80,7 +91,7 @@ def owners(request, owner_id):
    # places = []
   #  for place in location:
    #     places.append(place.the_place)
-    return render(request, 'owners.html', {'places': location, 'relaitve': relatives, 'books':books, 'owner':owner, 'locations':location})
+    return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books':books, 'owner':owner, 'locations':location})
 
 def loadup(request):
     # if run accidentally, delete all texts and rerun
@@ -130,27 +141,30 @@ def loadup(request):
     return HttpResponse('Thanks')
 
 def bibload(request):
-   # csvinfo = open('books_app/csvs/bibs2.csv', 'r')
-    #for line in csvinfo:
-     #   line  = line.replace('\n', '')
-      #  line = line.split(',')
-        # We get a bib reference and a bunch of ! seperated books
-       # bib = line[0]
-        #bib = bib.replace('!', ',')
-      #  bib = bib.rstrip()
-       # bibToAdd = Bibliography.objects.filter(author_date__contains=bib)
-
-#        books = line[1]
- #       books = books.split('!')
-        # probably need to filter here for \n
-  #      for book in books:
-   #         book = book.lstrip()
-    #        if len(book) != 0:
-     #           bookToEdit = Book.objects.filter(shelfmark__contains=book)
-      #      if len(bookToEdit) != 0 and len(bibToAdd) != 0:
-       #         bookToEdit[0].bibliography.add(bibToAdd[0])
-        #        bookToEdit[0].save()
-         #   else:
-          #      print("This bibliography is not in the database")
-
+    translators = open('books_app/csvs/relatives.csv', 'r')
+    for line in translators:
+        line = line.split(',')
+        ownerToEdit = Owner.objects.filter(name__icontains=line[0])
+        if len(ownerToEdit) != 0:
+            ownerToEdit = ownerToEdit[0]
+            ownerToEdit.birth_year = line[1]
+            ownerToEdit.death_year = line[2]
+            ownerToEdit.titles = line[3]
+            # father = Owner.objects.filter(name__icontains=line[4])
+            # if len(father != 0):
+            #     ownerToEdit.relative.add(father[0])
+            # mother = Owner.objects.filter(name__icontains=line[5])
+            # if len(mother != 0):
+            #     ownerToEdit.relative.add(mother[0])
+            # spouse1 = Owner.objects.filter(name__icontains=line[6])
+            # if len(spouse1 != 0):
+            #     ownerToEdit.relative.add(spouse1[0])
+            # spouse2 = Owner.objects.filter(name__icontains=line[7])
+            # if len(spouse2 != 0):
+            #     ownerToEdit.relative.add(spouse2[0])
+            # spouse3 = Owner.objects.filter(name__icontains=line[8])
+            # if len(spouse3 != 0):
+            #     ownerToEdit.relative.add(spouse3[0])
+            ownerToEdit.save()
+    translators.close()
     return HttpResponse('Thanks')
