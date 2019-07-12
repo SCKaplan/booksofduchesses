@@ -16,19 +16,19 @@ def index(request):
         search_form = SearchForm(request.POST)
         # check whether it's valid:
         if search_form.is_valid():
-
-            # Search queries for books, authors and owners
+            display = request.POST.getlist('display')
             query = request.POST.get('search', '')
-
-            author_result = Author.objects.filter(name__icontains=query)
-
-            owners_result = Owner.objects.filter(name__icontains=query)
-
-            locations = Location.objects.filter(name__icontains=query)
-
             author = request.POST.get('author', '')
             start_date = request.POST.get('start_date', '')
             end_date = request.POST.get('end_date', '')
+            genre = request.POST.get('genre', '')
+            text = request.POST.get('text', '')
+            shelfmark = request.POST.get('shelfmark', '')
+
+            # Search queries for books, authors and owners
+            author_result = Author.objects.filter(name__icontains=query)
+            owners_result = Owner.objects.filter(name__icontains=query)
+            locations = Location.objects.filter(name__icontains=query)
 
             owners_search = request.POST.get('owner', '')
             owners_to_map = Owner.objects.filter(name__icontains=owners_search)
@@ -40,18 +40,30 @@ def index(request):
                 for item in set:
                     b.append(item)
 
-            genre = request.POST.get('genre', '')
-            text = request.POST.get('text', '')
-            shelfmark = request.POST.get('shelfmark', '')
+            books_to_map = Book.objects.filter(shelfmark__icontains=shelfmark)
+            z = []
+            a = []
+            for book in books_to_map:
+                z.append(book.book_location.all().order_by('date'))
+            for locs in z:
+                for loc in locs:
+                    a.append(loc)
+
+            if len(display) == 0 or display[0] == 'owners':
+                # If we only want to display owners
+                a = []
+            if len(display) == 1 and display[0] == 'books':
+                # If we only want to display books
+                b = []
 
             return render(request, 'index.html',
                           #{'books': books_result, 'locations': locations, 'search_form': search_form, 'authors': author_result, 'owners':owner_result}
-                          {'locations': locations, 'search_form': search_form, 'authors': author_result, 'owners':b, }
+                          {'locations': locations, 'search_form': search_form, 'authors': author_result, 'owners':b, 'display':display, 'books':a}
                         )
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        books = Book.objects.all()
+        books = []
         locations = Location.objects.all()
         authors = Author.objects.all()
         owners = Owner.objects.filter(gender="Female")
@@ -79,7 +91,9 @@ def books(request, book_id):
             l.append((Owner.objects.get(book_date=owner), owner.dateowned))
         except:
             pass
-    return render(request,'books.html', {'book': book, 'owners': l, 'texts': texts, 'bibs': bibs})
+    # Geo data for template
+    places = BookLocation.objects.filter(book_shelfmark=book)
+    return render(request,'books.html', {'book': book, 'owners': l, 'texts': texts, 'bibs': bibs, 'places': places})
 
 def owners(request, owner_id):
     # owner_id should be the name of an owner if we did this right
@@ -92,6 +106,15 @@ def owners(request, owner_id):
   #  for place in location:
    #     places.append(place.the_place)
     return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books':books, 'owner':owner, 'locations':location})
+
+def texts(request, text_id):
+    text = Text.objects.get(title=text_id)
+    books = text.book.all()
+    languages = text.language.all()
+    if len(languages) == 0:
+        languages = None
+    tags = text.tags.all()
+    return render(request, 'texts.html', {'text': text, 'books': books, 'languages': languages, 'tags': tags})
 
 def loadup(request):
     # if run accidentally, delete all texts and rerun
@@ -141,30 +164,29 @@ def loadup(request):
     return HttpResponse('Thanks')
 
 def bibload(request):
-    translators = open('books_app/csvs/relatives.csv', 'r')
-    for line in translators:
-        line = line.split(',')
-        ownerToEdit = Owner.objects.filter(name__icontains=line[0])
-        if len(ownerToEdit) != 0:
-            ownerToEdit = ownerToEdit[0]
-            ownerToEdit.birth_year = line[1]
-            ownerToEdit.death_year = line[2]
-            ownerToEdit.titles = line[3]
-            # father = Owner.objects.filter(name__icontains=line[4])
-            # if len(father != 0):
-            #     ownerToEdit.relative.add(father[0])
-            # mother = Owner.objects.filter(name__icontains=line[5])
-            # if len(mother != 0):
-            #     ownerToEdit.relative.add(mother[0])
-            # spouse1 = Owner.objects.filter(name__icontains=line[6])
-            # if len(spouse1 != 0):
-            #     ownerToEdit.relative.add(spouse1[0])
-            # spouse2 = Owner.objects.filter(name__icontains=line[7])
-            # if len(spouse2 != 0):
-            #     ownerToEdit.relative.add(spouse2[0])
-            # spouse3 = Owner.objects.filter(name__icontains=line[8])
-            # if len(spouse3 != 0):
-            #     ownerToEdit.relative.add(spouse3[0])
-            ownerToEdit.save()
-    translators.close()
-    return HttpResponse('Thanks')
+    books = Book.objects.all()
+    for book in books:
+        dateinfo = DateOwned.objects.filter(book_owned=book)
+        places = []
+        for date in dateinfo:
+            # In case of random unlinked data entries
+            try:
+                ownergeo = Owner.objects.get(book_date=date)
+                dateRange = date.date_range()
+            except:
+                continue
+            # Now we have to compare this date range to one generated by the owner locations
+            locations = ownergeo.owner_location.all()
+            for location in locations:
+                ownerRange = location.date_range()
+                if dateRange[1] >= ownerRange[0] and dateRange[0] <= ownerRange[1]:
+                    # Add the owners location
+                    places.append((location, ownergeo))
+        # create an book location object for each place
+        for tuple in places:
+            place = tuple[0]
+            b = BookLocation(geom=place.geom, book_location=place.the_place, date=place.date_at_location, book_shelfmark=book, owner_at_time=tuple[1])
+            b.save()
+            book.book_location.add(b)
+            book.save()
+    return HttpResponse('Book Locations loaded')

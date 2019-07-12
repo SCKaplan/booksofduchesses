@@ -39,6 +39,15 @@
   display: table;
   clear: both;
 }
+
+.legend {
+    line-height: 18px;
+    color: white;
+    padding-left:10px;
+    width: 90px;
+    background: gray;
+}
+
 </style>
 <header class="w3-display-container w3-content w3-wide" style="max-width:1500px;" id="home">
   <img class="w3-image" src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Woman_in_Medieval_Dress_or_Costume_%2822%29.JPG" alt="Medieval woman reading a book" width="600" height="600">
@@ -52,7 +61,7 @@
 <!-- About section -->
 <div id="about" style="margin-top: 100px">
 <div class="w3-content w3-wide" style="padding-left:10px;padding-right:10px;" id="about">
-  <h2 style="text-align:center;">About</h2>
+  <h2 style="text-align:center;">About    {{display }}</h2>
   <p>This project collects, organizes, and presents data related to late-medieval laywomen and their books. Through an interactive map of Europe, users are able to visualize networks of manuscripts, texts, and readers and explore the libraries and peregrinations of woman book owners.</p>
     <br>
   <p>The data collected in the beta-version of the project has the potential to shift scholarly paradigms by challenging narratives of national literary history and uncovering the active role played  by women in creating, consuming literary and material culture and in circulating texts across national, geographic, and generational borders.</p>
@@ -64,15 +73,17 @@
 
 
   <div class="column left" style=" margin-top: 30px; font-family:Verdana,sans-serif; padding-left:25px;">
-    <form action="#map" method="post" style="margin-top: 70px">
+    <form action="#map" method="post" style="margin-top: 50px" id="map">
     {% csrf_token %}
+	<p>Display:</p>{{ search_form.display }}
         <p>Search:</p>{{ search_form.search }}<br>
         <p>Dates:</p>{{ search_form.start_date }} to {{ search_form.end_date }}<br>
         <p>Owner:</p>{{ search_form.owner }}<br>
         <p>Shelfmark:</p>{{ search_form.shelfmark }}<br>
         <p>Text:</p>{{ search_form.text }}<br>
         <p>Author:</p>{{ search_form.author }}<br>
-        <p>Genre:</p>{{ search_form.genre }}<br>
+        <p>Tag:</p>{{ search_form.genre }}<br>
+        <br></br>
 
     <input type="submit" value="Submit">
 </form>
@@ -80,7 +91,7 @@
 
   <div class="column right" style="margin-top: 30px; padding-right:25px;">
 
-<div id="mapid" style="width: 100%; height:800px;">
+<div id="mapid" style="width: 100%; height:800px; z-index:0;">
 
 
     <script>
@@ -113,26 +124,24 @@
 		id: 'mapbox.streets'
 	}).addTo(mymap);
 
-//	var locations = {{ locations|geojsonfeature:'popupcontent'|safe }};
-  //  L.geoJson(locations, { onEachFeature: function(feature, layer) {
-    //        var props = feature.properties.popupcontent;
-      //      var content = `<p>${props}</p>`;
-        //    layer.bindPopup(content);
-       // }}).addTo(mymap);
+var legend = L.control({position: 'bottomleft'});
 
+legend.onAdd = function (mymap) {
 
-   // var authors = {{ authors|geojsonfeature:'popupcontent'|safe }};
+    var div = L.DomUtil.create('div', 'info legend'),
+        grades = ["Owner", "Book"],
+	labels = ["https://github.com/pointhi/leaflet-color-markers/raw/master/img/marker-icon-2x-violet.png","https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png"];
 
-   // L.geoJSON(authors, {
- // pointToLayer: function (feature, latlng) {
-   //         return L.marker(latlng, {icon: greenIcon});
-   // },
+    // loop through our density intervals and generate a label with a colored square for each interval
+	div.innerHTML = '<p style="text-align:center;">Legend</p>';
+    for (var i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+	     ("<img src="+ labels[i] +" height='41' width='25'>")+ " " + grades[i] +'<br>';
+    }
+    return div;
+};
 
- // onEachFeature: function(feature, layer) {
-   //   var props = feature.properties.popupcontent;
-     // var content = `<p>${props}</p>`;
-      //layer.bindPopup(content);
- // }}).addTo(mymap);
+legend.addTo(mymap);
 
         var owners = {{ owners|geojsonfeature:'popupcontent'|safe }};
 
@@ -146,6 +155,20 @@ L.geoJSON(owners, {
       var content = `<p>${props}</p>`;
       layer.bindPopup(content);
   }}).addTo(mymap);
+
+    var books = {{ books|geojsonfeature:'popupcontent'|safe }};
+
+    L.geoJSON(books, {
+  pointToLayer: function (feature, latlng) {
+            return L.marker(latlng, {icon: greenIcon});
+    },
+
+  onEachFeature: function(feature, layer) {
+      var props = feature.properties.popupcontent;
+      var content = `<p>${props}</p>`;
+      layer.bindPopup(content);
+  }}).addTo(mymap);
+
 
 </script>
 </div>

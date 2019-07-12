@@ -30,10 +30,10 @@ class Book(models.Model):
 	library = models.ForeignKey('Location', blank=True, on_delete=models.SET_NULL, null=True) # Should reference a location
 	digital_version = models.CharField(max_length=200, blank=True)
 	date_created= models.CharField(max_length=200, blank=True, null=True)
-	book_movements = models.CharField(max_length=200, blank=True)
 	scribes = models.CharField(max_length=200, blank=True)
 	illuminators = models.CharField(max_length=200, blank=True)
 	catalog_entry = models.CharField(max_length=2000, blank=True)
+	book_location = models.ManyToManyField('BookLocation', blank=True)
 	def __str__(self):
 		return self.shelfmark
 
@@ -234,6 +234,9 @@ class AuthorPlaceDateLived(models.Model):
 	def __str__(self):
 		return self.place_date_lived
 
+	class Meta:
+		verbose_name = 'Author Location'
+
 class OwnerPlaceDateLived(models.Model):
 	geom = models.PointField(null=True, blank=True)
 	the_place = models.ForeignKey(Location, on_delete=models.CASCADE, null=True)
@@ -241,6 +244,81 @@ class OwnerPlaceDateLived(models.Model):
 
 	def __str__(self):
 		return self.the_place.name + ", " + self.date_at_location
+
+	def date_range(self):
+		from datetime import datetime, timedelta
+		dates = self.date_at_location.split('-')
+		print(dates)
+		month = "January"
+		day = 1
+		year = 1350
+		final = []
+		chop = 0
+		firstDate = True
+		if len(dates[0]) == 0 and len(dates[1]) == 0:
+			# If we just get a dash return the full possible date range
+			x = []
+			x.append(datetime.datetime(1350, 1, 1))
+			x.append(datetime.datetime(1500, 12, 31))
+			return x
+		# For start date and finish date
+		for date in dates:
+			print(date)
+			date = date.lstrip()
+			date = date.rstrip()
+			# How we want to organize uncertain dates
+			if date.find('?') != -1 and len(date) < 2:
+				# When we get just a "?"
+				if firstDate:
+					date = "1350"
+				else:
+					date = "1500"
+			if date.find('?') != -1:
+				# Maybe add an uncertainty factor to this
+				# If we get a date with a ? i.e. "1460?"
+				date = date.replace("?", "")
+			if "c." in date:
+				# Maybe do a +/- operation to just get a range straight off the bat
+				# For now just chop
+				date = date.replace("c. ", "")
+				date = date.replace("c.", "")
+			if date.find('/') != -1:
+				# For now just take the earlier date... maybe change this
+				chop = date.index('/')
+				if firstDate:
+					# Take the earlier date- this is most/all of the dates we encounter
+					date = date[:chop]
+				else:
+					# Take the later date when its the second date- widest range
+					# (Makes "1450/60 "into "1460")
+					date = date[:chop-2]+date[chop+1:]
+			# We now have a certain date
+			date = date.split(' ')
+			print("AHHH DATE")
+			print(date)
+			if len(date[0]) < 3:
+				# e.g. 15 December 1443
+				day = date[0]
+				month = date[1]
+				year = date[2]
+			elif len(date) == 2:
+				# e.g. December 1443
+				month = date[0]
+				year = date[1]
+			else:
+				# e.g. 1443
+				year = date[0]
+
+			stringIt = str(year) + "-" + month + "-" + str(day)
+			#print(StringIt)
+			final.append(datetime.strptime(stringIt, "%Y-%B-%d"))
+			firstDate = False
+			print(final)
+
+		if len(final) == 1:
+		# If we are only given one date (e.g. 1433), how far do we stretch the window (currently to the end of the year)
+			final.append(final[0]+ timedelta(days=364))
+		return final
 
 	@property
 	def popupcontent(self):
@@ -250,6 +328,9 @@ class OwnerPlaceDateLived(models.Model):
 		for date in same_loc:
 			str = str + '<a href="owners/{}/">{}</a>, {} <br>'.format(owner.name, owner.name, date.date_at_location)
 		return '<strong>{}, {}</strong><br>{}'.format(self.the_place.City, self.the_place.Country, str)
+
+	class Meta:
+		verbose_name = 'Owner Location'
 
 class Bibliography(models.Model):
 	author_date = models.CharField(max_length=200)
@@ -294,3 +375,22 @@ class Translator(models.Model):
 
 	def __str__(self):
                 return self.name
+
+class BookLocation(models.Model):
+        geom = models.PointField(null=True, blank=True)
+        book_location = models.ForeignKey(Location, on_delete=models.CASCADE, null=True)
+        date = models.CharField(max_length=200, null=True)
+        book_shelfmark = models.ForeignKey(Book, on_delete=models.CASCADE, null=True)
+        owner_at_time = models.ForeignKey(Owner, on_delete=models.CASCADE, null=True)
+
+        def __str__(self):
+                return self.book_shelfmark.shelfmark + ", " + self.book_location.City + ", " + self.date
+
+        @property
+        def popupcontent(self):
+                str = ""
+                book = self.book_shelfmark
+                same_loc = book.book_location.filter(book_location=self.book_location).order_by('date')
+                for dat in same_loc:
+                        str = str + '<a href="/{}/">{}</a>, owned by <a href="http://booksofduchesses.com/owners/{}/">{}</a> ({}) <br>'.format(book.shelfmark, book.shelfmark, dat.owner_at_time, dat.owner_at_time, dat.date)
+                return '<strong>{}, {}</strong><br>{}'.format(self.book_location.City, self.book_location.Country, str)

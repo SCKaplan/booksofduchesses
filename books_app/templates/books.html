@@ -14,7 +14,11 @@
   <div style="padding-left:20px; padding-right:20px;">
     <div class="w3-col l3 m6 w3-margin-bottom">
       <h3 style="text-align:center;"><strong>Overview</strong></h3>
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Binding_by_Zaehnsdorf%2C_1896.jpg/621px-Binding_by_Zaehnsdorf%2C_1896.jpg" alt="John" style="width:100%">
+	{% if book.image %}
+          <img src="http://booksofduchesses.com/media/{{book.image}}" style="object-fit:cover; overflow:hidden; width:100%;height:100%;">
+        {% else %}
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Binding_by_Zaehnsdorf%2C_1896.jpg/621px-Binding_by_Zaehnsdorf%2C_1896.jpg" alt="John" style="width:100%">
+	{% endif %}
 	{% if book.digital_version %}
       <p><button class="w3-button w3-light-grey w3-block"><a href="{{book.digital_version}}">Digitization</a></button></p>
 	{% endif %}
@@ -23,7 +27,7 @@
 	{% endif %}
         <p class="w3-opacity">Texts:
       {% for text in texts %}
-	<li>{{text.title}}</li> 
+	<li><a href="http://booksofduchesses.com/texts/{{text.title}}/">{{ text.title }}</a></li> 
       {% endfor %}
         </p>
     </div>
@@ -31,15 +35,14 @@
 
       <script>
 
-       var violetIcon = new L.Icon({
-  iconUrl: 'https://github.com/pointhi/leaflet-color-markers/raw/master/img/marker-icon-2x-violet.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
-
+        var greenIcon = new L.Icon({
+	iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+  	shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  	iconSize: [25, 41],
+  	iconAnchor: [12, 41],
+  	popupAnchor: [1, -34],
+  	shadowSize: [41, 41]
+	});
 
         var mymap = L.map('mapid').setView([50.332721, 1.050860], 5);
 
@@ -50,6 +53,21 @@
                         'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
                 id: 'mapbox.streets'
         }).addTo(mymap);
+
+        var places = {{ places|geojsonfeature:'popupcontent'|safe }};
+
+L.geoJSON(places, {
+  pointToLayer: function (feature, latlng) {
+            return L.marker(latlng, {icon: greenIcon});
+    },
+
+  onEachFeature: function(feature, layer) {
+      var props = feature.properties.popupcontent;
+      var content = `<p>${props}</p>`;
+      layer.bindPopup(content);
+  }}).addTo(mymap);
+
+
       </script>
     </div>
     <div class="w3-col l3 m6 w3-margin-bottom" style="float:right; text-align:center;">

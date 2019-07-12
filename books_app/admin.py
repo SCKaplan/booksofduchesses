@@ -21,7 +21,7 @@ admin.site.register(Location, LocationAdmin)
 
 class BookAdmin(admin.ModelAdmin):
     search_fields = ['shelfmark']
-    autocomplete_fields = [ 'owner','library','bibliography']
+    autocomplete_fields = [ 'owner','library','bibliography', 'book_location']
 
 
 admin.site.register(Book, BookAdmin)
@@ -112,7 +112,7 @@ class AuthorPlaceDateLivedAdmin(admin.ModelAdmin):
 admin.site.register(AuthorPlaceDateLived, AuthorPlaceDateLivedAdmin)
 
 class OwnerPlaceDateLivedAdmin(admin.ModelAdmin):
-    search_fields = ['place_date_lived']
+    search_fields = ['the_place']
 
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
@@ -135,3 +135,17 @@ class RelativeAdmin(admin.ModelAdmin):
 
 admin.site.register(Relative, RelativeAdmin)
 admin.site.register(Translator)
+
+class BookLocationAdmin(admin.ModelAdmin):
+    search_fields = ['book_location']
+
+    def get_form(self, request, obj=None, **kwargs):
+        if not obj:
+            self.form = BookLocationAdminForm
+        else:
+            self.form = BookLocationAdminForm
+        return super(BookLocationAdmin, self).get_form(request, obj, **kwargs)
+
+
+
+admin.site.register(BookLocation, BookLocationAdmin)

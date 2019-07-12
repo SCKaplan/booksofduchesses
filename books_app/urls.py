@@ -14,4 +14,5 @@ urlpatterns = [
     # Django will expect a string and send it to the view as var owner_id
     path('books/<str:book_id>', views.books, name='books'),
     path('owners/<str:owner_id>/', views.owners, name='owners'),
+    path('texts/<str:text_id>/', views.texts, name='texts')
 ]

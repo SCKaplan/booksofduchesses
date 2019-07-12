@@ -66,6 +66,14 @@ class OwnerPlaceDateLivedAdminForm(forms.ModelForm):
             'geom':GooglePointFieldWidget(settings={"GooglePointFieldWidget":(("zoom",8),)}),
         }
 
+class BookLocationAdminForm(forms.ModelForm):
+    class Meta:
+        model = BookLocation
+        fields = "__all__"
+        widgets = {
+            'geom':GooglePointFieldWidget(settings={"GooglePointFieldWidget":(("zoom",8),)}),
+        }
+
 class SearchForm(forms.Form):
     search = forms.CharField(label='Search', max_length=100, required=False)
     start_date = forms.CharField(label='Start Date', max_length=100, required=False)
@@ -75,4 +83,12 @@ class SearchForm(forms.Form):
     text = forms.CharField(label='Text', max_length=100, required=False)
     author = forms.CharField(label='Author', max_length=100, required=False)
     genre = forms.CharField(label='Genre', max_length=100, required=False)
-
+    book_or_owner = [
+    ('books', 'Books'),
+    ('owners', 'Owners'),
+]
+    display = forms.MultipleChoiceField(
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        choices=book_or_owner,
+    )

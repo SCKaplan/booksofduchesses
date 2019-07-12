@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load geojson_tags %}
+
+{% block content %}
+
+ <!-- Books Section -->
+<div class="column-left">
+  <div class="w3-container w3-padding-32" id="about">
+    <h2 style="text-align:center; padding-top:30px;">Text: {{text.title}}</h2>
+    <h3 class="w3-opacity" style="text-align:center;"><i>{{text.name_eng}}</i></h3>
+ <hr></hr>
+  </div>
+  <div style="padding-left:25px;">
+    <h3><strong>Overview</strong></h3>
+	<h4 class="w3-opacity">Found in:</h4>
+        {% for book in books %}
+          <a href="http://booksofduchesses.com/books/{{book.shelfmark}}">{{book.shelfmark}}</a>
+        {% endfor %}
+        {% for language in languages %}
+          <p>{{language.books_language}}</p>
+        {% endfor %}
+        {% if text.author %}
+          <p>Author: {{text.author}}</p>
+        {% else %}
+          <p>Author unknown</p>
+        {% endif %}
+	{% if text.translator %}
+          <p>Translator: {{text.translator}}</p>
+        {% else %}
+          <p>Translator unknown</p>
+        {% endif %}
+	{% if text.arlima_link %}
+	  <a href="{{text.arlima_link}}">Arlima</a> 
+        {% endif %}
+	{% if text.me_compendium_link %}
+          <a href="{{text.me_compendium_link}}">ME Compendium</a>
+        {% endif %}
+	{% if text.ihrt_link %}
+          <a href="{{text.ihrt_link}}">IHRT</a>
+        {% endif %}
+	{% if tags %}
+	<p class="w3-opacity">Tags:</p>
+	{% else %}
+	<p class="w3-opacity">Tags: None</p>
+	{% endif %}
+	{% for tag in tags %}
+	  <li>{{tag}}</li>	  
+        {% endfor %}
+  </div>
+
+</div>
+
+ <!-- Map, Ownership specifics, Bibliographies, Information-->
+    {% endblock %}
+

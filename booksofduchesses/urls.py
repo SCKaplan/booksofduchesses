@@ -23,4 +23,6 @@ urlpatterns = [
     path('bibload/', include('books_app.urls')),
     path('books/', include('books_app.urls')),
     path('owners/', include('books_app.urls')),
+    path('texts/', include('books_app.urls')),
 ]
+

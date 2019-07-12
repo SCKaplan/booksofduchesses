@@ -18,8 +18,12 @@
 	{% if owner.image %}
       <img src="http://booksofduchesses.com/media/{{owner.image}}" style="object-fit:cover; overflow:hidden; width:100%;height:100%;">
       <p style="text-align:left; font-size:11px;"><i>{{owner.image_citation}}</i></p>
+	{% else %}
+      <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" style="width:100%">
 	{% endif %}
+	{% if owner.birth_year and owner.death_year %}
      <p class="w3-opacity" style="text-align:center;">{{owner.birth_year}}-{{owner.death_year}}</p>
+	{% endif %}
 	{% if owner.title %}
       <p>Title: {{owner.title}}</p>
 	{% else %}
