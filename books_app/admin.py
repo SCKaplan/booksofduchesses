@@ -21,7 +21,7 @@ admin.site.register(Location, LocationAdmin)
 
 class BookAdmin(admin.ModelAdmin):
     search_fields = ['shelfmark']
-    autocomplete_fields = [ 'owner','library','bibliography', 'book_location']
+    autocomplete_fields = ['text', 'owner','library','bibliography', 'book_location']
 
 
 admin.site.register(Book, BookAdmin)
@@ -29,7 +29,7 @@ admin.site.register(Book, BookAdmin)
 
 class TextAdmin(admin.ModelAdmin):
     search_fields = ['title']
-    autocomplete_fields = ['book', 'tags', 'author', 'language']
+    autocomplete_fields = ['tags', 'author', 'language']
 
 
 admin.site.register(Text, TextAdmin)
@@ -137,7 +137,7 @@ admin.site.register(Relative, RelativeAdmin)
 admin.site.register(Translator)
 
 class BookLocationAdmin(admin.ModelAdmin):
-    search_fields = ['book_location']
+    search_fields = ['book_location__name']
 
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
@@ -145,7 +145,5 @@ class BookLocationAdmin(admin.ModelAdmin):
         else:
             self.form = BookLocationAdminForm
         return super(BookLocationAdmin, self).get_form(request, obj, **kwargs)
-
-
 
 admin.site.register(BookLocation, BookLocationAdmin)

@@ -3,6 +3,8 @@
 {% load geojson_tags %}
 
 {% block content %}
+<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
 
  <!-- Books Section -->
 <div class="column-left">
@@ -55,18 +57,21 @@
         }).addTo(mymap);
 
         var places = {{ places|geojsonfeature:'popupcontent'|safe }};
+var mcg = new L.MarkerClusterGroup();
 
-L.geoJSON(places, {
+var bookLayer = L.geoJSON(places, {
   pointToLayer: function (feature, latlng) {
             return L.marker(latlng, {icon: greenIcon});
-    },
+ },
 
   onEachFeature: function(feature, layer) {
       var props = feature.properties.popupcontent;
       var content = `<p>${props}</p>`;
       layer.bindPopup(content);
-  }}).addTo(mymap);
-
+  }
+});
+mcg.addLayer(bookLayer);
+mymap.addLayer(mcg);
 
       </script>
     </div>

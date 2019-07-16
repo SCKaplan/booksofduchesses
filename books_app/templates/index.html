@@ -3,10 +3,8 @@
 {% load geojson_tags %}
 
 {% block content %}
-
-
-
-
+<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
 <style>
     .center {
   margin: auto;
@@ -47,7 +45,6 @@
     width: 90px;
     background: gray;
 }
-
 </style>
 <header class="w3-display-container w3-content w3-wide" style="max-width:1500px;" id="home">
   <img class="w3-image" src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Woman_in_Medieval_Dress_or_Costume_%2822%29.JPG" alt="Medieval woman reading a book" width="600" height="600">
@@ -61,7 +58,7 @@
 <!-- About section -->
 <div id="about" style="margin-top: 100px">
 <div class="w3-content w3-wide" style="padding-left:10px;padding-right:10px;" id="about">
-  <h2 style="text-align:center;">About    {{display }}</h2>
+  <h2 style="text-align:center;">About</h2>
   <p>This project collects, organizes, and presents data related to late-medieval laywomen and their books. Through an interactive map of Europe, users are able to visualize networks of manuscripts, texts, and readers and explore the libraries and peregrinations of woman book owners.</p>
     <br>
   <p>The data collected in the beta-version of the project has the potential to shift scholarly paradigms by challenging narratives of national literary history and uncovering the active role played  by women in creating, consuming literary and material culture and in circulating texts across national, geographic, and generational borders.</p>
@@ -91,7 +88,7 @@
 
   <div class="column right" style="margin-top: 30px; padding-right:25px;">
 
-<div id="mapid" style="width: 100%; height:800px; z-index:0;">
+<div id="mapid" style="width: 100%; height:800px;">
 
 
     <script>
@@ -132,7 +129,6 @@ legend.onAdd = function (mymap) {
         grades = ["Owner", "Book"],
 	labels = ["https://github.com/pointhi/leaflet-color-markers/raw/master/img/marker-icon-2x-violet.png","https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png"];
 
-    // loop through our density intervals and generate a label with a colored square for each interval
 	div.innerHTML = '<p style="text-align:center;">Legend</p>';
     for (var i = 0; i < grades.length; i++) {
         div.innerHTML +=
@@ -143,33 +139,41 @@ legend.onAdd = function (mymap) {
 
 legend.addTo(mymap);
 
+
         var owners = {{ owners|geojsonfeature:'popupcontent'|safe }};
 
-L.geoJSON(owners, {
+var mcg = new L.MarkerClusterGroup();
+
+var ownerLayer = L.geoJSON(owners, {
   pointToLayer: function (feature, latlng) {
             return L.marker(latlng, {icon: violetIcon});
-    },
+ },
 
   onEachFeature: function(feature, layer) {
       var props = feature.properties.popupcontent;
       var content = `<p>${props}</p>`;
       layer.bindPopup(content);
-  }}).addTo(mymap);
+  }
+});
+mcg.addLayer(ownerLayer);
+mymap.addLayer(mcg);
 
-    var books = {{ books|geojsonfeature:'popupcontent'|safe }};
 
-    L.geoJSON(books, {
+        var books = {{ books|geojsonfeature:'popupcontent'|safe }};
+
+var bookLayer = L.geoJSON(books, {
   pointToLayer: function (feature, latlng) {
             return L.marker(latlng, {icon: greenIcon});
-    },
+ },
 
   onEachFeature: function(feature, layer) {
       var props = feature.properties.popupcontent;
       var content = `<p>${props}</p>`;
       layer.bindPopup(content);
-  }}).addTo(mymap);
-
-
+  }
+});
+mcg.addLayer(bookLayer);
+mymap.addLayer(mcg);
 </script>
 </div>
 </div>

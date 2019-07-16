@@ -3,7 +3,8 @@
 {% load staticfiles %}
 
 {% block content %}
-
+<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
 <!-- Page content -->
 <div class="w3-content w3-padding" style="max-width:1564px">
 
@@ -22,10 +23,10 @@
       <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" style="width:100%">
 	{% endif %}
 	{% if owner.birth_year and owner.death_year %}
-     <p class="w3-opacity" style="text-align:center;">{{owner.birth_year}}-{{owner.death_year}}</p>
+     <p class="w3-opacity" style="text-align:center;">b. {{owner.birth_year}}- d. {{owner.death_year}}</p>
 	{% endif %}
-	{% if owner.title %}
-      <p>Title: {{owner.title}}</p>
+	{% if owner.titles %}
+      <p>Title: {{owner.titles}}</p>
 	{% else %}
       <p>Title: Unknown</p>
 	{% endif %}
@@ -69,17 +70,21 @@
 
         var places = {{ places|geojsonfeature:'popupcontent'|safe }};
 
-L.geoJSON(places, {
+var mcg = new L.MarkerClusterGroup();
+
+var ownerLayer = L.geoJSON(places, {
   pointToLayer: function (feature, latlng) {
             return L.marker(latlng, {icon: violetIcon});
-    },
+ },
 
   onEachFeature: function(feature, layer) {
       var props = feature.properties.popupcontent;
       var content = `<p>${props}</p>`;
       layer.bindPopup(content);
-  }}).addTo(mymap);
-
+  }
+});
+mcg.addLayer(ownerLayer);
+mymap.addLayer(mcg);
 
       </script>
     </div>
