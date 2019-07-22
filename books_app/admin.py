@@ -21,7 +21,7 @@ admin.site.register(Location, LocationAdmin)
 
 class BookAdmin(admin.ModelAdmin):
     search_fields = ['shelfmark']
-    autocomplete_fields = ['text', 'owner','library','bibliography', 'book_location']
+    autocomplete_fields = ['text', 'owner','library','bibliography', 'book_location', 'owner_info']
 
 
 admin.site.register(Book, BookAdmin)
@@ -78,7 +78,7 @@ admin.site.register(Author, AuthorAdmin)
 
 
 class DateOwnedAdmin(admin.ModelAdmin):
-    search_fields =['Date owned']
+    search_fields =['book_owned__shelfmark']
     autocomplete_fields = ['book_owned']
 
 admin.site.register(DateOwned, DateOwnedAdmin)

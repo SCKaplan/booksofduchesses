@@ -35,6 +35,7 @@ class Book(models.Model):
 	illuminators = models.CharField(max_length=200, blank=True)
 	catalog_entry = models.CharField(max_length=2000, blank=True)
 	book_location = models.ManyToManyField('BookLocation', blank=True)
+	owner_info = models.ManyToManyField('DateOwned', blank=True, verbose_name="Ownership Information/History")
 	def __str__(self):
 		return self.shelfmark
 
@@ -87,7 +88,7 @@ class Location(models.Model):
 		for owner_loc in a:
 			b = (Owner.objects.filter(owner_location=owner_loc))
 			if len(b) != 0:
-				str =  str + '<a href="owners/{}/">{}</a>, {} <br>'.format(b[0].name, b[0].name, owner_loc.date_at_location)
+				str =  str + '<a href="https://booksofduchesses.com/owners/{}/">{}</a>, {} <br>'.format(b[0].name, b[0].name, owner_loc.date_at_location)
 		return '<strong>{}, {}</strong><br>{}'.format(self.City, self.Country, str)
 
 	def __str__(self):
@@ -127,6 +128,7 @@ class DateOwned(models.Model):
 	#owner = models.ForeignKey(Owner, on_delete=models.CASCADE)
 	book_owned = models.ForeignKey(Book, on_delete=models.SET_NULL, blank=True, null=True) #book_owned = models.ForeignKey(Book, on_delete=models.CASCADE)
 	dateowned = models.CharField(max_length=200, null = True)
+	book_owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, blank=True, null=True)
 	Conf = 'Confirmed'
 	Poss = 'Possible'
 	conf_choices = [(Conf, "Confirmed"),(Poss, "Possible")]
@@ -223,7 +225,7 @@ class DateOwned(models.Model):
 		verbose_name_plural = 'Dates Book Owned'
 
 	def __str__(self):
-		return self.book_owned.shelfmark + ", " + self.dateowned
+		return self.book_owner.name + ", " + self.dateowned
 		#return self.dateowned
 
 class AuthorPlaceDateLived(models.Model):
@@ -248,7 +250,6 @@ class OwnerPlaceDateLived(models.Model):
 	def date_range(self):
 		from datetime import datetime, timedelta
 		dates = self.date_at_location.split('-')
-		print(dates)
 		month = "January"
 		day = 1
 		year = 1350
@@ -263,7 +264,6 @@ class OwnerPlaceDateLived(models.Model):
 			return x
 		# For start date and finish date
 		for date in dates:
-			print(date)
 			date = date.lstrip()
 			date = date.rstrip()
 			# How we want to organize uncertain dates
@@ -294,8 +294,6 @@ class OwnerPlaceDateLived(models.Model):
 					date = date[:chop-2]+date[chop+1:]
 			# We now have a certain date
 			date = date.split(' ')
-			print("AHHH DATE")
-			print(date)
 			if len(date[0]) < 3:
 				# e.g. 15 December 1443
 				day = date[0]
@@ -313,7 +311,6 @@ class OwnerPlaceDateLived(models.Model):
 			#print(StringIt)
 			final.append(datetime.strptime(stringIt, "%Y-%B-%d"))
 			firstDate = False
-			print(final)
 
 		if len(final) == 1:
 		# If we are only given one date (e.g. 1433), how far do we stretch the window (currently to the end of the year)
@@ -323,7 +320,7 @@ class OwnerPlaceDateLived(models.Model):
 	@property
 	def popupcontent(self):
 		owner = Owner.objects.get(owner_location=self)
-		str = '<a href="owners/{}/">{}</a>, {} <br>'.format(owner.name, owner.name, self.date_at_location)
+		str = '<a href="https://booksofduchesses.com/owners/{}/">{}</a>, {} <br>'.format(owner.name, owner.name, self.date_at_location)
 		return '<strong>{}, {}</strong><br>{}'.format(self.the_place.City, self.the_place.Country, str)
 
 	class Meta:

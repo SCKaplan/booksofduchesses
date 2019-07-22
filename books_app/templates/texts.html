@@ -3,20 +3,31 @@
 {% load geojson_tags %}
 
 {% block content %}
-
+<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
+<style>
+a {
+  color: blue;
+}
+</style>
  <!-- Books Section -->
 <div class="column-left">
   <div class="w3-container w3-padding-32" id="about">
-    <h2 style="text-align:center; padding-top:30px;">Text: {{text.title}}</h2>
-    <h3 class="w3-opacity" style="text-align:center;"><i>{{text.name_eng}}</i></h3>
+    <h2 style="text-align:center; padding-top:30px;">Text: {{ text.title }}</h2>
+    {% if text.name_eng %}
+    <h3 class="w3-opacity" style="text-align:center;">{{ text.name_eng }}</h3>
+    {% endif %}
  <hr></hr>
   </div>
-  <div style="padding-left:25px;">
-    <h3><strong>Overview</strong></h3>
+
+  <div style="padding-left:20px; text-align:center; padding-right:0px;">
+    <div class="w3-col l3 m6 w3-margin-bottom">
+      <h3 style="text-align:center;"><strong>Overview</strong></h3>
 	<h4 class="w3-opacity">Found in:</h4>
         {% for book in books %}
-          <a href="http://booksofduchesses.com/books/{{book.shelfmark}}">{{book.shelfmark}}</a>
+         <li> <a href="http://booksofduchesses.com/books/{{book.shelfmark}}">{{book.shelfmark}}</a></li>
         {% endfor %}
+        <hr></hr>
         {% for language in languages %}
           <p>{{language.books_language}}</p>
         {% endfor %}
@@ -30,25 +41,78 @@
         {% else %}
           <p>Translator unknown</p>
         {% endif %}
-	{% if text.arlima_link %}
-	  <a href="{{text.arlima_link}}">Arlima</a> 
-        {% endif %}
-	{% if text.me_compendium_link %}
-          <a href="{{text.me_compendium_link}}">ME Compendium</a>
-        {% endif %}
-	{% if text.ihrt_link %}
-          <a href="{{text.ihrt_link}}">IHRT</a>
-        {% endif %}
+	<hr></hr>
 	{% if tags %}
-	<p class="w3-opacity">Tags:</p>
+	<h4 class="w3-opacity">Tags:</h4>
 	{% else %}
 	<p class="w3-opacity">Tags: None</p>
 	{% endif %}
 	{% for tag in tags %}
 	  <li>{{tag}}</li>	  
         {% endfor %}
-  </div>
+    </div>
+    <div id="mapid" style="width:42%; height:600px; left:40px; float:left; z-index:0;">
 
+      <script>
+
+        var greenIcon = new L.Icon({
+	iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+  	shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  	iconSize: [25, 41],
+  	iconAnchor: [12, 41],
+  	popupAnchor: [1, -34],
+  	shadowSize: [41, 41]
+	});
+
+        var mymap = L.map('mapid').setView([50.332721, 1.050860], 5);
+
+        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+                maxZoom: 18,
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+                        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                id: 'mapbox.streets'
+        }).addTo(mymap);
+
+        var places = {{ places|geojsonfeature:'popupcontent'|safe }};
+var mcg = new L.MarkerClusterGroup();
+
+var bookLayer = L.geoJSON(places, {
+  pointToLayer: function (feature, latlng) {
+            return L.marker(latlng, {icon: greenIcon});
+ },
+
+  onEachFeature: function(feature, layer) {
+      var props = feature.properties.popupcontent;
+      var content = `<p>${props}</p>`;
+      layer.bindPopup(content);
+  }
+});
+mcg.addLayer(bookLayer);
+mymap.addLayer(mcg);
+
+      </script>
+    </div>
+    <div class="w3-col l3 m6 w3-margin-bottom" style="padding-right: 10px; width: 28%; float:right; text-align:center;">
+      <h3 style="text-align:center;"><strong>Ownership Details</strong></h3>
+        {% for date in dates %}
+          <p style="font-size:13px;"><i>{{date.conf_or_possible}}</i> in <a href="https://booksofduchesses.com/books/{{date.book_owned}}">{{date.book_owned}}</a>, owned by <a href="https://booksofduchesses.com/owners/{{date.book_owner}}">{{date.book_owner}}</a> ({{date.dateowned}})</p>
+        {% endfor %}
+      <br></br>
+      <h3 style="text-align:center;"><strong>Bibliography</strong></h3>
+	{% if text.arlima_link %}
+	  <p><a href="{{text.arlima_link}}">Arlima</a></p> 
+        {% endif %}
+	{% if text.me_compendium_link %}
+         <p><a href="{{text.me_compendium_link}}">ME Compendium</a></p>
+        {% endif %}
+	{% if text.ihrt_link %}
+          <p><a href="{{text.ihrt_link}}">IHRT</a></p>
+        {% endif %}
+	<hr></hr>
+
+    </div>
+  </div>
 </div>
 
  <!-- Map, Ownership specifics, Bibliographies, Information-->

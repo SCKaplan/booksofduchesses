@@ -18,9 +18,11 @@
       <h3 style="text-align:center;"><strong>Overview</strong></h3>
 	{% if owner.image %}
       <img src="http://booksofduchesses.com/media/{{owner.image}}" style="object-fit:cover; overflow:hidden; width:100%;height:100%;">
-      <p style="text-align:left; font-size:11px;"><i>{{owner.image_citation}}</i></p>
 	{% else %}
       <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" style="width:100%">
+	{% endif %}
+	{% if owner.image_citation %}
+      <p style="text-align:left; font-size:11px;"><i>{{owner.image_citation}}</i></p>
 	{% endif %}
 	{% if owner.birth_year and owner.death_year %}
      <p class="w3-opacity" style="text-align:center;">b. {{owner.birth_year}}- d. {{owner.death_year}}</p>
@@ -41,9 +43,13 @@
       <p>Symbol: Unknown</p>
 	{% endif %}
       <h4 style="text-align:center;"><strong>Family Tree</strong></h4>
+	{% if relatives %}
       {% for relative in relatives %}
-      	<li><a style="color:blue;" href="owners/{{relative.person}}/">{{relative.person}}</a>, {{relative.relation}}</li>
+      	<li><a style="color:blue;" href="https://booksofduchesses.com/owners/{{relative.person}}/">{{relative.person}}</a>, {{relative.relation}}</li>
       {% endfor %}
+	{% else %}
+	<p style="font-size:13px;">No known relatives</p>
+	{% endif %}
     </div>
     <div id="mapid" style="width:44%; height:600px; left:40px; float:left; z-index:0;">
       <script>
@@ -90,9 +96,13 @@ mymap.addLayer(mcg);
     </div>
     <div class="w3-col l3 m6 w3-margin-bottom" style="float:right; text-align:center;">
       <h3 style="text-align:center;"><strong>{{owner.name}}'s Locations</strong></h3>
-	{% for location in locations %}
-      <p style="font-size:13px;">{{location.the_place.City}} ({{location.date_at_location}})</p>
-        {% endfor %}
+	{% if locations %}
+	    {% for location in locations %}
+            <p style="font-size:13px;">{{location.the_place.City}} ({{location.date_at_location}})</p>
+            {% endfor %}
+        {% else %}
+	    <p style="font-size:13px;">No known locations</p>
+	{% endif %}
       <br>      
       <h3 style="text-align:center;"><strong>{{owner.name}}'s Library</strong></h3></p>
         {% for book in books %}

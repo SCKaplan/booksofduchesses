@@ -9,7 +9,11 @@
  <!-- Books Section -->
 <div class="column-left">
   <div class="w3-container w3-padding-32" id="about">
-    <h2 style="text-align:center; padding-top:30px;">Book: {{ book.shelfmark }}</h2>
+    <h2 style="text-align:center; padding-top:30px;">Book: {{ book.shelfmark }}
+    {% if book.date_created %}
+      (created {{ book.date_created }})
+    {% endif %}
+    </h2>
  <hr></hr>
   </div>
 
@@ -31,6 +35,9 @@
       {% for text in texts %}
 	<li><a href="http://booksofduchesses.com/texts/{{text.title}}/">{{ text.title }}</a></li> 
       {% endfor %}
+      {% if book.iluminators %}
+        <p class="w3-opacity">Iluminators: {{ book.iluminators }}</p>
+      {% endif %}
         </p>
     </div>
     <div id="mapid" style="width:44%; height:600px; left:40px; float:left; z-index:0;">
@@ -78,7 +85,7 @@ mymap.addLayer(mcg);
     <div class="w3-col l3 m6 w3-margin-bottom" style="float:right; text-align:center;">
       <h3 style="text-align:center;"><strong>Ownership Details</strong></h3>
       {% for owner in owners %}
-        <p><a href="http://booksofduchesses.com/owners/{{owner.0}}/">{{ owner.0 }}</a> ({{ owner.1 }})</p>
+        <p><a href="http://booksofduchesses.com/owners/{{owner.book_owner}}/">{{ owner.book_owner }}</a>, Ownership {{owner.conf_or_possible}} ({{ owner.dateowned }})</p>
       {% endfor %}
       <br></br>
       <h3 style="text-align:center;"><strong>Bibliography</strong></h3>
