@@ -49,16 +49,6 @@ class OwnerAdminForm(forms.ModelForm):
             'geom':GooglePointFieldWidget(settings={"GooglePointFieldWidget":(("zoom",8),)}),
         }
 
-
-class AuthorPlaceDateLivedAdminForm(forms.ModelForm):
-    class Meta:
-        model = AuthorPlaceDateLived
-        fields = "__all__"
-        widgets = {
-            'geom':GooglePointFieldWidget(settings={"GooglePointFieldWidget":(("zoom",8),)}),
-        }
-
-
 class OwnerPlaceDateLivedAdminForm(forms.ModelForm):
     class Meta:
         model = OwnerPlaceDateLived
