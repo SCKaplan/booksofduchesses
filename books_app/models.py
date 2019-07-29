@@ -23,16 +23,20 @@ class BooksLanguage(models.Model):
 class Book(models.Model):
 	image = models.ImageField(null=True, blank=True)
 	shelfmark = models.CharField(max_length=200)
+	about = models.TextField(blank=True)
 	owner = models.ManyToManyField('Owner', blank=True, verbose_name="Owner(s)")
 	text = models.ManyToManyField('Text', blank=True, verbose_name="Text(s)")
-	type = models.CharField(max_length=200, blank=True)
+	type_print = 'Print'
+	Manuscript = 'Manuscript'
+	type_choices = [(type_print, "Print"),(Manuscript, "Manuscript")]
+	type = models.CharField(max_length=30, choices=type_choices, default='Manuscript')
 	ex_libris = models.TextField(blank=True) # can link to more books?
 	bibliography = models.ManyToManyField('Bibliography', blank=True)
 	library = models.ForeignKey('Location', blank=True, on_delete=models.SET_NULL, null=True) # Should reference a location
 	digital_version = models.CharField(max_length=200, blank=True)
 	date_created= models.CharField(max_length=200, blank=True, null=True)
-	scribes = models.CharField(max_length=200, blank=True)
-	illuminators = models.CharField(max_length=200, blank=True)
+	illuminators = models.ManyToManyField('Illuminator', blank=True)
+	scribes = models.ManyToManyField('Scribe', blank=True)
 	catalog_entry = models.CharField(max_length=2000, blank=True)
 	book_location = models.ManyToManyField('BookLocation', blank=True)
 	owner_info = models.ManyToManyField('DateOwned', blank=True, verbose_name="Ownership Information/History")
@@ -44,7 +48,7 @@ class Author(models.Model):
 	image = models.ImageField(null=True, blank=True)
 	geom = models.PointField(null=True, blank=True)
 	name = models.CharField(max_length=200)
-	abstract = models.TextField("About", blank=True)
+	link = models.CharField(max_length=1000, blank=True)
 	birth_date = models.CharField(max_length=200, blank=True)
 	death_date = models.CharField(max_length=200, blank=True)
 	gender = models.CharField(max_length=200, blank=True)
@@ -62,8 +66,9 @@ class Author(models.Model):
 class Text(models.Model):
 	title = models.CharField(max_length=200)
 	name_eng = models.CharField(max_length=200, blank=True)
-	tags = models.ManyToManyField(Tag)
+	tags = models.ManyToManyField(Tag, blank=True)
 	language = models.ManyToManyField(BooksLanguage, blank=True)
+	date_composed = models.CharField(max_length=200, blank=True, verbose_name="Date Composed (if known)")
 	author = models.ForeignKey(Author, on_delete=models.CASCADE, blank=True, null=True)
 	translator = models.ForeignKey('Translator', on_delete=models.CASCADE, blank=True, null=True)
 	arlima_link = models.CharField(max_length=200, blank=True)
@@ -460,3 +465,15 @@ class BookLocation(models.Model):
 		# If we are only given one date (e.g. 1433), how far do we stretch the window (currently to the end of the year)
 			final.append(final[0]+ timedelta(days=364))
 		return final
+
+class Illuminator(models.Model):
+        name = models.CharField(max_length=200)
+
+        def __str__(self):
+                return self.name
+
+class Scribe(models.Model):
+        name = models.CharField(max_length=200)
+
+        def __str__(self):
+                return self.name

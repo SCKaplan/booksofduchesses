@@ -21,7 +21,7 @@ admin.site.register(Location, LocationAdmin)
 
 class BookAdmin(admin.ModelAdmin):
     search_fields = ['shelfmark']
-    autocomplete_fields = ['text', 'owner','library','bibliography', 'book_location', 'owner_info']
+    autocomplete_fields = ['text', 'owner','library','bibliography', 'book_location', 'owner_info', 'scribes', 'illuminators']
 
 
 admin.site.register(Book, BookAdmin)
@@ -147,3 +147,13 @@ class BookLocationAdmin(admin.ModelAdmin):
         return super(BookLocationAdmin, self).get_form(request, obj, **kwargs)
 
 admin.site.register(BookLocation, BookLocationAdmin)
+
+class IlluminatorAdmin(admin.ModelAdmin):
+    search_fields = ['name']
+
+admin.site.register(Illuminator, IlluminatorAdmin)
+
+class ScribeAdmin(admin.ModelAdmin):
+    search_fields = ['name']
+
+admin.site.register(Scribe, ScribeAdmin)

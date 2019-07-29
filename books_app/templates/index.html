@@ -45,6 +45,7 @@
     width: 90px;
     background: gray;
 }
+
 </style>
 <header class="w3-display-container w3-content w3-wide" style="max-width:1500px;" id="home">
   <img class="w3-image" src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Woman_in_Medieval_Dress_or_Costume_%2822%29.JPG" alt="Medieval woman reading a book" width="600" height="600">
@@ -70,10 +71,9 @@
 
 
   <div class="column left" style=" margin-top: 30px; font-family:Verdana,sans-serif; padding-left:25px;">
-    <form action="#map" method="post" style="margin-top: 50px" id="map">
+    <form action="#map" method="post" style="margin-top: 50px; padding 0px;" id="map">
     {% csrf_token %}
 	<p>Display:</p>{{ search_form.display }}
-        <p>Search:</p>{{ search_form.search }}<br>
         <p>Dates:</p>{{ search_form.start_date }} to {{ search_form.end_date }}<br>
         <p>Owner:</p>{{ search_form.owner }}<br>
         <p>Shelfmark:</p>{{ search_form.shelfmark }}<br>
@@ -176,5 +176,37 @@ mcg.addLayer(bookLayer);
 mymap.addLayer(mcg);
 </script>
 </div>
+</div>
+<div style="padding-left:25px;">
+<br></br>
+<br></br>
+  {% if book_len %}
+  <h3>Search Results:</h3>
+  <p><strong> Your search returned {{book_len}} books, {{owner_len}} owners, and {{text_len}} texts</strong></p>
+      <ul style="padding-left: 30px;display: inline-block; vertical-align: top; text-align:left;">
+    <h4>Books:</h4>
+      {% for book in books_search %}
+        <li style="font-size:12px;"><a href="https://booksofduchesses.com/books/{{book.shelfmark}}">{{book.shelfmark}}</a></li>
+    {% empty %}
+      <li style="font-size:12px;">No book locations were returned</li>
+      {% endfor %}
+      </ul>
+     <ul style="padding-left: 30px; display: inline-block; vertical-align: top; text-align:left;">
+  <h4>Owners:</h4>
+    {% for owner in owners_search %}
+      <li style="font-size:12px;"><a href="https://booksofduchesses.com/owners/{{owner.name}}">{{owner.name}}</a></li>
+    {% empty %}
+      <li style="font-size:12px;">No owner locations were returned</li>
+    {% endfor %}
+      </ul>
+      <ul style="padding-left: 30px;display: inline-block; vertical-align: top; text-align:left;">
+  <h4>Texts:</h4>
+    {% for text in texts_search %}
+      <li style="font-size:12px;"><a href="https://booksofduchesses.com/texts/{{text.title}}">{{text.title}}</a></li>
+    {% empty %}
+      <li style="font-size:12px;">No texts were returned</li>
+    {% endfor %}
+      </ul>
+  {% endif %}
 </div>
 {% endblock %}

@@ -5,11 +5,6 @@
 {% block content %}
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
-<style>
-a {
-  color: blue;
-}
-</style>
  <!-- Books Section -->
 <div class="column-left">
   <div class="w3-container w3-padding-32" id="about">
@@ -28,16 +23,27 @@ a {
          <li> <a href="http://booksofduchesses.com/books/{{book.shelfmark}}">{{book.shelfmark}}</a></li>
         {% endfor %}
         <hr></hr>
+	{% if text.date_composed %}
+	<p class="w3-opacity">Created in {{text.date_composed}}</p>
+	{% endif %} 
         {% for language in languages %}
           <p>{{language.books_language}}</p>
         {% endfor %}
         {% if text.author %}
+		{% if text.author.link %}
+		  <p>Author: <a style="color:blue;" href="{{text.author.link}}"> {{text.author}}</a></p>
+		{% else %}
           <p>Author: {{text.author}}</p>
+  		{% endif %}
         {% else %}
           <p>Author unknown</p>
         {% endif %}
 	{% if text.translator %}
+                {% if text.translator.arlima %}
+                 <p>Translator: <a style="color:blue;" href="{{text.translator.arlima}}">{{text.translator}}</a></p>
+                {% else %}
           <p>Translator: {{text.translator}}</p>
+                {% endif %}
         {% else %}
           <p>Translator unknown</p>
         {% endif %}
@@ -96,18 +102,18 @@ mymap.addLayer(mcg);
     <div class="w3-col l3 m6 w3-margin-bottom" style="padding-right: 10px; width: 28%; float:right; text-align:center;">
       <h3 style="text-align:center;"><strong>Ownership Details</strong></h3>
         {% for date in dates %}
-          <p style="font-size:13px;"><i>{{date.conf_or_possible}}</i> in <a href="https://booksofduchesses.com/books/{{date.book_owned}}">{{date.book_owned}}</a>, owned by <a href="https://booksofduchesses.com/owners/{{date.book_owner}}">{{date.book_owner}}</a> ({{date.dateowned}})</p>
+          <p style="font-size:13px;"><i>{{date.conf_or_possible}}</i> in <a style="color: blue;" href="https://booksofduchesses.com/books/{{date.book_owned}}">{{date.book_owned}}</a>, owned by <a style="color: blue;" href="https://booksofduchesses.com/owners/{{date.book_owner}}">{{date.book_owner}}</a> ({{date.dateowned}})</p>
         {% endfor %}
       <br></br>
       <h3 style="text-align:center;"><strong>Bibliography</strong></h3>
 	{% if text.arlima_link %}
-	  <p><a href="{{text.arlima_link}}">Arlima</a></p> 
+	  <p><a style="color: blue;" href="{{text.arlima_link}}">Arlima</a></p> 
         {% endif %}
 	{% if text.me_compendium_link %}
-         <p><a href="{{text.me_compendium_link}}">ME Compendium</a></p>
+         <p><a style="color: blue;" href="{{text.me_compendium_link}}">ME Compendium</a></p>
         {% endif %}
 	{% if text.ihrt_link %}
-          <p><a href="{{text.ihrt_link}}">IHRT</a></p>
+          <p><a style="color: blue;" href="{{text.ihrt_link}}">IHRT</a></p>
         {% endif %}
 	<hr></hr>
 

@@ -1,6 +1,7 @@
 from django import forms
 from books_app.models import *
 
+from dal import autocomplete
 from mapwidgets.widgets import GooglePointFieldWidget, GoogleStaticMapWidget
 
 
@@ -80,12 +81,17 @@ class SearchForm(forms.Form):
     end_date = forms.CharField(label='End Date', max_length=100, required=False)
     owner = forms.CharField(label='Owner', max_length=100, required=False)
     shelfmark = forms.CharField(label='Shelfmark', max_length=100, required=False)
+#    shelfmark = forms.ModelChoiceField(
+ #       queryset=Book.objects.all(),
+  #      widget=autocomplete.ModelSelect2(url='books-autocomplete')
+   # )
+
     text = forms.CharField(label='Text', max_length=100, required=False)
     author = forms.CharField(label='Author', max_length=100, required=False)
     genre = forms.CharField(label='Genre', max_length=100, required=False)
     book_or_owner = [
+    ('owners', 'Owners (default)'),
     ('books', 'Books'),
-    ('owners', 'Owners'),
 ]
     display = forms.MultipleChoiceField(
         required=False,

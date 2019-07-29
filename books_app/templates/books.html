@@ -19,7 +19,7 @@
 
   <div style="padding-left:20px; padding-right:20px;">
     <div class="w3-col l3 m6 w3-margin-bottom">
-      <h3 style="text-align:center;"><strong>Overview</strong></h3>
+<!--      <h3 style="text-align:center;"><strong>Overview</strong></h3> -->
 	{% if book.image %}
           <img src="http://booksofduchesses.com/media/{{book.image}}" style="object-fit:cover; overflow:hidden; width:100%;height:100%;">
         {% else %}
@@ -35,9 +35,12 @@
       {% for text in texts %}
 	<li><a href="http://booksofduchesses.com/texts/{{text.title}}/">{{ text.title }}</a></li> 
       {% endfor %}
-      {% if book.iluminators %}
-        <p class="w3-opacity">Iluminators: {{ book.iluminators }}</p>
-      {% endif %}
+      {% for illum in illuminators %}
+        <li>{{ illum.name }}</a></li>
+      {% endfor %}
+      {% for scribe in scribes %}
+        <li>{{ scribe.name }}</a></li>
+      {% endfor %}
         </p>
     </div>
     <div id="mapid" style="width:44%; height:600px; left:40px; float:left; z-index:0;">
@@ -85,7 +88,11 @@ mymap.addLayer(mcg);
     <div class="w3-col l3 m6 w3-margin-bottom" style="float:right; text-align:center;">
       <h3 style="text-align:center;"><strong>Ownership Details</strong></h3>
       {% for owner in owners %}
+	{% if owner.book_owner.gender == "Male" %}
+	<p>{{ owner.book_owner }}, Ownership {{owner.conf_or_possible}} ({{ owner.dateowned }})</p>
+	{% else %}
         <p><a href="http://booksofduchesses.com/owners/{{owner.book_owner}}/">{{ owner.book_owner }}</a>, Ownership {{owner.conf_or_possible}} ({{ owner.dateowned }})</p>
+  	{% endif %}
       {% endfor %}
       <br></br>
       <h3 style="text-align:center;"><strong>Bibliography</strong></h3>

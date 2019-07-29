@@ -1,3 +1,4 @@
+from dal import autocomplete
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.db.models import Q
@@ -20,34 +21,21 @@ def index(request):
             author = request.POST.get('author', '')
             start_date = request.POST.get('start_date', '')
             end_date = request.POST.get('end_date', '')
-            genre = request.POST.get('genre', '')
+            tag = request.POST.get('tag', '')
             text = request.POST.get('text', '')
             shelfmark = request.POST.get('shelfmark', '')
-
-            # Search queries for books, authors and owners
-            author_result = Author.objects.filter(name__icontains=author)
-            owners_result = Owner.objects.filter(name__icontains=query)
-            locations = Location.objects.filter(name__icontains=query)
-
-            # Owners search field
             owners_search = request.POST.get('owner', '')
-            owners_objs = Owner.objects.filter(name__icontains=owners_search)
-            t = []
-            owner_to_filter = []
-            for owner in owners_objs:
-                t.append(owner.owner_location.all().order_by('date_at_location'))
-            for queryset in t:
-                for item in queryset:
-                    owner_to_filter.append(item)
 
             # Book shelfmark search field
             books_objs = Book.objects.filter(shelfmark__icontains=shelfmark)
+
 	    # Author Search Field
+            author_result = Author.objects.filter(name__icontains=author)
             texts_from_author = []
             books_from_author = []
             for auth in author_result:
-                text = Text.objects.filter(author=auth)
-                for element in text:
+                text_query = Text.objects.filter(author=auth)
+                for element in text_query:
                     texts_from_author.append(element)
             for text_obj in texts_from_author:
                 book = Book.objects.filter(text=text_obj)
@@ -56,6 +44,36 @@ def index(request):
             if len(author) != 0:
                 books_objs = set(books_from_author) & set(books_objs)
 
+            # Text Search Field
+            texts_from_text = Text.objects.filter(title__icontains=text)
+            books_from_text = []
+            for item in texts_from_text:
+                book = Book.objects.filter(text=item)
+                for c in book:
+                    books_from_text.append(c)
+            if len(text) != 0:
+                books_objs = set(books_from_text) & set(books_objs)
+
+            # Tag Search Field
+            if len(tag) != 0:
+                texts_from_tag = []
+                books_from_tag = []
+                tag_result = Tag.objects.filter(tag__icontains=tag)
+                all_texts = Text.objects.all()
+                for tag_obj in tag_result:
+                    for a in all_texts:
+                        texttags = a.tags.filter(tag=tag_obj)
+                        if len(texttags) != 0:
+                             texts_from_tag.append(a)
+                for text_obj_tag in texts_from_tag:
+                    book = Book.objects.filter(text=text_obj_tag)
+                    for c in book:
+                        books_from_tag.append(c)
+                books_objs = set(books_from_tag) & set(books_objs)
+            else:
+                texts_from_tag = Text.objects.all()
+
+            # Locations for each book
             z = []
             books_to_filter = []
             for book in books_objs:
@@ -64,8 +82,28 @@ def index(request):
                 for loc in locs:
                     books_to_filter.append(loc)
 
+            owners_objs = Owner.objects.filter(name__icontains=owners_search)
+
+            # Owners from book searches
+            owners_from_books = []
+            if len(text) != 0 or len(author) != 0 or len(tag) != 0:
+                for book_obj in books_objs:
+                    date_for_owner = DateOwned.objects.filter(book_owned=book_obj)
+                    for owner_date in date_for_owner:
+                        owners_from_books.append(owner_date.book_owner)
+                owners_objs = set(owners_from_books) & set(owners_objs)
+
+            # Locations for each owner
+            t = []
+            owner_to_filter = []
+            for owner in owners_objs:
+                t.append(owner.owner_location.all().order_by('date_at_location'))
+            for queryset in t:
+                for item in queryset:
+                    owner_to_filter.append(item)
+
             # Display options
-            if len(display) == 0 or display[0] == 'owners':
+            if len(display) == 0 or (display[0] == 'owners' and len(display) != 2):
                 # If we only want to display owners
                 books_to_filter = []
             if len(display) == 1 and display[0] == 'books':
@@ -82,6 +120,7 @@ def index(request):
                 searchRange.append(datetime.datetime(1500, 1, 1))
             else:
                 searchRange.append(datetime.datetime(int(end_date), 1, 1))
+
             # Date range filtering for books
             books_final = []
             for date in books_to_filter:
@@ -97,10 +136,24 @@ def index(request):
                 if not(dateRange[1] < searchRange[0] or dateRange[0] > searchRange[1]):
                     owners_final.append(owner_date)
 
-            return render(request, 'index.html',
-                          #{'books': books_result, 'locations': locations, 'search_form': search_form, 'authors': author_result, 'owners':owner_result}
-                          {'locations': locations, 'search_form': search_form, 'authors': author_result, 'owners': owners_final, 'display':display, 'books': books_final}
-                        )
+            owners_search = []
+            for owner_location in owners_final:
+                 toAppend = Owner.objects.get(owner_location=owner_location)
+                 owners_search.append(toAppend)
+            owners_search = list(set(owners_search))
+
+            books_search = []
+            for book_location in books_final:
+                 toAdd = Book.objects.get(book_location=book_location)
+                 books_search.append(toAdd)
+            books_search = list(set(books_search))
+
+            owner_len = len(owners_search)
+            book_len = len(books_search)
+            texts_search = set(texts_from_text) & set(texts_from_tag) & set(texts_from_author)
+            text_len = len(texts_search)
+
+            return render(request, 'index.html',{'books_search': books_search, 'owners_search': owners_search, 'search_form': search_form, 'owners': owners_final, 'display':display, 'books': books_final, 'book_len': book_len, 'owner_len': owner_len, 'text_len': text_len, 'texts_search': texts_search,})
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -136,7 +189,9 @@ def books(request, book_id):
             pass
     # Geo data for template
     places = BookLocation.objects.filter(book_shelfmark=book)
-    return render(request,'books.html', {'book': book, 'owners': l, 'texts': texts, 'bibs': bibs, 'places': places})
+    illuminators = book.illuminators.all()
+    scribes = book.scribes.all()
+    return render(request,'books.html', {'book':book, 'owners':l, 'texts': texts, 'bibs': bibs, 'places':places, 'iluminators': illuminators, 'scribes': scribes})
 
 def owners(request, owner_id):
     # owner_id should be the name of an owner
@@ -221,3 +276,12 @@ def bibload(request):
                 book.owner_info.add(date)
             book.save()
     return HttpResponse('Success')
+
+#class BooksAutocomplete(autocomplete.Select2QuerySetView):
+ #   def get_queryset(self):
+  #      qs = Book.objects.all()
+
+   #     if self.q:
+    #        qs = qs.filter(shelfmark__istartswith=self.q)
+
+     #   return qs
