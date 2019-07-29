@@ -5,17 +5,14 @@ from django.db.models import Q
 from books_app.models import *
 from books_app.forms import SearchForm
 
-
 # Create your views here.
-
 def index(request):
-
     if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-
+        # create a form instance
         search_form = SearchForm(request.POST)
         # check whether it's valid:
         if search_form.is_valid():
+            # Get all the data from the search form
             display = request.POST.getlist('display')
             query = request.POST.get('search', '')
             author = request.POST.get('author', '')
@@ -26,36 +23,41 @@ def index(request):
             shelfmark = request.POST.get('shelfmark', '')
             owners_search = request.POST.get('owner', '')
 
-            # Book shelfmark search field
+            # Book shelfmark search field- we get all the books from here and narrow the list down
+            # with the other search fields
             books_objs = Book.objects.filter(shelfmark__icontains=shelfmark)
 
-	    # Author Search Field
+	        # Author Search Field- get all the books that contain a text by the searched author
             author_result = Author.objects.filter(name__icontains=author)
-            texts_from_author = []
-            books_from_author = []
-            for auth in author_result:
-                text_query = Text.objects.filter(author=auth)
-                for element in text_query:
-                    texts_from_author.append(element)
-            for text_obj in texts_from_author:
-                book = Book.objects.filter(text=text_obj)
-                for b in book:
-                    books_from_author.append(b)
-            if len(author) != 0:
+            if len(author_result) != 0:
+                texts_from_author = []
+                books_from_author = []
+                # Create a list of texts with author
+                for auth in author_result:
+                    text_query = Text.objects.filter(author=auth)
+                    for element in text_query:
+                        texts_from_author.append(element)
+                # Get all the books from texts
+                for text_obj in texts_from_author:
+                    book = Book.objects.filter(text=text_obj)
+                    for b in book:
+                        books_from_author.append(b)
+                # Get the duplicate elements from the books searched frm shelfmark and from author
                 books_objs = set(books_from_author) & set(books_objs)
 
-            # Text Search Field
+            # Text Search Field- same process as author
             texts_from_text = Text.objects.filter(title__icontains=text)
-            books_from_text = []
-            for item in texts_from_text:
-                book = Book.objects.filter(text=item)
-                for c in book:
-                    books_from_text.append(c)
-            if len(text) != 0:
+            if len(texts_from_text) != 0:
+                books_from_text = []
+                for item in texts_from_text:
+                    book = Book.objects.filter(text=item)
+                    for c in book:
+                        books_from_text.append(c)
                 books_objs = set(books_from_text) & set(books_objs)
 
-            # Tag Search Field
-            if len(tag) != 0:
+            # Tag Search Field- same process as author, added complication of tags being ManyToManyField
+            if len(tag_result) != 0:
+                # ^^ Prevents us from doing a lot useless work if search field is blank
                 texts_from_tag = []
                 books_from_tag = []
                 tag_result = Tag.objects.filter(tag__icontains=tag)
@@ -71,29 +73,35 @@ def index(request):
                         books_from_tag.append(c)
                 books_objs = set(books_from_tag) & set(books_objs)
             else:
+                # Will add to the list of texts we return as a list of search results
                 texts_from_tag = Text.objects.all()
 
-            # Locations for each book
+            # To filter out by dates we need to get each BookLocation object, which has a date_range() attached
             z = []
             books_to_filter = []
             for book in books_objs:
                 z.append(book.book_location.all().order_by('date'))
             for locs in z:
                 for loc in locs:
+                    # List of Book Locations to filter
                     books_to_filter.append(loc)
 
             owners_objs = Owner.objects.filter(name__icontains=owners_search)
-
-            # Owners from book searches
+            # Owners from book searches- We also have to display owners on the map if they owned a book
+            # which came up from another search field
             owners_from_books = []
             if len(text) != 0 or len(author) != 0 or len(tag) != 0:
+                # If another search field was filled in
                 for book_obj in books_objs:
+                    # Get the dates the book was owned
                     date_for_owner = DateOwned.objects.filter(book_owned=book_obj)
                     for owner_date in date_for_owner:
+                        # Create a list of the owners who owned the books from the searche fields
                         owners_from_books.append(owner_date.book_owner)
+                # Get the duplicates from the owner search field and all the other fields
                 owners_objs = set(owners_from_books) & set(owners_objs)
 
-            # Locations for each owner
+            # Locations for each owner- same process as books
             t = []
             owner_to_filter = []
             for owner in owners_objs:
@@ -102,7 +110,7 @@ def index(request):
                 for item in queryset:
                     owner_to_filter.append(item)
 
-            # Display options
+            # Display options- default display is only owners per request of profs.
             if len(display) == 0 or (display[0] == 'owners' and len(display) != 2):
                 # If we only want to display owners
                 books_to_filter = []
@@ -112,7 +120,9 @@ def index(request):
 
             # Date range search field
             searchRange = []
+            # At the moment forces the search to be a year, this filtering could be improved
             if len(start_date) != 4:
+                # If we don't get a valid year we max out the range
                 searchRange.append(datetime.datetime(1350, 1, 1))
             else:
                 searchRange.append(datetime.datetime(int(start_date), 1, 1))
@@ -123,21 +133,25 @@ def index(request):
 
             # Date range filtering for books
             books_final = []
+            # Filter all the book locations based on their date range
             for date in books_to_filter:
                 dateRange = date.date_range()
-                # decide to display each book or not
+                # decide to display each book or not- the ranges must have overlap to display
                 if not(dateRange[1] < searchRange[0] or dateRange[0] > searchRange[1]):
                     books_final.append(date)
-	    # For owners
+
+	        # For owners
             owners_final = []
             for owner_date in owner_to_filter:
                 dateRange = owner_date.date_range()
-                # decide to display each owner or not
+                # decide to display each owner or not- the ranges must have overlap to display
                 if not(dateRange[1] < searchRange[0] or dateRange[0] > searchRange[1]):
                     owners_final.append(owner_date)
 
+            # Lists to display search results below the map
             owners_search = []
             for owner_location in owners_final:
+                 # Get the owners associated with each pin
                  toAppend = Owner.objects.get(owner_location=owner_location)
                  owners_search.append(toAppend)
             owners_search = list(set(owners_search))
@@ -148,54 +162,54 @@ def index(request):
                  books_search.append(toAdd)
             books_search = list(set(books_search))
 
+            # For a search summary "your search returned (owner_len) owners..."
             owner_len = len(owners_search)
             book_len = len(books_search)
             texts_search = set(texts_from_text) & set(texts_from_tag) & set(texts_from_author)
             text_len = len(texts_search)
 
+            # owners_final and books_final have PointFields associated with them and therefore can be mapped
+            # Popups are determined by Leaflet and the models- this just decides which ones to display
             return render(request, 'index.html',{'books_search': books_search, 'owners_search': owners_search, 'search_form': search_form, 'owners': owners_final, 'display':display, 'books': books_final, 'book_len': book_len, 'owner_len': owner_len, 'text_len': text_len, 'texts_search': texts_search,})
 
-    # if a GET (or any other method) we'll create a blank form
+    # if a GET (or any other method) we'll create a blank form and display all female owners
     else:
         books = []
-        locations = Location.objects.all()
-        authors = Author.objects.all()
         owners = Owner.objects.filter(gender="Female")
-        t = []
-        b = []
+        owners_default = []
+        # For every female owner add her known PointField locations
         for owner in owners:
-           # if len(owner.owner_location.all()) != 0:
             toAdd = owner.owner_location.all()
             for item in toAdd:
-                t.append(item)
-     # for set in t:
-        #    for item in set:
-         #       b.append(item.the_place)
+                owners_default.append(item)
         search_form = SearchForm()
 
-        return render(request, 'index.html',{'books':books, 'locations':locations, 'search_form': search_form, 'authors': authors, 'owners':t})
+        return render(request, 'index.html',{'books':books, 'locations':locations, 'search_form': search_form, 'authors': authors, 'owners': owners_default})
 
 def books(request, book_id):
+    # book_id comes from the url- is a book's shelfmark
+    # Get all the data we need on a book and send to template
     book = Book.objects.get(shelfmark=book_id)
     texts = book.text.all()
-    owners = DateOwned.objects.filter(book_owned=book).order_by('dateowned')
     bibs = book.bibliography.all()
-    l = []
-    for owner in owners:
-        try:
-            # In case some misc dateowned objects appear- if everything has a link and we clean up this isn't necessary
-            l.append(owner)
-        except:
-            pass
-    # Geo data for template
+    # Geo data for the template map
     places = BookLocation.objects.filter(book_shelfmark=book)
     illuminators = book.illuminators.all()
     scribes = book.scribes.all()
-    return render(request,'books.html', {'book':book, 'owners':l, 'texts': texts, 'bibs': bibs, 'places':places, 'iluminators': illuminators, 'scribes': scribes})
+    # For owners we query DateOwned objects because they contain dates which we need to be on template
+    owners_date = DateOwned.objects.filter(book_owned=book).order_by('dateowned')
+    owner_geo = []
+    for owner in owners_date:
+        try:
+            # In case some misc dateowned objects appear- if everything has a link and we clean up this isn't necessary
+            owner_geo.append(owner)
+        except:
+            pass
+    return render(request,'books.html', {'book':book, 'owners':owner_geo, 'texts': texts, 'bibs': bibs, 'places':places, 'iluminators': illuminators, 'scribes': scribes})
 
 def owners(request, owner_id):
-    # owner_id should be the name of an owner
-    # We need Owner Name, Motto, Title, Locations, Library
+    # owner_id is the name of an owner
+    # Get all owner data for the template
     owner = Owner.objects.get(name=owner_id)
     location = owner.owner_location.all().order_by('date_at_location')
     books = DateOwned.objects.filter(owner=owner).order_by('book_owned__shelfmark')
@@ -203,80 +217,30 @@ def owners(request, owner_id):
     return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books':books, 'owner':owner, 'locations':location})
 
 def texts(request, text_id):
+    # text_id is the title of a text
     text = Text.objects.get(title=text_id)
     books = Book.objects.filter(text=text)
     languages = text.language.all()
-    if len(languages) == 0:
-        languages = None
     tags = text.tags.all()
     places = []
     dates = []
+    # Geo data for the map
     for book in books:
         locations = book.book_location.all()
         for location in locations:
+            # For every book the text is in add the locations of that book
             places.append(location)
         toAdd = book.owner_info.all()
         for date in toAdd:
+            # Add DateOwned objects to a list for display
             dates.append(date)
     return render(request, 'texts.html', {'text': text, 'books': books, 'languages': languages, 'tags': tags, 'places': places, 'dates' : dates})
 
 def loadup(request):
-    # if run accidentally, delete all texts and rerun
-#    textinfo = open('books_app/csvs/texts14.csv', 'r')
- #   # texts = Text.objects.all()
-  #  # textsIndex = 0
-#    for line in textinfo:
- #       line = line.split(',')
-  #      toEdit = Text.objects.create()
-        # Text name, name_eng, author,translator, books,arlima,feminae,me comp,teams,tags,ihrt order in csv
-        # name, name_eng, arlima are all charfields
-  #      toEdit.title = line[0]
-#        toEdit.name_eng = line[1]
-#        toEdit.arlima_link = line[5]
-#        toEdit.me_compendium_link = line[7]
- #       toEdit.ihrt_link = line[10]
-        # Author is a Foreign Key so make an object
- #       author = Author.objects.filter(name__contains = line[2])
- #       if len(author) != 0 and len(author) < 3:
- #           toEdit.author = author[0]
-        # Tags Many to Many Fields
- #       allTags = line[9] #[:-1]
-  #      allTags = allTags.split('!')
-  #      for tag in allTags:
-  #          tag = tag.lstrip()
- #           if len(tag) != 0:
-  #              toAdd = Tag.objects.filter(tag__contains=tag)
-   #             if len(toAdd) != 0:
-    #                toEdit.tags.add(toAdd[0])
-        #toEdit.save()
- #      # Books Many to Many Field
-     #   allBooks = line[4]
-      #  allBooks = allBooks.split('!')
-       # for book in allBooks:
-        #    book = book.lstrip()
-         #   if len(book) != 0:
-          #      toAdd = Book.objects.filter(shelfmark__contains=book)
-           #     # So that we don't break it, for now
-            #    if len(toAdd) != 0:
-              #      toEdit.book.add(toAdd[0])
-             #   else:
-                   # print("This is a book that is not yet loaded into the db")
-       # toEdit.save()
-
-        # textsIndex += 1
-    #textinfo.close()
-    return HttpResponse('Thanks')
-
-def bibload(request):
-    owners = Owner.objects.all()
-    books = Book.objects.all()
-    for book in books:
-            dates = DateOwned.objects.filter(book_owned=book)
-            for date in dates:
-                book.owner_info.add(date)
-            book.save()
+    # Inactive- used for database loading
     return HttpResponse('Success')
 
+# Inactive- to be used for autocomplete
 #class BooksAutocomplete(autocomplete.Select2QuerySetView):
  #   def get_queryset(self):
   #      qs = Book.objects.all()
@@ -285,3 +249,4 @@ def bibload(request):
     #        qs = qs.filter(shelfmark__istartswith=self.q)
 
      #   return qs
+

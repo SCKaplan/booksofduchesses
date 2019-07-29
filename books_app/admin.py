@@ -4,7 +4,8 @@ from .models import *
 from mapwidgets.widgets import GooglePointFieldWidget
 from books_app.forms import *
 
-
+# If you want to add search capabilities within the admin follow the search_field examples
+# If you want to add autocomplete fields within the admin (for editing/adding models) follow the corresponsing examples
 class LocationAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
