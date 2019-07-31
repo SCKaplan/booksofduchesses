@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% load geojson_tags %}
-
+{% load static %}
 {% block content %}
+<script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
 <style>
@@ -81,7 +82,7 @@
         <p>Author:</p>{{ search_form.author }}<br>
         <p>Tag:</p>{{ search_form.genre }}<br>
         <br></br>
-
+        {{ search_form.media }}
     <input type="submit" value="Submit">
 </form>
   </div>

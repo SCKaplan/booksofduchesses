@@ -3,8 +3,10 @@
 {% load staticfiles %}
 
 {% block content %}
+<!-- For leaflet mcg -->
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
+
 <!-- Page content -->
 <div class="w3-content w3-padding" style="max-width:1564px">
 
@@ -14,106 +16,111 @@
   </div>
 
 <div style="padding-left:20px; padding-right:20px;">
-    <div class="w3-col l3 m6 w3-margin-bottom">
-   <!--   <h3 style="text-align:center;"><strong>Overview</strong></h3> -->
-	{% if owner.image %}
-      <img src="http://booksofduchesses.com/media/{{owner.image}}" style="object-fit:cover; overflow:hidden; width:100%;height:100%;">
-	{% else %}
-      <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" style="width:100%">
-	{% endif %}
-	{% if owner.image_citation %}
-      <p style="text-align:left; font-size:11px;"><i>{{owner.image_citation}}</i></p>
-	{% endif %}
-	{% if owner.birth_year and owner.death_year %}
-     <p class="w3-opacity" style="text-align:center;">b. {{owner.birth_year}}- d. {{owner.death_year}}</p>
-	{% endif %}
-	{% if owner.titles %}
-      <p>Title: {{owner.titles}}</p>
-	{% else %}
-      <p>Title: Unknown</p>
-	{% endif %}
-	{% if owner.motto %}
-      <p>Motto: {{owner.motto}}</p>
-	{% else %}
-      <p>Motto: Unknown</p>
-	{% endif %}
-	{% if owner.symbol %}      
-      <p>Symbol: {{owner.symbol}}</p>
-	{% else %}
-      <p>Symbol: Unknown</p>
-	{% endif %}
-      <h4 style="text-align:center;"><strong>Family Tree</strong></h4>
-	{% if relatives %}
-      {% for relative in relatives %}
-	{% if relative.person.gender == "Male" %}
-	<li>{{relative.person}}, {{relative.relation}}</li>
-	{% else %}
-      	<li><a style="color:blue;" href="https://booksofduchesses.com/owners/{{relative.person}}/">{{relative.person}}</a>, {{relative.relation}}</li>
-	{% endif %}
-      {% endfor %}
-	{% else %}
-	<p style="font-size:13px;">No known relatives</p>
-	{% endif %}
-    </div>
-    <div id="mapid" style="width:44%; height:600px; left:40px; float:left; z-index:0;">
-      <script>
+  <div class="w3-col l3 m6 w3-margin-bottom">
+  	{% if owner.image %}
+        <img src="http://booksofduchesses.com/media/{{owner.image}}" style="object-fit:cover; overflow:hidden; width:100%;height:100%;">
+  	{% else %}
+        <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" style="width:100%">
+  	{% endif %}
+  	{% if owner.image_citation %}
+        <p style="text-align:left; font-size:11px;"><i>{{owner.image_citation}}</i></p>
+  	{% endif %}
+  	{% if owner.birth_year and owner.death_year %}
+       <p class="w3-opacity" style="text-align:center;">b. {{owner.birth_year}}- d. {{owner.death_year}}</p>
+  	{% endif %}
+  	{% if owner.titles %}
+        <p>Title: {{owner.titles}}</p>
+  	{% else %}
+        <p>Title: Unknown</p>
+  	{% endif %}
+  	{% if owner.motto %}
+        <p>Motto: {{owner.motto}}</p>
+  	{% else %}
+        <p>Motto: Unknown</p>
+  	{% endif %}
+  	{% if owner.symbol %}
+        <p>Symbol: {{owner.symbol}}</p>
+  	{% else %}
+        <p>Symbol: Unknown</p>
+  	{% endif %}
+        <h4 style="text-align:center;"><strong>Family Tree</strong></h4>
+  	{% if relatives %}
+        {% for relative in relatives %}
+  	{% if relative.person.gender == "Male" %}
+  	<li>{{relative.person}}, {{relative.relation}}</li>
+  	{% else %}
+        	<li><a style="color:blue;" href="https://booksofduchesses.com/owners/{{relative.person}}/">{{relative.person}}</a>, {{relative.relation}}</li>
+  	{% endif %}
+        {% endfor %}
+  	{% else %}
+  	<p style="font-size:13px;">No known relatives</p>
+  	{% endif %}
+  </div>
+  <!-- Map -->
+  <div id="mapid" style="width:44%; height:600px; left:40px; float:left; z-index:0;">
+    <script>
 
-       var violetIcon = new L.Icon({
-  iconUrl: 'https://github.com/pointhi/leaflet-color-markers/raw/master/img/marker-icon-2x-violet.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
+      var violetIcon = new L.Icon({
+          iconUrl: 'https://github.com/pointhi/leaflet-color-markers/raw/master/img/marker-icon-2x-violet.png',
+          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41]
+      });
 
 
-        var mymap = L.map('mapid').setView([50.332721, 1.050860], 5);
+      var mymap = L.map('mapid').setView([50.332721, 1.050860], 5);
 
-        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-                maxZoom: 18,
-                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-                        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-                        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-                id: 'mapbox.streets'
-        }).addTo(mymap);
+      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+              maxZoom: 18,
+              attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+                      '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                      'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+              id: 'mapbox.streets'
+      }).addTo(mymap);
 
-        var places = {{ places|geojsonfeature:'popupcontent'|safe }};
+      var places = {{ places|geojsonfeature:'popupcontent'|safe }};
 
-var mcg = new L.MarkerClusterGroup();
+      var mcg = new L.MarkerClusterGroup();
 
-var ownerLayer = L.geoJSON(places, {
-  pointToLayer: function (feature, latlng) {
-            return L.marker(latlng, {icon: violetIcon});
- },
+      var ownerLayer = L.geoJSON(places, {
+          pointToLayer: function (feature, latlng) {
+              return L.marker(latlng, {icon: violetIcon});
+       },
 
-  onEachFeature: function(feature, layer) {
-      var props = feature.properties.popupcontent;
-      var content = `<p>${props}</p>`;
-      layer.bindPopup(content);
-  }
-});
-mcg.addLayer(ownerLayer);
-mymap.addLayer(mcg);
+      onEachFeature: function(feature, layer) {
+          var props = feature.properties.popupcontent;
+          var content = `<p>${props}</p>`;
+          layer.bindPopup(content);
+      }
+      });
+
+      mcg.addLayer(ownerLayer);
+      mymap.addLayer(mcg);
 
       </script>
-    </div>
-    <div class="w3-col l3 m6 w3-margin-bottom" style="float:right; text-align:center;">
-      <h3 style="text-align:center;"><strong>{{owner.name}}'s Locations</strong></h3>
-	{% if locations %}
-	    {% for location in locations %}
-            <p style="font-size:13px;">{{location.the_place.City}} ({{location.date_at_location}})</p>
-            {% endfor %}
-        {% else %}
-	    <p style="font-size:13px;">No known locations</p>
-	{% endif %}
-      <br>      
-      <h3 style="text-align:center;"><strong>{{owner.name}}'s Library</strong></h3></p>
-        {% for book in books %}
-      <p style="text-align:left;" ><a style="color:blue;" href="http://booksofduchesses.com/books/{{book.book_owned}}">{{book.book_owned}}</a> ({{book.dateowned}})</p>
-	{% endfor %}
-    </div>
   </div>
+  <!-- Right column -->
+  <div class="w3-col l3 m6 w3-margin-bottom" style="float:right; text-align:center;">
+    <h3 style="text-align:center;"><strong>{{owner.name}}'s Locations</strong></h3>
+    {% if locations %}
+      {% for location in locations %}
+        <p style="font-size:13px;">{{location.the_place.City}} ({{location.date_at_location}})</p>
+      {% endfor %}
+    {% else %}
+      <p style="font-size:13px;">No known locations</p>
+    {% endif %}
+    <br>
+    <h3 style="text-align:center;"><strong>{{owner.name}}'s Library</strong></h3></p>
+    {% for book in books %}
+      <p style="text-align:left;" ><a style="color:blue;" href="http://booksofduchesses.com/books/{{book.book_owned}}">{{book.book_owned}}</a> ({{book.dateowned}})</p>
+    {% endfor %}
+  </div>
+
+</div>
+
 </div>
 
     {% endblock %}
+
