@@ -434,8 +434,10 @@ class Relative(models.Model):
 	God_son = 'God-son'
 	God_parent = 'God-parent'
 	God_daughter = 'God-Daughter'
+	Niece = 'Niece'
+	Nephew = 'Nephew'
 	Other = 'Other'
-	rel_choices = [(Father, "Father"),(Mother, "Mother"), (Spouse, "Spouse"), (Son, "Son"), (Daughter, 'Daughter'), (Brother, 'Brother'),(Sister, 'Sister'),(Aunt, 'Aunt'),(Uncle, 'Uncle'),(Cousin, 'Cousin'),(DiL, 'Daughter-in-law'),(SiL, 'Son-in-Law'), (MiL, 'Mother-in-law'), (FiL, 'Father-in-law'), (SiL, 'Sister-in-law'), (BiL, 'Brother-in-law'), (God_son, 'God-son'), (God_parent, 'God-parent'), (God_parent, 'God-parent'), (God_daughter, 'God-Daughter'), (Other, 'Other')]
+	rel_choices = [(Father, "Father"), (Mother, "Mother"), (Spouse, "Spouse"), (Son, "Son"), (Daughter, 'Daughter'), (Brother, 'Brother'), (Sister, 'Sister'),(Aunt, 'Aunt'),(Uncle, 'Uncle'),(Cousin, 'Cousin'),(DiL, 'Daughter-in-law'),(SiL, 'Son-in-Law'), (MiL, 'Mother-in-law'), (FiL, 'Father-in-law'), (SiL, 'Sister-in-law'), (BiL, 'Brother-in-law'), (God_son, 'God-son'), (God_parent, 'God-parent'), (God_parent, 'God-parent'), (God_daughter, 'God-Daughter'), (Niece, "Niece"), (Nephew, "Nephew"), (Other, 'Other')]
 	relation = models.CharField(max_length=40, choices=rel_choices, default='Father')
 
 	def __str__(self):
