@@ -1,5 +1,5 @@
 from django.contrib.gis import admin
-from django.contrib.gis.db import models 
+from django.contrib.gis.db import models
 from .models import *
 from mapwidgets.widgets import GooglePointFieldWidget
 from books_app.forms import *
@@ -24,14 +24,12 @@ class BookAdmin(admin.ModelAdmin):
     search_fields = ['shelfmark']
     autocomplete_fields = ['text', 'bibliography', 'book_location', 'owner_info', 'scribes', 'illuminators']
 
-
 admin.site.register(Book, BookAdmin)
 
 
 class TextAdmin(admin.ModelAdmin):
     search_fields = ['title']
-    autocomplete_fields = ['tags', 'author', 'language']
-
+    autocomplete_fields = ['tags', 'language', 'authors', 'translators']
 
 admin.site.register(Text, TextAdmin)
 
@@ -79,8 +77,8 @@ admin.site.register(Author, AuthorAdmin)
 
 
 class DateOwnedAdmin(admin.ModelAdmin):
-    search_fields =['book_owned__shelfmark']
-    autocomplete_fields = ['book_owned']
+    search_fields =['book_owned__shelfmark', 'book_owner__name']
+    autocomplete_fields = ['book_owned', 'book_owner']
 
 admin.site.register(DateOwned, DateOwnedAdmin)
 
@@ -94,8 +92,6 @@ class BooksLanguageAdmin(admin.ModelAdmin):
         else:
             self.form = BooksLanguageAdminForm
         return super(BooksLanguageAdmin, self).get_form(request, obj, **kwargs)
-
-
 
 admin.site.register(BooksLanguage, BooksLanguageAdmin)
 
@@ -122,10 +118,14 @@ class RelativeAdmin(admin.ModelAdmin):
     autocomplete_fields = ['person']
 
 admin.site.register(Relative, RelativeAdmin)
-admin.site.register(Translator)
+
+class TranslatorAdmin(admin.ModelAdmin):
+    search_fields = ['name']
+
+admin.site.register(Translator, TranslatorAdmin)
 
 class BookLocationAdmin(admin.ModelAdmin):
-    search_fields = ['book_location__name']
+    search_fields = ['book_location__name', 'book_shelfmark__shelfmark']
 
     def get_form(self, request, obj=None, **kwargs):
         if not obj:

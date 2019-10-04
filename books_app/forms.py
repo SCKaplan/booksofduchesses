@@ -1,6 +1,7 @@
 from django import forms
 from books_app.models import *
-
+from django_select2.forms import Select2MultipleWidget
+from django.forms import ModelChoiceField
 from dal import autocomplete
 from mapwidgets.widgets import GooglePointFieldWidget, GoogleStaticMapWidget
 

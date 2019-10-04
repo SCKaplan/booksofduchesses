@@ -12,6 +12,7 @@ class Book(models.Model):
 	type_choices = [(type_print, "Print"),(Manuscript, "Manuscript")]
 	type = models.CharField(max_length=30, choices=type_choices, default='Manuscript')
 
+	printer = models.CharField(max_length=200, blank=True, verbose_name="Printer Information")
 	ex_libris = models.TextField(blank=True) # Hasn't been used yet, but is in AirTable so leaving it here
 	bibliography = models.ManyToManyField('Bibliography', blank=True)
 	digital_version = models.CharField(max_length=200, blank=True)
@@ -57,11 +58,14 @@ class Text(models.Model):
 	tags = models.ManyToManyField('Tag', blank=True)
 	language = models.ManyToManyField('BooksLanguage', blank=True)
 	date_composed = models.CharField(max_length=200, blank=True, verbose_name="Date Composed (if known)")
-	author = models.ForeignKey('Author', on_delete=models.CASCADE, blank=True, null=True)
-	translator = models.ForeignKey('Translator', on_delete=models.CASCADE, blank=True, null=True)
+	#author = models.ForeignKey('Author', on_delete=models.CASCADE, blank=True, null=True, related_name='old_author')
+	authors = models.ManyToManyField('Author', blank=True)
+	#translator = models.ForeignKey('Translator', on_delete=models.CASCADE, blank=True, null=True, related_name='old_translator')
+	translators = models.ManyToManyField('Translator', blank=True)
 	arlima_link = models.CharField(max_length=200, blank=True)
-	me_compendium_link = models.CharField(max_length=200, blank=True)
-	ihrt_link = models.CharField(max_length=200, blank=True)
+	me_compendium_link = models.CharField(max_length=200, blank=True, verbose_name="ME Compendium Link")
+	ihrt_link = models.CharField(max_length=800, blank=True)
+	estc_link = models.CharField(max_length=800, blank=True, verbose_name="ESTC Link")
 
 	def __str__(self):
 		return self.title
@@ -257,9 +261,9 @@ class BookLocation(models.Model):
 
 # An individual ownership event- catalogs when an owner owned a certain book and some more info
 class DateOwned(models.Model):
-	book_owned = models.ForeignKey(Book, on_delete=models.SET_NULL, blank=True, null=True)
+	book_owned = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
 	dateowned = models.CharField(max_length=200, null = True)
-	book_owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, blank=True, null=True)
+	book_owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, null=True, help_text="If you don't have a known owner for this entry, select No known Owner")
 	Conf = 'Confirmed'
 	Poss = 'Possible'
 	conf_choices = [(Conf, "Confirmed"),(Poss, "Possible")]
@@ -353,7 +357,8 @@ class DateOwned(models.Model):
 		verbose_name_plural = 'Dates Book Owned'
 
 	def __str__(self):
-		return self.book_owner.name + ", " + self.dateowned
+		return self.book_owned.shelfmark + ", " + self.book_owner.name + ", " + self.dateowned
+		#return self.book_owner.name + ", " + self.dateowned
 
 # Not necesarilly useful or necessary but I'm keeping this around until we figure out stacking on the map
 class Location(models.Model):
@@ -439,6 +444,8 @@ class Relative(models.Model):
 # Linked in Text
 class Translator(models.Model):
 	name = models.CharField(max_length=200)
+	birth_year = models.CharField(max_length=200, blank=True, null=True)
+	death_year = models.CharField(max_length=200, blank=True, null=True)
 	arlima = models.CharField(max_length=200, blank=True, null=True)
 
 	def __str__(self):
@@ -447,7 +454,6 @@ class Translator(models.Model):
 # Linked in Book
 class Illuminator(models.Model):
         name = models.CharField(max_length=200)
-
         def __str__(self):
                 return self.name
 
@@ -474,3 +480,11 @@ class BooksLanguage(models.Model):
 	def __str__(self):
 		return self.books_language
 
+class OwnershipEvidence(models.Model):
+        evidence = models.CharField(max_length=500)
+
+        class Meta:
+                verbose_name = 'Evidence'
+
+        def __str__(self):
+                return self.evidence

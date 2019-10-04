@@ -152,22 +152,34 @@ def index(request):
             for owner_location in owners_final:
                  toAppend = Owner.objects.get(owner_location=owner_location)
                  owners_search.append(toAppend)
-            # Black magic, don't touch
+            # Get rid of duplicates
             owners_search = list(set(owners_search))
+            owner_len = len(owners_search)
+            owners_search_preview = []
+            if owner_len > 5:
+                owners_search_preview = owners_search[:5]
+                owners_search = owners_search[5:]
 
             books_search = []
             for book_location in books_final:
                  toAdd = Book.objects.get(book_location=book_location)
                  books_search.append(toAdd)
             books_search = list(set(books_search))
+            book_len = len(books_search)
+            books_search_preview = []
+            if book_len > 5:
+                books_search_preview = books_search[:5]
+                books_search = books_search[5:]
 
             # For displaying information about the search
-            owner_len = len(owners_search)
-            book_len = len(books_search)
-            texts_search = set(texts_from_text) & set(texts_from_tag) & set(texts_from_author)
+            texts_search = list(set(texts_from_text) & set(texts_from_tag) & set(texts_from_author))
+            texts_search_preview = []
             text_len = len(texts_search)
+            if text_len > 5:
+                texts_search_preview = texts_search[:5]
+                texts_search = texts_search[5:]
 
-            return render(request, 'index.html',{'books_search': books_search, 'owners_search': owners_search, 'search_form': search_form, 'owners': owners_final, 'display':display, 'books': books_final, 'book_len': book_len, 'owner_len': owner_len, 'text_len': text_len, 'texts_search': texts_search,})
+            return render(request, 'index.html',{'books_search': books_search, 'owners_search': owners_search, 'search_form': search_form, 'owners': owners_final, 'display':display, 'books': books_final, 'book_len': book_len, 'owner_len': owner_len, 'text_len': text_len, 'texts_search': texts_search, 'books_search_preview': books_search_preview, 'owners_search_preview': owners_search_preview, 'texts_search_preview': texts_search_preview})
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -204,41 +216,22 @@ def books(request, book_id):
             owner_geo.append(owner)
         except:
             pass
-    return render(request,'books.html', {'book':book, 'owners':owner_geo, 'texts': texts, 'bibs': bibs, 'places':places, 'iluminators': illuminators, 'scribes': scribes})
-
-def books(request, book_id):
-    # book_id comes from the url- is a book's shelfmark
-    # Get all the data we need on a book and send to template
-    book = Book.objects.get(shelfmark=book_id)
-    texts = book.text.all()
-    bibs = book.bibliography.all()
-    # Geo data for the template map
-    places = BookLocation.objects.filter(book_shelfmark=book)
-    illuminators = book.illuminators.all()
-    scribes = book.scribes.all()
-    # For owners we query DateOwned objects because they contain dates which we need to be on template
-    owners_date = DateOwned.objects.filter(book_owned=book).order_by('dateowned')
-    owner_geo = []
-    for owner in owners_date:
-        try:
-            # In case some misc dateowned objects appear- if everything has a link and we clean up this isn't necessary
-            owner_geo.append(owner)
-        except:
-            pass
-    return render(request,'books.html', {'book':book, 'owners':owner_geo, 'texts': texts, 'bibs': bibs, 'places':places, 'iluminators': illuminators, 'scribes': scribes})
+    return render(request,'books.html', {'book':book, 'owners':owner_geo, 'texts': texts, 'bibs': bibs, 'places':places, 'illuminators': illuminators, 'scribes': scribes})
 
 def owners(request, owner_id):
     # owner_id is the name of an owner
     # Get all owner data for the template
     owner = Owner.objects.get(name=owner_id)
     location = owner.owner_location.all().order_by('date_at_location')
-    books = DateOwned.objects.filter(owner=owner).order_by('book_owned__shelfmark')
+    books = DateOwned.objects.filter(book_owner=owner).order_by('book_owned__shelfmark')
     relatives = owner.relation.all()
     return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books':books, 'owner':owner, 'locations':location})
 
 def texts(request, text_id):
     # text_id is the title of a text
     text = Text.objects.get(title=text_id)
+    authors = text.authors.all()
+    translators = text.translators.all()
     books = Book.objects.filter(text=text)
     languages = text.language.all()
     tags = text.tags.all()
@@ -254,11 +247,26 @@ def texts(request, text_id):
         for date in toAdd:
             # Add DateOwned objects to a list for display
             dates.append(date)
-    return render(request, 'texts.html', {'text': text, 'books': books, 'languages': languages, 'tags': tags, 'places': places, 'dates' : dates})
+    return render(request, 'texts.html', {'text': text, 'books': books, 'languages': languages, 'tags': tags, 'places': places, 'dates' : dates, 'authors' : authors, 'translators' : translators})
 
 def loadup(request):
-    # Inactive- used for database loading
-    return HttpResponse('Success')
+    all_owners=Owner.objects.all()
+    for owner in all_owners:
+        already_in = owner.book_date.all()
+        dates = DateOwned.objects.filter(book_owner=owner)
+        for date in dates:
+            if not (date in already_in):
+                owner.book_date.add(date)
+        owner.save()
+    all_books=Book.objects.all()
+    for book in all_books:
+        already_there = book.owner_info.all()
+        book_dates = DateOwned.objects.filter(book_owned=book)
+        for d in book_dates:
+            if not (d in already_there):
+                book.owner_info.add(d)
+        book.save()
+    return HttpResponse('Data Successfully Migrated')
 
 # Inactive- to be used for autocomplete
 class BooksAutocomplete(autocomplete.Select2ListView):

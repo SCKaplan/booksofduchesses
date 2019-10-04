@@ -32,23 +32,28 @@
       {% for language in languages %}
         <p>{{language.books_language}}</p>
       {% endfor %}
-      {% if text.author %}
-  	    {% if text.author.link %}
-  	      <p>Author: <a style="color:blue;" href="{{text.author.link}}"> {{text.author}}</a></p>
-  	    {% else %}
-          <p>Author: {{text.author}}</p>
-  		  {% endif %}
+      <!-- We need a case for a text without authors -->
+      {% if authors %}
+        {% for author in authors %}
+  	      {% if text.author.link %}
+  	        <p>Author: <a style="color:blue;" href="{{author.link}}"> {{author.name}}</a></p>
+  	      {% else %}
+                <p>Author: {{author.name}}</p>
+  	      {% endif %}
+        {% endfor %}
       {% else %}
-        <p>Author unknown</p>
+        <p>Author Unknown</p>
       {% endif %}
-      {% if text.translator %}
-        {% if text.translator.arlima %}
-          <p>Translator: <a style="color:blue;" href="{{text.translator.arlima}}">{{text.translator}}</a></p>
-        {% else %}
-          <p>Translator: {{text.translator}}</p>
-        {% endif %}
+      {% if translators %}
+        {% for translator in translators %}
+              {% if text.translator.arlima %}
+                <p>Translator: <a style="color:blue;" href="{{translator.arlima}}">{{translator}}</a></p>
+              {% else %}
+                <p>Translator: {{text.translator}}</p>
+              {% endif %}
+        {% endfor %}
       {% else %}
-        <p>Translator unknown</p>
+        <p>Translator Unknown</p>
       {% endif %}
       <hr></hr>
       {% if tags %}
@@ -107,8 +112,12 @@
     <div class="w3-col l3 m6 w3-margin-bottom" style="padding-right: 10px; width: 28%; float:right; text-align:center;">
       <h3 style="text-align:center;"><strong>Ownership Details</strong></h3>
       {% for date in dates %}
-        <p style="font-size:13px;"><i>{{date.conf_or_possible}}</i> in <a style="color: blue;" href="https://booksofduchesses.com/books/{{date.book_owned}}">{{date.book_owned}}</a>, owned by <a style="color: blue;" href="https://booksofduchesses.com/owners/{{date.book_owner}}">{{date.book_owner}}</a> ({{date.dateowned}})</p>
-      {% endfor %}
+	{% if date.book_owner.gender == "Male" %}
+          <p style="font-size:13px;"><i>{{date.conf_or_possible}}</i> in <a style="color: blue;" href="https://booksofduchesses.com/books/{{date.book_owned}}">{{date.book_owned}}</a>, owned by {{date.book_owner}} ({{date.dateowned}})</p>
+        {% else %}
+          <p style="font-size:13px;"><i>{{date.conf_or_possible}}</i> in <a style="color: blue;" href="https://booksofduchesses.com/books/{{date.book_owned}}">{{date.book_owned}}</a>, owned by <a style="color: blue;" href="https://booksofduchesses.com/owners/{{date.book_owner}}">{{date.book_owner}}</a> ({{date.dateowned}})</p>
+	{% endif %} 
+     {% endfor %}
       <br></br>
       <h3 style="text-align:center;"><strong>Bibliography</strong></h3>
       {% if text.arlima_link %}

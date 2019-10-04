@@ -11,11 +11,14 @@
 
   <!-- Page Title, not a header per say -->
   <div class="w3-container w3-padding-32" id="about">
-    <h2 style="text-align:center; padding-top:30px;">Book: {{ book.shelfmark }}
-    {% if book.date_created %}
-      (created {{ book.date_created }})
+    <h2 style="text-align:center; padding-top:30px;">Book: {{ book.shelfmark }} 
+    {% if book.about %}
+      ({{book.about}})
     {% endif %}
     </h2>
+    {% if book.date_created %}
+      <h4 class="w3-opacity" style="text-align:center;"> Created {{ book.date_created }}</h4>
+    {% endif %}
     <hr></hr>
   </div>
 
@@ -38,13 +41,19 @@
       {% for text in texts %}
         <li><a href="http://booksofduchesses.com/texts/{{text.title}}/">{{ text.title }}</a></li>
       {% endfor %}
+      </p>
+      {% if illuminators %}
+        <p class="w3-opacity">Illuminators:</p>
+      {% endif %}
       {% for illum in illuminators %}
         <li>{{ illum.name }}</a></li>
       {% endfor %}
+      {% if scribes %}
+        <p class="w3-opacity">Scribes:</p>
+      {% endif %}
       {% for scribe in scribes %}
         <li>{{ scribe.name }}</a></li>
       {% endfor %}
-        </p>
     </div>
     <!-- Map -->
     <div id="mapid" style="width:44%; height:600px; left:40px; float:left; z-index:0;">

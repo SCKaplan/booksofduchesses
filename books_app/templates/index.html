@@ -11,6 +11,10 @@
 <!-- Style that overrides w3schools stylesheet-->
 
 <style>
+#greenAdd {display: none;}
+#purpleAdd {display: none;}
+#textsAdd {display: none;}
+
 .center {
   margin: auto;
   width: 80%;
@@ -46,12 +50,32 @@
   width: 90px;
   background: gray;
 }
+/* Screen resizing for title */
+.w3-display-middle {
+  padding-left:130px;
+}
+
+
+@media screen and (max-width: 1000px) {
+  .w3-image {
+    opacity: 0.2;
+  }
+  .w3-display-middle {
+    padding-left:0px;
+  }
+  .column {
+    float: none;
+  }
+  .right {
+    width: 90%;
+  }
+}
 </style>
 
 <!-- Homepage setup, still needs modification for mobile -->
 <header class="w3-display-container w3-content w3-wide" style="max-width:1500px;" id="home">
-  <img class="w3-image" src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Woman_in_Medieval_Dress_or_Costume_%2822%29.JPG" alt="Medieval woman reading a book" width="600" height="600">
-  <div class="w3-display-middle w3-margin-top w3-center" style="padding-left: 130px;">
+  <div> <img class="w3-image" src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Woman_in_Medieval_Dress_or_Costume_%2822%29.JPG" alt="Medieval woman reading a book" width="600" height="600"></div>
+  <div class="w3-display-middle w3-margin-top w3-center">
     <a href="#map"><h1 class="w3-xxlarge w3-text-white"><span class="w3-padding w3-black w3-opacity-min"><b>Books of Duchesses</b></h1></span><br> <h3><span class="w3-hide-small w3-text-dark-grey">Women Book Owners in Late-Medieval Francophone Europe: 1350-1500</h3><br><br> <a class="w3-text-dark-grey" href=" https://www.haverford.edu/users/swatson
 ">Sarah Wilma Watson (Haverford College)</a> <br>&<br> <a class="w3-text-dark-grey" href=" https://clic.rice.edu/people/faculty/sc-kaplan">S.C. Kaplan (Rice University)</a> </span></a>
   </div>
@@ -88,7 +112,7 @@
 </div>
 
 <!-- Map Section -->
-<div class="column right" style="margin-top: 30px; padding-right:25px;">
+<div class="column right" style="margin-top: 30px; padding-right:25px; padding-left:10px;">
   <div id="mapid" style="width: 100%; height:800px;">
     <script>
       // Definte green icons, to represent books
@@ -177,35 +201,134 @@
 <div style="padding-left:25px;">
   <br></br>
   <br></br>
-  {% if book_len %}
+  {% if book_len or owner_len%}
   <!-- Check for search results, display them if they exist -->
   <h3>Search Results:</h3>
     <p><strong> Your search returned {{book_len}} books, {{owner_len}} owners, and {{text_len}} texts</strong></p>
+
   <ul style="padding-left: 30px;display: inline-block; vertical-align: top; text-align:left;">
   <h4>Books:</h4>
+    {% if books_search_preview %}
+      {% for b in books_search_preview %}
+        <li style="font-size:12px;"><a href="https://booksofduchesses.com/books/{{b.shelfmark}}">{{b.shelfmark}}</a></li>
+      {% endfor %}
+      <span id="greenMore"></span><span id="greenAdd">
+      {% for book in books_search %}
+        <li style="font-size:12px;"><a href="https://booksofduchesses.com/books/{{book.shelfmark}}">{{book.shelfmark}}</a></li>
+      {% endfor %}
+      </span>
+      <button onclick="greenFunction()" id="myBtn" style="border: 2px solid #4CAF50;font-size:10px;background-color:white">Show all {{book_len}} books</button>
+    {% else %}
     {% for book in books_search %}
       <li style="font-size:12px;"><a href="https://booksofduchesses.com/books/{{book.shelfmark}}">{{book.shelfmark}}</a></li>
     {% empty %}
-      <li style="font-size:12px;">No book locations were returned</li>
+      <li style="font-size:12px;">No book locations were returned (did you select the books checkbox?)</li>
     {% endfor %}
+    {% endif %}
   </ul>
+
+<script>
+function greenFunction() {
+  var dots = document.getElementById("greenMore");
+  var moreText = document.getElementById("greenAdd");
+  var btnText = document.getElementById("myBtn");
+
+  btnText.setAttribute("style","border: 2px solid #4CAF50;font-size:10px;background-color:white");
+  if (dots.style.display === "none") {
+    dots.style.display = "inline";
+    btnText.innerHTML = "Show all " + {{book_len}} + " books"; 
+    moreText.style.display = "none";
+  } else {
+    dots.style.display = "none";
+    btnText.innerHTML = "Show less"; 
+    moreText.style.display = "inline";
+  }
+}
+</script>
+
+
   <ul style="padding-left: 30px; display: inline-block; vertical-align: top; text-align:left;">
   <h4>Owners:</h4>
-    {% for owner in owners_search %}
-      <li style="font-size:12px;"><a href="https://booksofduchesses.com/owners/{{owner.name}}">{{owner.name}}</a></li>
-    {% empty %}
-      <li style="font-size:12px;">No owner locations were returned</li>
-    {% endfor %}
+    {% if owners_search_preview %}
+      {% for o in owners_search_preview %}
+        <li style="font-size:12px;"><a href="https://booksofduchesses.com/owners/{{o.name}}">{{o.name}}</a></li>
+      {% endfor %}
+      <span id="purpleMore"></span><span id="purpleAdd">
+      {% for owner in owners_search %}
+        <li style="font-size:12px;"><a href="https://booksofduchesses.com/owners/{{owner.name}}">{{owner.name}}</a></li>
+      {% endfor %}
+      </span>
+      <button onclick="purpleFunction()" id="theBtn" style="border: 2px solid #9400D3;font-size:10px;background-color:white">Show all {{owner_len}} owners</button>
+    {% else %}
+      {% for owner in owners_search %}
+        <li style="font-size:12px;"><a href="https://booksofduchesses.com/owners/{{owner.name}}">{{owner.name}}</a></li>
+      {% empty %}
+        <li style="font-size:12px;">No owner locations were returned</li>
+      {% endfor %}
+    {% endif %}
   </ul>
+
+<script>
+function purpleFunction() {
+  var dots = document.getElementById("purpleMore");
+  var moreText = document.getElementById("purpleAdd");
+  var btnText = document.getElementById("theBtn");
+
+  btnText.setAttribute("style","border: 2px solid #9400D3;font-size:10px;background-color:white");
+  if (dots.style.display === "none") {
+    dots.style.display = "inline";
+    btnText.innerHTML = "Show all " + {{owner_len}} + " owners";
+    moreText.style.display = "none";
+  } else {
+    dots.style.display = "none";
+    btnText.innerHTML = "Show less";
+    moreText.style.display = "inline";
+  }
+}
+</script>
+
+
   <ul style="padding-left: 30px;display: inline-block; vertical-align: top; text-align:left;">
   <h4>Texts:</h4>
-    {% for text in texts_search %}
-      <li style="font-size:12px;"><a href="https://booksofduchesses.com/texts/{{text.title}}">{{text.title}}</a></li>
-    {% empty %}
-      <li style="font-size:12px;">No texts were returned</li>
-    {% endfor %}
+    {% if texts_search_preview %}
+      {% for t in texts_search_preview %}
+        <li style="font-size:12px;"><a href="https://booksofduchesses.com/texts/{{t.title}}">{{t.title}}</a></li>
+      {% endfor %}
+      <span id="textsMore"></span><span id="textsAdd">
+      {% for text in texts_search %}
+        <li style="font-size:12px;"><a href="https://booksofduchesses.com/texts/{{text.title}}">{{text.title}}</a></li>
+      {% endfor %}
+      </span>
+      <button onclick="textsFunction()" id="textsBtn" style="border: 2px solid yellow;font-size:10px;background-color:white">Show all {{ text_len }} texts</button>
+    {% else %}
+      {% for text in texts_search %}
+        <li style="font-size:12px;"><a href="https://booksofduchesses.com/texts/{{text.title}}">{{text.title}}</a></li>
+      {% empty %}
+        <li style="font-size:12px;">No texts were returned</li>
+      {% endfor %}
+    {% endif %}
   </ul>
   {% endif %}
+
+<script>
+function textsFunction() {
+  var dots = document.getElementById("textsMore");
+  var moreText = document.getElementById("textsAdd");
+  var btnText = document.getElementById("textsBtn");
+
+  btnText.setAttribute("style","border: 2px solid yellow;font-size:10px;background-color:white");
+  if (dots.style.display === "none") {
+    dots.style.display = "inline";
+    btnText.innerHTML = "Show all " + {{text_len}} + " texts";
+    moreText.style.display = "none";
+  } else {
+    dots.style.display = "none";
+    btnText.innerHTML = "Show less";
+    moreText.style.display = "inline";
+  }
+}
+</script>
+
 </div>
 
 {% endblock %}
