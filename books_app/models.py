@@ -24,6 +24,7 @@ class Book(models.Model):
 	book_location = models.ManyToManyField('BookLocation', blank=True) # These are searched in the map
 	# Helps us cross reference book ownership, also convenient to display on templates
 	owner_info = models.ManyToManyField('DateOwned', blank=True, verbose_name="Ownership Information/History")
+
 	def __str__(self):
 		return self.shelfmark
 
@@ -47,6 +48,9 @@ class Owner(models.Model):
 	# This is the object we search for the map- a date range where an owner was in a location
 	owner_location = models.ManyToManyField('OwnerPlaceDateLived', blank=True)
 	relation = models.ManyToManyField('Relative', blank=True, verbose_name='Relatives')
+
+	class Meta:
+		ordering = ('name',)
 
 	def __str__(self):
 		return self.name
@@ -469,6 +473,9 @@ class Scribe(models.Model):
 # Texts have descriptive tags- searchable on main page
 class Tag(models.Model):
 	tag = models.CharField(max_length=200)
+
+	class Meta:
+		ordering = ('tag',)
 
 	def __str__(self):
 		return self.tag
