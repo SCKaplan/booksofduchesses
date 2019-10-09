@@ -163,7 +163,7 @@ class OwnerPlaceDateLived(models.Model):
 	def popupcontent(self):
 		# The content that goes in the popup on the map- html formatted
 		owner = Owner.objects.get(owner_location=self)
-		str = '<a href="https://booksofduchesses.com/owners/{}/">{}</a>, {} <br>'.format(owner.name, owner.name, self.date_at_location)
+		str = '<a href="https://booksofduchesses.com/owners/{}/" target="_blank">{}</a>, {} <br>'.format(owner.name, owner.name, self.date_at_location)
 		return '<strong>{}, {}</strong><br>{}'.format(self.the_place.City, self.the_place.Country, str)
 
 	class Meta:
@@ -257,7 +257,7 @@ class BookLocation(models.Model):
 	@property
 	def popupcontent(self):
 		book = self.book_shelfmark
-		str = '<a href="http://booksofduchesses.com/books/{}">{}</a>, owned by <a href="http://booksofduchesses.com/owners/{}/">{}</a> ({}) <br>'.format(book.shelfmark, book.shelfmark, self.owner_at_time, self.owner_at_time, self.date)
+		str = '<a href="http://booksofduchesses.com/books/{}" target="_blank">{}</a>, owned by <a href="http://booksofduchesses.com/owners/{}/" target="_blank">{}</a> ({}) <br>'.format(book.shelfmark, book.shelfmark, self.owner_at_time, self.owner_at_time, self.date)
 		return '<strong>{}, {}</strong><br>{}'.format(self.book_location.City, self.book_location.Country, str)
 
 	def __str__(self):
@@ -381,7 +381,7 @@ class Location(models.Model):
 		for owner_loc in a:
 			b = (Owner.objects.filter(owner_location=owner_loc))
 			if len(b) != 0:
-				str =  str + '<a href="https://booksofduchesses.com/owners/{}/">{}</a>, {} <br>'.format(b[0].name, b[0].name, owner_loc.date_at_location)
+				str =  str + '<a  href="https://booksofduchesses.com/owners/{}/" target="_blank" >{}</a>, {} <br>'.format(b[0].name, b[0].name, owner_loc.date_at_location)
 		return '<strong>{}, {}</strong><br>{}'.format(self.City, self.Country, str)
 
 	def __str__(self):

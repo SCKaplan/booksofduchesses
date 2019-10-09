@@ -201,7 +201,7 @@
 <div style="padding-left:25px;">
   <br></br>
   <br></br>
-  {% if book_len or owner_len%}
+  {% if book_len or owner_len %}
   <!-- Check for search results, display them if they exist -->
   <h3>Search Results:</h3>
     <p><strong> Your search returned {{book_len}} books, {{owner_len}} owners, and {{text_len}} texts</strong></p>
@@ -219,13 +219,16 @@
       </span>
       <button onclick="greenFunction()" id="myBtn" style="border: 2px solid #4CAF50;font-size:10px;background-color:white">Show all {{book_len}} books</button>
     {% else %}
-    {% for book in books_search %}
-      <li style="font-size:12px;"><a href="https://booksofduchesses.com/books/{{book.shelfmark}}">{{book.shelfmark}}</a></li>
-    {% empty %}
-      <li style="font-size:12px;">No book locations were returned (did you select the books checkbox?)</li>
-    {% endfor %}
+      {% for book in books_search %}
+        <li style="font-size:12px;"><a href="https://booksofduchesses.com/books/{{book.shelfmark}}">{{book.shelfmark}}</a></li>
+      {% empty %}
+        <li style="font-size:12px;">No book locations were returned (did you select the books checkbox?)</li>
+      {% endfor %}
+
     {% endif %}
   </ul>
+
+
 
 <script>
 function greenFunction() {
@@ -308,6 +311,7 @@ function purpleFunction() {
       {% endfor %}
     {% endif %}
   </ul>
+
   {% endif %}
 
 <script>
