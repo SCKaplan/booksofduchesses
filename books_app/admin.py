@@ -79,6 +79,8 @@ admin.site.register(Author, AuthorAdmin)
 class DateOwnedAdmin(admin.ModelAdmin):
     search_fields =['book_owned__shelfmark', 'book_owner__name']
     autocomplete_fields = ['book_owned', 'book_owner']
+    list_display = ['dateowned', 'book_owned', 'book_owner']
+    list_filter = ('book_owner','book_owned')
 
 admin.site.register(DateOwned, DateOwnedAdmin)
 
