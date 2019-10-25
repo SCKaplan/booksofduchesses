@@ -32,16 +32,13 @@ def index(request):
             texts_from_author = []
             books_from_author = []
             # For all the authors in a search result, add the texts which correspond to them
-            for auth in author_result:
-                text_query = Text.objects.filter(authors=auth)
-                for element in text_query:
-                    texts_from_author.append(element)
             if len(author) == 0:
                 texts_from_author = Text.objects.all()
             else:
                 for t in Text.objects.all():
                     if set(author_result) & set(t.authors.all()):
                         texts_from_author.append(t)
+
             # Find all books in which each text appears
             for text_obj in texts_from_author:
                 book = Book.objects.filter(text=text_obj)
@@ -158,21 +155,27 @@ def index(request):
             for owner_location in owners_final:
                  toAppend = Owner.objects.get(owner_location=owner_location)
                  owners_search.append(toAppend)
-            # Black magic, don't touch
+            # Get rid of duplicates
             owners_search = list(set(owners_search))
+            owner_len = len(owners_search)
+            owners_search_preview = []
+            if owner_len > 5:
+                owners_search_preview = owners_search[:5]
+                owners_search = owners_search[5:]
 
             books_search = []
             for book_location in books_final:
                  toAdd = Book.objects.get(book_location=book_location)
                  books_search.append(toAdd)
             books_search = list(set(books_search))
+            book_len = len(books_search)
+            books_search_preview = []
+            if book_len > 5:
+                books_search_preview = books_search[:5]
+                books_search = books_search[5:]
 
             # For displaying information about the search
-            owner_len = len(owners_search)
-            book_len = len(books_search)
             texts_search = list(set(texts_from_text) & set(texts_from_tag) & set(texts_from_author))
-            text_len = len(texts_search)
-
             if not (books_search or owners_search) and not (author or text or tag):
                 texts_search = []
             texts_search_preview = []
