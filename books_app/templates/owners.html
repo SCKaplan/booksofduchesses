@@ -104,6 +104,20 @@
   <!-- Right column -->
   <div class="w3-col l3 m6 w3-margin-bottom" style="float:right; text-align:center;">
     <h3 style="text-align:center;"><strong>{{owner.name}}'s Locations</strong></h3>
+
+        <form action="" method="post" id="map">
+            {% csrf_token %}
+        Order:
+            <select name="order">
+
+                <option type="radio" {{ order_list.0 }} value="alphabetical"> Alphabetical</option>
+                <option type="radio" {{ order_list.1 }} value="datedesc"> Descending date</option>>
+                <option type="radio" {{ order_list.2 }} value="dateasc">  Ascending date</option>>
+            </select>
+
+            <input type="submit" value="Sort">
+  </form>
+
     {% if locations %}
       {% for location in locations %}
         <p style="font-size:13px;">{{location.the_place.City}} ({{location.date_at_location}})</p>

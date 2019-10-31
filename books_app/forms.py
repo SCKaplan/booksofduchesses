@@ -69,6 +69,15 @@ class BookLocationAdminForm(forms.ModelForm):
 def get_choice_list():
     return [book.shelfmark for book in Book.objects.all()]
 
+ORDER_CHOICES= [
+    ('alphabetical', 'Alphabetical'),
+    ('datedesc', 'Descending date'),
+    ('dateasc', 'Ascending date'),
+    ]
+
+class OwnerLocationOrderForm(forms.Form):
+    order_option = forms.ChoiceField(label="Order by", widget=forms.RadioSelect(choices=ORDER_CHOICES))
+
 class SearchForm(forms.Form):
     search = forms.CharField(label='Search', max_length=100, required=False)
     start_date = forms.CharField(label='Start Date', max_length=100, required=False)

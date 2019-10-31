@@ -3,8 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.db.models import Q
 from books_app.models import *
-from books_app.forms import SearchForm
-
+from books_app.forms import *
 # Create your views here.
 # Disclaimer: this doesn't seem efficient but this version runs the fastest
 def index(request):
@@ -230,11 +229,43 @@ def books(request, book_id):
 def owners(request, owner_id):
     # owner_id is the name of an owner
     # Get all owner data for the template
-    owner = Owner.objects.get(name=owner_id)
-    location = owner.owner_location.all().order_by('date_at_location')
-    books = DateOwned.objects.filter(owner=owner).order_by('book_owned__shelfmark')
-    relatives = owner.relation.all()
-    return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books':books, 'owner':owner, 'locations':location})
+    order_list = ["selected", "", ""]
+    if request.method == 'POST':
+        order_form = OwnerLocationOrderForm(request.POST)
+        # if order_form.is_valid():
+        #     # Get form data
+        #     order = request.POST.get('order')
+        #     owner = Owner.objects.get(name=owner_id)
+        #     books = DateOwned.objects.filter(owner=owner).order_by('book_owned__shelfmark')
+        #     relatives = owner.relation.all()
+        #     order_form = OwnerLocationOrderForm()
+        #     if order=="datedesc":
+        #         location = owner.owner_location.all().order_by('date_at_location')
+        #     elif order=="alphabetical":
+        #         location = owner.owner_location.all().order_by('owner_location__the_place')
+        order = request.POST.get('order')
+        owner = Owner.objects.get(name=owner_id)
+        books = DateOwned.objects.filter(owner=owner).order_by('book_owned__shelfmark')
+        relatives = owner.relation.all()
+        order_form = OwnerLocationOrderForm()
+        if order=="alphabetical":
+            location = owner.owner_location.all().order_by('the_place__name')
+            order_list = ["selected", "", ""]
+        elif order=="datedesc":
+            location = owner.owner_location.all().order_by('date_at_location')
+            order_list = ["", "selected", ""]
+        elif order=="dateasc":
+            location = owner.owner_location.all().order_by('-date_at_location')
+            order_list = ["", "", "selected"]
+        return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list})
+
+    else:
+        owner = Owner.objects.get(name=owner_id)
+        location = owner.owner_location.all().order_by('-the_place')
+        books = DateOwned.objects.filter(owner=owner).order_by('book_owned__shelfmark')
+        relatives = owner.relation.all()
+        order_form = OwnerLocationOrderForm()
+        return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books':books, 'order_form':order_form, 'owner':owner, 'locations':location,  'order_list':order_list})
 
 def texts(request, text_id):
     # text_id is the title of a text
