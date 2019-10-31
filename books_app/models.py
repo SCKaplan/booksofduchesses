@@ -392,13 +392,13 @@ class Location(models.Model):
 
 # Linked to texts: Author has geo capabilities but these aren't used at the moment
 class Author(models.Model):
-	image = models.ImageField(null=True, blank=True)
-	geom = models.PointField(null=True, blank=True)
 	name = models.CharField(max_length=200)
-	link = models.CharField(max_length=1000, blank=True)
 	birth_date = models.CharField(max_length=200, blank=True)
 	death_date = models.CharField(max_length=200, blank=True)
+	link = models.CharField(max_length=1000, blank=True)
 	gender = models.CharField(max_length=200, blank=True)
+	image = models.ImageField(null=True, blank=True)
+	geom = models.PointField(null=True, blank=True)
 
 	@property
 	def popupcontent(self):
@@ -455,7 +455,10 @@ class Translator(models.Model):
 	name = models.CharField(max_length=200)
 	birth_year = models.CharField(max_length=200, blank=True, null=True)
 	death_year = models.CharField(max_length=200, blank=True, null=True)
-	arlima = models.CharField(max_length=200, blank=True, null=True)
+	gender = models.CharField(max_length=200, blank=True, null=True)
+	arlima = models.CharField(max_length=200, blank=True, null=True, verbose_name="Further Information (link)")
+	image = models.ImageField(null=True, blank=True)
+	geom = models.PointField(null=True, blank=True)
 
 	def __str__(self):
                 return self.name
@@ -500,3 +503,19 @@ class OwnershipEvidence(models.Model):
 
         def __str__(self):
                 return self.evidence
+
+class Printer(models.Model):
+        name = models.CharField(max_length=200)
+        link = models.CharField(max_length=1000, blank=True, verbose_name="Further Information (link)")
+        birth_date = models.CharField(max_length=200, blank=True)
+        death_date = models.CharField(max_length=200, blank=True)
+        gender = models.CharField(max_length=200, blank=True)
+        image = models.ImageField(null=True, blank=True)
+        geom = models.PointField(null=True, blank=True)
+
+        @property
+        def popupcontent(self):
+                return '<p>Printer popup</p>'
+
+        def __str__(self):
+                return self.name

@@ -201,8 +201,8 @@
 <div style="padding-left:25px;">
   <br></br>
   <br></br>
-  {% if book_len or owner_len %}
   <!-- Check for search results, display them if they exist -->
+  {% if display_search == True %}
   <h3>Search Results:</h3>
     <p><strong> Your search returned {{book_len}} books, {{owner_len}} owners, and {{text_len}} texts</strong></p>
 
@@ -312,7 +312,6 @@ function purpleFunction() {
     {% endif %}
   </ul>
 
-  {% endif %}
 
 <script>
 function textsFunction() {
@@ -332,6 +331,7 @@ function textsFunction() {
   }
 }
 </script>
+  {% endif %}
 
 </div>
 

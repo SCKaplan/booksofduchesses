@@ -26,15 +26,18 @@ def index(request):
             # Get books matching shelfmark search, all books if blank
             books_objs = Book.objects.filter(shelfmark__icontains=shelfmark)
 
-	        # Author Search Field
+            # Author Search Field
             author_result = Author.objects.filter(name__icontains=author)
             texts_from_author = []
             books_from_author = []
             # For all the authors in a search result, add the texts which correspond to them
-            for auth in author_result:
-                text_query = Text.objects.filter(authors=auth)
-                for element in text_query:
-                    texts_from_author.append(element)
+            if len(author) == 0:
+                texts_from_author = Text.objects.all()
+            else:
+                for t in Text.objects.all():
+                    if set(author_result) & set(t.authors.all()):
+                        texts_from_author.append(t)
+
             # Find all books in which each text appears
             for text_obj in texts_from_author:
                 book = Book.objects.filter(text=text_obj)
@@ -151,22 +154,37 @@ def index(request):
             for owner_location in owners_final:
                  toAppend = Owner.objects.get(owner_location=owner_location)
                  owners_search.append(toAppend)
-            # Black magic, don't touch
+            # Get rid of duplicates
             owners_search = list(set(owners_search))
+            owner_len = len(owners_search)
+            owners_search_preview = []
+            if owner_len > 5:
+                owners_search_preview = owners_search[:5]
+                owners_search = owners_search[5:]
 
             books_search = []
             for book_location in books_final:
                  toAdd = Book.objects.get(book_location=book_location)
                  books_search.append(toAdd)
             books_search = list(set(books_search))
+            book_len = len(books_search)
+            books_search_preview = []
+            if book_len > 5:
+                books_search_preview = books_search[:5]
+                books_search = books_search[5:]
 
             # For displaying information about the search
-            owner_len = len(owners_search)
-            book_len = len(books_search)
-            texts_search = set(texts_from_text) & set(texts_from_tag) & set(texts_from_author)
+            texts_search = list(set(texts_from_text) & set(texts_from_tag) & set(texts_from_author))
+            if not (books_search or owners_search) and not (author or text or tag):
+                texts_search = []
+            texts_search_preview = []
             text_len = len(texts_search)
+            if text_len > 5:
+                texts_search_preview = texts_search[:5]
+                texts_search = texts_search[5:]
+            display_search = True
 
-            return render(request, 'index.html',{'books_search': books_search, 'owners_search': owners_search, 'search_form': search_form, 'owners': owners_final, 'display':display, 'books': books_final, 'book_len': book_len, 'owner_len': owner_len, 'text_len': text_len, 'texts_search': texts_search,})
+            return render(request, 'index.html',{'books_search': books_search, 'owners_search': owners_search, 'search_form': search_form, 'owners': owners_final, 'display':display, 'books': books_final, 'book_len': book_len, 'owner_len': owner_len, 'text_len': text_len, 'texts_search': texts_search, 'books_search_preview': books_search_preview, 'owners_search_preview': owners_search_preview, 'texts_search_preview': texts_search_preview, 'display_search': display_search})
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -181,8 +199,9 @@ def index(request):
             for item in toAdd:
                 owners_default.append(item)
         search_form = SearchForm()
+        display_search = False
 
-        return render(request, 'index.html',{'books':books, 'locations':locations, 'search_form': search_form, 'authors': authors, 'owners':owners_default})
+        return render(request, 'index.html',{'books':books, 'locations':locations, 'search_form': search_form, 'authors': authors, 'owners':owners_default, 'display_search': display_search})
 
 def books(request, book_id):
     # book_id comes from the url- is a book's shelfmark
