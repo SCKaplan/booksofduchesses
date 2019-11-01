@@ -360,6 +360,9 @@ class DateOwned(models.Model):
 		verbose_name = 'Date owned'
 		verbose_name_plural = 'Dates Book Owned'
 
+	class Meta:
+		ordering = ('book_owner',)
+
 	def __str__(self):
 		return self.book_owned.shelfmark + ", " + self.book_owner.name + ", " + self.dateowned
 		#return self.book_owner.name + ", " + self.dateowned

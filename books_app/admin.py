@@ -23,6 +23,7 @@ admin.site.register(Location, LocationAdmin)
 class BookAdmin(admin.ModelAdmin):
     search_fields = ['shelfmark']
     autocomplete_fields = ['text', 'bibliography', 'book_location', 'owner_info', 'scribes', 'illuminators']
+    ordering = ('shelfmark',)
 
 admin.site.register(Book, BookAdmin)
 
