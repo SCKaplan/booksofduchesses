@@ -113,9 +113,9 @@
       <h3 style="text-align:center;"><strong>Ownership Details</strong></h3>
       {% for date in dates %}
 	{% if date.book_owner.gender == "Male" %}
-          <p style="font-size:13px;"><i>{{date.conf_or_possible}}</i> in <a style="color: blue;" href="https://booksofduchesses.com/books/{{date.book_owned}}">{{date.book_owned}}</a>, owned by {{date.book_owner}} ({{date.dateowned}})</p>
+          <p style="font-size:13px;"><a style="color: blue;" href="https://booksofduchesses.com/books/{{date.book_owned}}">{{date.book_owned}}</a> <i>{{date.conf_or_possible}}</i> owned by {{date.book_owner}} ({{date.dateowned}})</p>
         {% else %}
-          <p style="font-size:13px;"><i>{{date.conf_or_possible}}</i> in <a style="color: blue;" href="https://booksofduchesses.com/books/{{date.book_owned}}">{{date.book_owned}}</a>, owned by <a style="color: blue;" href="https://booksofduchesses.com/owners/{{date.book_owner}}">{{date.book_owner}}</a> ({{date.dateowned}})</p>
+          <p style="font-size:13px;"><a style="color: blue;" href="https://booksofduchesses.com/books/{{date.book_owned}}">{{date.book_owned}}</a> <i>{{date.conf_or_possible}}</i> owned by <a style="color: blue;" href="https://booksofduchesses.com/owners/{{date.book_owner}}">{{date.book_owner}}</a> ({{date.dateowned}})</p>
 	{% endif %} 
      {% endfor %}
       <br></br>

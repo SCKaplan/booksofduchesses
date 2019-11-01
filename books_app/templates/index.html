@@ -162,22 +162,63 @@
       // Get owners data
       var owners = {{ owners|geojsonfeature:'popupcontent'|safe }};
       // create a marker cluster group to add to
-      var mcg = new L.MarkerClusterGroup();
+      // var mcg = new L.MarkerClusterGroup();
       // Create a layer for owners, add each data point
+
+      var coords = [];
+      var popups = [];
+      var i;
+      var j;
+      var inArray = false;
+      var k;      
+      var z;
+      var t = 0;
+
       var ownerLayer = L.geoJSON(owners, {
           pointToLayer: function (feature, latlng) {
               return L.marker(latlng, {icon: violetIcon});
           },
           onEachFeature: function(feature, layer) {
-              var props = feature.properties.popupcontent;
+              c = [];
+              d = [];
+       	      props = [];
+
+              coords.push(feature.geometry.coordinates);
+  	      popups.push(feature.properties.popupcontent);
+              for (i = 0; i < coords.length; i++) {  
+                  for (j = 0; j < c.length; j++) {
+ 		      if (c[j][0][0] == (coords[i][0])) {
+  		          c[j].push(coords[i]);
+  			  d[j].push(popups[i]);
+ 	                  inArray = true;
+			  break;
+  	   	      }              
+                  }
+  		  if (inArray == false) {
+    		      c.push([coords[i]]);
+      		      d.push([popups[i]]);
+		  }
+  		  inArray = false;
+	      }
+
+	      for (k = 0; k < c.length; k++) {
+		  if (c[k].includes(feature.geometry.coordinates)) { break; }
+	          
+   	      }  
+	      var props = "";
+              props = props + d[k][0]
+	      for (t = 1; t < d[k].length; t++) {
+		  var x = d[k][t].indexOf("br>")
+		  d[k][t] = d[k][t].substring(x+3,d[k][t].length)
+		  props = props + d[k][t];
+	      } 
               var content = `<p>${props}</p>`;
               layer.bindPopup(content);
-          }
-      });
-      // create a marker cluster layer of the owner layer
-      mcg.addLayer(ownerLayer);
-      // add the marker cluster layer to the map
-      mymap.addLayer(mcg);
+           }
+      }).addTo(mymap);
+
+      inArray = false;
+      t = 0;
 
       // Follow the same process for books
       var books = {{ books|geojsonfeature:'popupcontent'|safe }};
@@ -186,13 +227,48 @@
               return L.marker(latlng, {icon: greenIcon});
           },
           onEachFeature: function(feature, layer) {
-              var props = feature.properties.popupcontent;
+              c = [];
+              d = [];
+       	      props = [];
+
+              coords.push(feature.geometry.coordinates);
+  	      popups.push(feature.properties.popupcontent);
+              for (i = 0; i < coords.length; i++) {  
+                  for (j = 0; j < c.length; j++) {
+ 		      if (c[j][0][0] == (coords[i][0])) {
+  		          c[j].push(coords[i]);
+  			  d[j].push(popups[i]);
+ 	                  inArray = true;
+			  break;
+  	   	      }              
+                  }
+  		  if (inArray == false) {
+    		      c.push([coords[i]]);
+      		      d.push([popups[i]]);
+		  }
+  		  inArray = false;
+	      }
+
+	      for (k = 0; k < c.length; k++) {
+		  if (c[k].includes(feature.geometry.coordinates)) { break; }
+	          
+   	      }  
+	      var props = "";
+              props = props + d[k][0]
+	      var booksStart = true;
+	      for (t = 1; t < d[k].length; t++) {
+		  var x = d[k][t].indexOf("br>")
+		  d[k][t] = d[k][t].substring(x+3,d[k][t].length)
+		  if (d[k][t].indexOf("owned by") > 0 && booksStart == true) {
+		      props = props + "<strong>Books: </strong><br>"
+		      booksStart = false;
+		  }
+		  props = props + d[k][t];
+	      } 
               var content = `<p>${props}</p>`;
               layer.bindPopup(content);
           }
-      });
-      mcg.addLayer(bookLayer);
-      mymap.addLayer(mcg);
+      }).addTo(mymap);
 
     </script>
   </div>
