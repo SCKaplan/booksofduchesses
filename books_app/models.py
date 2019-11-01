@@ -268,10 +268,10 @@ class DateOwned(models.Model):
 	book_owned = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
 	dateowned = models.CharField(max_length=200, null = True)
 	book_owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, null=True, help_text="If you don't have a known owner for this entry, select No known Owner")
-	Conf = 'Confirmed'
-	Poss = 'Possible'
-	conf_choices = [(Conf, "Confirmed"),(Poss, "Possible")]
-	conf_or_possible = models.CharField(max_length=9, choices=conf_choices, default='Confirmed')
+	Conf = 'confirmed'
+	Poss = 'possibly'
+	conf_choices = [(Conf, "confirmed"),(Poss, "possibly")]
+	conf_or_possible = models.CharField(max_length=9, choices=conf_choices, default='confirmed')
 
 	inscription = 'Inscription'
 	patron_portrait = 'Patron Portrait'
@@ -453,7 +453,7 @@ class Translator(models.Model):
 	birth_year = models.CharField(max_length=200, blank=True, null=True)
 	death_year = models.CharField(max_length=200, blank=True, null=True)
 	gender = models.CharField(max_length=200, blank=True, null=True)
-	arlima = models.CharField(max_length=200, blank=True, null=True, verbose_name="Further Information (link)")
+	link = models.CharField(max_length=200, blank=True, null=True)
 	image = models.ImageField(null=True, blank=True)
 	geom = models.PointField(null=True, blank=True)
 
