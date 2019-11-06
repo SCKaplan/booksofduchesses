@@ -66,6 +66,7 @@ admin.site.register(Owner, OwnerAdmin)
 
 class AuthorAdmin(admin.ModelAdmin):
     search_fields = ['name']
+    ordering = ['name']
 
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
@@ -79,7 +80,7 @@ admin.site.register(Author, AuthorAdmin)
 
 class DateOwnedAdmin(admin.ModelAdmin):
     search_fields =['book_owned__shelfmark', 'book_owner__name']
-    autocomplete_fields = ['book_owned', 'book_owner']
+    autocomplete_fields = ['book_owned', 'book_owner', 'ownership_type']
     list_display = ['dateowned', 'book_owned', 'book_owner']
     list_filter = ('book_owner','book_owned')
 
@@ -124,6 +125,7 @@ admin.site.register(Relative, RelativeAdmin)
 
 class TranslatorAdmin(admin.ModelAdmin):
     search_fields = ['name']
+    ordering = ['name']
 
 admin.site.register(Translator, TranslatorAdmin)
 
@@ -141,10 +143,17 @@ admin.site.register(BookLocation, BookLocationAdmin)
 
 class IlluminatorAdmin(admin.ModelAdmin):
     search_fields = ['name']
+    ordering = ['name']
 
 admin.site.register(Illuminator, IlluminatorAdmin)
 
 class ScribeAdmin(admin.ModelAdmin):
     search_fields = ['name']
+    ordering = ['name']
 
 admin.site.register(Scribe, ScribeAdmin)
+
+class EvidenceAdmin(admin.ModelAdmin):
+    search_fields = ['evidence', 'conf_or_possible']
+
+admin.site.register(Evidence, EvidenceAdmin)

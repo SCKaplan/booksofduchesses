@@ -224,27 +224,6 @@ def books(request, book_id):
             pass
     return render(request,'books.html', {'book':book, 'owners':owner_geo, 'texts': texts, 'bibs': bibs, 'places':places, 'iluminators': illuminators, 'scribes': scribes})
 
-def books(request, book_id):
-    # book_id comes from the url- is a book's shelfmark
-    # Get all the data we need on a book and send to template
-    book = Book.objects.get(shelfmark=book_id)
-    texts = book.text.all()
-    bibs = book.bibliography.all()
-    # Geo data for the template map
-    places = BookLocation.objects.filter(book_shelfmark=book)
-    illuminators = book.illuminators.all()
-    scribes = book.scribes.all()
-    # For owners we query DateOwned objects because they contain dates which we need to be on template
-    owners_date = DateOwned.objects.filter(book_owned=book).order_by('dateowned')
-    owner_geo = []
-    for owner in owners_date:
-        try:
-            # In case some misc dateowned objects appear- if everything has a link and we clean up this isn't necessary
-            owner_geo.append(owner)
-        except:
-            pass
-    return render(request,'books.html', {'book':book, 'owners':owner_geo, 'texts': texts, 'bibs': bibs, 'places':places, 'iluminators': illuminators, 'scribes': scribes})
-
 def owners(request, owner_id):
     # owner_id is the name of an owner
     # Get all owner data for the template
@@ -291,6 +270,8 @@ def texts(request, text_id):
     text = Text.objects.get(title=text_id)
     books = Book.objects.filter(text=text)
     languages = text.language.all()
+    authors = text.authors.all()
+    translators = text.translators.all()
     tags = text.tags.all()
     places = []
     dates = []
@@ -304,7 +285,7 @@ def texts(request, text_id):
         for date in toAdd:
             # Add DateOwned objects to a list for display
             dates.append(date)
-    return render(request, 'texts.html', {'text': text, 'books': books, 'languages': languages, 'tags': tags, 'places': places, 'dates' : dates})
+    return render(request, 'texts.html', {'text': text, 'books': books, 'languages': languages, 'tags': tags, 'places': places, 'dates' : dates, 'authors' : authors, 'translators': translators})
 
 def loadup(request):
     # Inactive- used for database loading

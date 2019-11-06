@@ -280,8 +280,10 @@ class DateOwned(models.Model):
 	arms = 'Arms'
 	will = 'Will'
 	other = 'Other'
+
 	type_choices = [(inscription, "Inscription"), (patron_portrait, "Patron Portrait"), (inventory,"Inventory"), (archival_mention, "Archival Mention"), (arms, "Arms"), (will, "Will"), (other, "Other")]
 	evidence = models.CharField(max_length=40, choices=type_choices, default='Inscription')
+	ownership_type = models.ManyToManyField('Evidence')
 
 	# Outputs a list of len 2- a range of datetimes from an ambigious string
 	def date_range(self):
@@ -519,3 +521,13 @@ class Printer(models.Model):
 
         def __str__(self):
                 return self.name
+
+class Evidence(models.Model):
+	Conf = 'confirmed'
+	Poss = 'possibly'
+	conf_choices = [(Conf, "confirmed"),(Poss, "possibly")]
+	conf_or_possible = models.CharField(max_length=9, choices=conf_choices, default='confirmed')
+	evidence = models.CharField(max_length=200)
+
+	def __str__(self):
+		return self.conf_or_possible + ", " + self.evidence

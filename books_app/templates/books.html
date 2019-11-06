@@ -109,7 +109,7 @@
         {% if owner.book_owner.gender == "Male" %}
           <p>{{ owner.book_owner }}, Ownership {{owner.conf_or_possible}} ({{ owner.dateowned }})</p>
         {% else %}
-          <p><a href="http://booksofduchesses.com/owners/{{owner.book_owner}}/">{{ owner.book_owner }}</a>, Ownership {{owner.conf_or_possible}} ({{ owner.dateowned }})</p>
+          <p><a href="http://booksofduchesses.com/owners/{{owner.book_owner}}/">{{ owner.book_owner }}</a>, Ownership {{ owner.conf_or_possible }} ({{ owner.dateowned }})</p>
         {% endif %}
       {% endfor %}
       <br></br>
