@@ -12,18 +12,18 @@ class Book(models.Model):
 	type_choices = [(type_print, "Print"),(Manuscript, "Manuscript")]
 	type = models.CharField(max_length=30, choices=type_choices, default='Manuscript')
 
-	printer = models.CharField(max_length=200, blank=True, verbose_name="Printer Information")
 	ex_libris = models.TextField(blank=True) # Hasn't been used yet, but is in AirTable so leaving it here
-	bibliography = models.ManyToManyField('Bibliography', blank=True)
-	digital_version = models.CharField(max_length=200, blank=True)
 	date_created= models.CharField(max_length=200, blank=True, null=True)
-	illuminators = models.ManyToManyField('Illuminator', blank=True)
-	scribes = models.ManyToManyField('Scribe', blank=True)
 	catalog_entry = models.CharField(max_length=2000, blank=True)
+	digital_version = models.CharField(max_length=200, blank=True)
+	scribes = models.ManyToManyField('Scribe', blank=True)
+	illuminators = models.ManyToManyField('Illuminator', blank=True)
+	printer = models.ManyToManyField('Printer', blank=True, verbose_name="Printer Information")
 	# These fields are important for mapping
 	book_location = models.ManyToManyField('BookLocation', blank=True) # These are searched in the map
 	# Helps us cross reference book ownership, also convenient to display on templates
 	owner_info = models.ManyToManyField('DateOwned', blank=True, verbose_name="Ownership Information/History")
+	bibliography = models.ManyToManyField('Bibliography', blank=True)
 
 	def __str__(self):
 		return self.shelfmark
@@ -32,16 +32,17 @@ class Owner(models.Model):
 	image = models.ImageField(null=True, blank=True)
 	image_citation = models.CharField(max_length=500, blank=True, null=True)
 	name = models.CharField(max_length=200)
-	motto = models.CharField(max_length=200, blank=True, null=True)
+	titles = models.CharField(max_length=200, blank=True, null=True)
 	birth_year = models.CharField(max_length=200, blank=True, null=True)
 	death_year = models.CharField(max_length=200, blank=True, null=True)
-	titles = models.CharField(max_length=200, blank=True, null=True)
-	symbol = models.CharField("Symbol(s)", max_length=200, blank=True, null=True)
 
 	Female = 'Female'
 	Male = 'Male'
 	gen_choices = [(Female, "Female"),(Male, "Male")]
 	gender = models.CharField(max_length=9, choices=gen_choices, default='Female')
+
+	motto = models.CharField(max_length=200, blank=True, null=True)
+	symbol = models.CharField("Symbol(s)", max_length=200, blank=True, null=True)
 
 	# Helps us cross refernce and useful in templates
 	book_date = models.ManyToManyField('DateOwned', blank=True, verbose_name='Instance of Book Ownership')
@@ -315,11 +316,13 @@ class DateOwned(models.Model):
 					date = "1350"
 				else:
 					date = "1500"
-			if date.find('?') != -1:
+			if date.find('?') != -1 and date.find('??') == -1:
 				# If we get a something like '1426?'
 				# Maybe add an uncertainty factor to this
 				# If we get a date with a ? i.e. "1460?"
 				date = date.replace("?", "")
+			if date.find('??') != -1:
+				date = date.replace("??", "00")
 			if "c." in date:
 				# 'c. 1450'
 				# Maybe do a +/- operation to just get a range straight off the bat
@@ -397,8 +400,13 @@ class Author(models.Model):
 	name = models.CharField(max_length=200)
 	birth_date = models.CharField(max_length=200, blank=True)
 	death_date = models.CharField(max_length=200, blank=True)
-	link = models.CharField(max_length=1000, blank=True)
-	gender = models.CharField(max_length=200, blank=True)
+	link = models.CharField(max_length=1000, blank=True, verbose_name="Further Information (link)")
+
+	Female = 'Female'
+	Male = 'Male'
+	gen_choices = [(Female, "Female"),(Male, "Male")]
+	gender = models.CharField(max_length=9, choices=gen_choices, default='Female')
+
 	image = models.ImageField(null=True, blank=True)
 	geom = models.PointField(null=True, blank=True)
 
@@ -411,7 +419,7 @@ class Author(models.Model):
 
 # Source reference for book ownership
 class Bibliography(models.Model):
-	author_date = models.CharField(max_length=200)
+	author_date = models.CharField(max_length=200, verbose_name="Author Last Name, Date")
 	source = models.CharField(max_length=10000)
 
 	def __str__(self):
@@ -457,8 +465,13 @@ class Translator(models.Model):
 	name = models.CharField(max_length=200)
 	birth_year = models.CharField(max_length=200, blank=True, null=True)
 	death_year = models.CharField(max_length=200, blank=True, null=True)
-	gender = models.CharField(max_length=200, blank=True, null=True)
-	link = models.CharField(max_length=200, blank=True, null=True)
+
+	Female = 'Female'
+	Male = 'Male'
+	gen_choices = [(Female, "Female"),(Male, "Male")]
+	gender = models.CharField(max_length=9, choices=gen_choices, default='Female')
+
+	link = models.CharField(max_length=200, blank=True, null=True, verbose_name="Further Information (link)")
 	image = models.ImageField(null=True, blank=True)
 	geom = models.PointField(null=True, blank=True)
 
@@ -468,12 +481,34 @@ class Translator(models.Model):
 # Linked in Book
 class Illuminator(models.Model):
         name = models.CharField(max_length=200)
+        birth_year = models.CharField(max_length=200, blank=True, null=True)
+        death_year = models.CharField(max_length=200, blank=True, null=True)
+
+        Female = 'Female'
+        Male = 'Male'
+        gen_choices = [(Female, "Female"),(Male, "Male")]
+        gender = models.CharField(max_length=9, choices=gen_choices, default='Female')
+
+        link = models.CharField(max_length=200, blank=True, null=True, verbose_name="Further Information (link)")
+        image = models.ImageField(null=True, blank=True)
+        geom = models.PointField(null=True, blank=True)
         def __str__(self):
                 return self.name
 
 # Linked in Book
 class Scribe(models.Model):
         name = models.CharField(max_length=200)
+        birth_year = models.CharField(max_length=200, blank=True, null=True)
+        death_year = models.CharField(max_length=200, blank=True, null=True)
+
+        Female = 'Female'
+        Male = 'Male'
+        gen_choices = [(Female, "Female"),(Male, "Male")]
+        gender = models.CharField(max_length=9, choices=gen_choices, default='Female')
+
+        link = models.CharField(max_length=200, blank=True, null=True, verbose_name="Further Information (link)")
+        image = models.ImageField(null=True, blank=True)
+        geom = models.PointField(null=True, blank=True)
 
         def __str__(self):
                 return self.name
@@ -511,7 +546,12 @@ class Printer(models.Model):
         link = models.CharField(max_length=1000, blank=True, verbose_name="Further Information (link)")
         birth_date = models.CharField(max_length=200, blank=True)
         death_date = models.CharField(max_length=200, blank=True)
-        gender = models.CharField(max_length=200, blank=True)
+
+        Female = 'Female'
+        Male = 'Male'
+        gen_choices = [(Female, "Female"),(Male, "Male")]
+        gender = models.CharField(max_length=9, choices=gen_choices, default='Female')
+
         image = models.ImageField(null=True, blank=True)
         geom = models.PointField(null=True, blank=True)
 
@@ -523,9 +563,9 @@ class Printer(models.Model):
                 return self.name
 
 class Evidence(models.Model):
-	Conf = 'confirmed'
-	Poss = 'possibly'
-	conf_choices = [(Conf, "confirmed"),(Poss, "possibly")]
+	Conf = 'Confirmed'
+	Poss = 'Possible'
+	conf_choices = [(Conf, "Confirmed"),(Poss, "Possible")]
 	conf_or_possible = models.CharField(max_length=9, choices=conf_choices, default='confirmed')
 	evidence = models.CharField(max_length=200)
 

@@ -91,6 +91,14 @@ def index(request):
             # Owner Search Field
             owners_objs = Owner.objects.filter(name__icontains=owners_search)
 
+            books_from_owners = []
+            for owners_obj in owners_objs:
+                books_from_owners.append(BookLocation.objects.filter(owner_at_time=owners_obj))
+            books_from_owners1 = []
+            for query in books_from_owners:
+                for lst in query:
+                    books_from_owners1.append(lst)
+            books_to_filter = list(set(books_from_owners1) & set(books_to_filter))
             # Per profs. request- if user searches for texts the owners which owned those texts must appear
             # on the map as well
             owners_from_books = []
@@ -142,7 +150,7 @@ def index(request):
                 if not(dateRange[1] < searchRange[0] or dateRange[0] > searchRange[1]):
                     books_final.append(date)
 
-	        # Same process for each OwnerPlaceDateLived
+            # Same process for each OwnerPlaceDateLived
             owners_final = []
             for owner_date in owner_to_filter:
                 dateRange = owner_date.date_range()
@@ -174,7 +182,14 @@ def index(request):
                 books_search = books_search[5:]
 
             # For displaying information about the search
-            texts_search = list(set(texts_from_text) & set(texts_from_tag) & set(texts_from_author))
+            texts_from_books = []
+            q = []
+            for v in books_search:
+                q.append(v.text.all())
+            for textquery in q:
+                for listing in textquery:
+                    texts_from_books.append(listing)
+            texts_search = list(set(texts_from_text) & set(texts_from_books) & set(texts_from_tag) & set(texts_from_author))
             if not (books_search or owners_search) and not (author or text or tag):
                 texts_search = []
             texts_search_preview = []
@@ -214,7 +229,9 @@ def books(request, book_id):
     illuminators = book.illuminators.all()
     scribes = book.scribes.all()
     # For owners we query DateOwned objects because they contain dates which we need to be on template
-    owners_date = DateOwned.objects.filter(book_owned=book).order_by('dateowned')
+    # orders by date_range method... i think
+    owners_date = sorted(DateOwned.objects.filter(book_owned=book), key=lambda a: a.date_range())
+    #owners_date = DateOwned.objects.filter(book_owned=book).order_by('dateowned')
     owner_geo = []
     for owner in owners_date:
         try:
@@ -291,6 +308,19 @@ def loadup(request):
     # Inactive- used for database loading
     return HttpResponse('Success')
 
+def search(request):
+    if request.method == 'POST':
+        search_form = SearchForm(request.POST)
+    else:
+        search_form = SearchForm()
+        dates = DateOwned.objects.all()
+        #dates = dates[0:300]
+        owners = Owner.objects.all()
+        books = Book.objects.all()
+        texts = Text.objects.all()
+
+    return render(request, 'search.html', {'search_form': search_form, 'dates':dates, 'owners':owners, 'books':books, 'texts':texts})
+
 # Inactive- to be used for autocomplete
 class BooksAutocomplete(autocomplete.Select2ListView):
     def create(self, text): # To create a new object
@@ -303,3 +333,5 @@ class BooksAutocomplete(autocomplete.Select2ListView):
             filter_result = Book.objects.all().filter(shelfmark__icontains=self.q)
             list = [book.shelfmark for book in filter_result]
         return list
+
+

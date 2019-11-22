@@ -211,6 +211,10 @@
 		  var x = d[k][t].indexOf("br>")
 		  d[k][t] = d[k][t].substring(x+3,d[k][t].length)
 		  props = props + d[k][t];
+                  if (t > 10) {
+                      props = props + "<p>and " + ((d[k].length) + -t) + " more results. Narrow down your search!</p>";
+                      break;
+                  }
 	      } 
               var content = `<p>${props}</p>`;
               layer.bindPopup(content);
@@ -263,6 +267,11 @@
 		      props = props + "<strong>Books: </strong><br>"
 		      booksStart = false;
 		  }
+                  if (t > 10) {
+                      props = props + "<p>and " + ((d[k].length) + -t) + " more results. Narrow down your search!</p>";
+                      break;
+                  }
+		// Can add an additional break to reduce lag?
 		  props = props + d[k][t];
 	      } 
               var content = `<p>${props}</p>`;
@@ -330,11 +339,19 @@ function greenFunction() {
   <h4>Owners:</h4>
     {% if owners_search_preview %}
       {% for o in owners_search_preview %}
-        <li style="font-size:12px;"><a href="https://booksofduchesses.com/owners/{{o.name}}">{{o.name}}</a></li>
+	{% if o.gender == "Male" %}
+          <li style="font-size:12px;">{{o.name}}</li>
+        {% else %}
+          <li style="font-size:12px;"><a href="https://booksofduchesses.com/owners/{{o.name}}">{{o.name}}</a></li>
+  	{% endif %}
       {% endfor %}
       <span id="purpleMore"></span><span id="purpleAdd">
       {% for owner in owners_search %}
-        <li style="font-size:12px;"><a href="https://booksofduchesses.com/owners/{{owner.name}}">{{owner.name}}</a></li>
+	{% if owner.gender == "Male" %}
+          <li style="font-size:12px;">{{owner.name}}</li>
+	{% else %}        
+	  <li style="font-size:12px;"><a href="https://booksofduchesses.com/owners/{{owner.name}}">{{owner.name}}</a></li>
+	{% endif %}
       {% endfor %}
       </span>
       <button onclick="purpleFunction()" id="theBtn" style="border: 2px solid #9400D3;font-size:10px;background-color:white">Show all {{owner_len}} owners</button>

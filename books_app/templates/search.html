@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load geojson_tags %}
+{% load static %}
+
+{% block content %}
+<script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+
+<style>
+#greenAdd {display: none;}
+#purpleAdd {display: none;}
+#textsAdd {display: none;}
+
+.center {
+  margin: auto;
+  width: 80%;
+  border: 3px solid darkblue;
+  padding: 10px;
+}
+* {
+  box-sizing: border-box;
+}
+/* Create two unequal columns that float next to each other */
+.column {
+  float: left;
+  padding: 10px;
+  height: 820px; /* Should be removed. Only for demonstration */
+}
+.left {
+  width: 20%;
+}
+.right {
+  width: 80%;
+}
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+/* Map legend style */
+.legend {
+  line-height: 18px;
+  color: white;
+  padding-left:10px;
+  width: 90px;
+  background: gray;
+}
+/* Screen resizing for title */
+.w3-display-middle {
+  padding-left:130px;
+}
+
+
+@media screen and (max-width: 1000px) {
+  .w3-image {
+    opacity: 0.2;
+  }
+  .w3-display-middle {
+    padding-left:0px;
+  }
+  .column {
+    float: none;
+  }
+  .right {
+    width: 90%;
+  }
+}
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 15px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+
+<body>
+  <div class="w3-container w3-padding-32" id="projects">
+    <h2 style="text-align:center; padding-top:30px;">Search All Records</h2>
+    <h4 class="w3-opacity" style="text-align:center;"> Includes records without geographical information</h4>
+    <hr></hr>
+  </div>
+
+<div>
+<h3 style="text-align:center" class="w3-opacity">Ownership Events</h3>
+<script>
+$(document).ready(function() {
+    $('#example').DataTable( {
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+    } );
+} );
+</script>
+
+<table id="example" class="display" style="width:95%; padding-top:0px;">
+        <thead>
+            <tr>
+                <th>Book Owner</th>
+                <th>Book Shelfmark</th>
+                <th>Dates of Ownership</th>
+	        
+            </tr>
+        </thead>
+        <tbody>
+	{% for date in dates %}
+            <tr>
+                <td><a href="https://booksofduchesses.com/owners/{{ date.book_owner }}">{{ date.book_owner }}</a></td>
+                <td><a href="https://booksofduchesses.com/books/{{ date.book_owned }}">{{ date.book_owned }}</a></td>
+                <td>{{ date.dateowned }}</td>
+            </tr>  
+	{% endfor %}
+      </tbody>
+</table>
+</div>
+<br>
+<br>
+<div>
+<h3 style="text-align:center" class="w3-opacity">Owners</h3>
+<script>
+$(document).ready(function() {
+    $('#ownerstable').DataTable( {
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+    } );
+} );
+</script>
+
+<table id="ownerstable" class="display" style="width:95%; align:center; padding-top:0px;">
+        <thead>
+            <tr>
+                <th>Owner</th>
+		<th>Symbol</th>
+                <th>Birth date - Death Date</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for owner in owners %}
+            <tr>
+                <td><a href="https://booksofduchesses.com/owners/{{ owner.name }}">{{ owner.name }}</a></td>
+		<td>{{ owner.symbol }}</td>
+                <td>{{ owner.birth_year }} - {{ owner.death_year }}</td>
+            </tr>
+        {% endfor %}
+      </tbody>
+</table>
+</div>
+
+<br>
+<br>
+<div>
+<h3 style="text-align:center" class="w3-opacity">Books</h3>
+<script>
+$(document).ready(function() {
+    $('#bookstable').DataTable( {
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+    } );
+} );
+</script>
+
+<table id="bookstable" class="display" style="width:95%; align:center; padding-top:0px;">
+        <thead>
+            <tr>
+                <th>Shelfmark</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for book in books %}
+            <tr>
+                <td><a href="https://booksofduchesses.com/books/{{ book.shelfmark }}">{{ book.shelfmark }}</a></td>
+                <td>{{ book.type }}</td>
+            </tr>
+        {% endfor %}
+      </tbody>
+</table>
+</div>
+
+<br>
+<br>
+<div>
+<h3 style="text-align:center" class="w3-opacity">Texts</h3>
+<script>
+$(document).ready(function() {
+    $('#textstable').DataTable( {
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+    } );
+} );
+</script>
+
+<table id="textstable" class="display" style="width:95%; align:center; padding-top:0px;">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>English Name</th>
+		<th>Date Composed</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for text in texts %}
+            <tr>
+                <td><a href="https://booksofduchesses.com/texts/{{ text.title }}">{{ text.title }}</a></td>
+                <td>{{ text.name_eng }}</td>
+                <td>{{ text.date_composed }}</td>
+            </tr>
+        {% endfor %}
+      </tbody>
+</table>
+</div>
+
+
+</body>
+
+{% endblock %}

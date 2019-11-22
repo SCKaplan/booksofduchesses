@@ -22,7 +22,7 @@ admin.site.register(Location, LocationAdmin)
 
 class BookAdmin(admin.ModelAdmin):
     search_fields = ['shelfmark']
-    autocomplete_fields = ['text', 'bibliography', 'book_location', 'owner_info', 'scribes', 'illuminators']
+    autocomplete_fields = ['text', 'bibliography', 'book_location', 'owner_info', 'scribes', 'illuminators', 'printer']
     ordering = ('shelfmark',)
 
 admin.site.register(Book, BookAdmin)
@@ -157,3 +157,8 @@ class EvidenceAdmin(admin.ModelAdmin):
     search_fields = ['evidence', 'conf_or_possible']
 
 admin.site.register(Evidence, EvidenceAdmin)
+
+class PrinterAdmin(admin.ModelAdmin):
+    search_fields = ['name']
+
+admin.site.register(Printer, PrinterAdmin)
