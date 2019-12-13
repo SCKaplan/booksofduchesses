@@ -15,5 +15,7 @@ urlpatterns = [
     path('owners/<str:owner_id>/', views.owners, name='owners'),
     path('texts/<str:text_id>/', views.texts, name='texts'),
     path('books-autocomplete/', views.BooksAutocomplete.as_view(), name='books-autocomplete'),
-    path('search', views.search, name='search')
+    path('search', views.search, name='search'),
+    path('about', views.about, name='about'),
+    path('howto', views.howto, name='howto')
 ]

@@ -89,136 +89,138 @@ tr:nth-child(even) {
 </style>
 
 <body>
-  <div class="w3-container w3-padding-32" id="projects">
-    <h2 style="text-align:center; padding-top:30px;">Search All Records</h2>
-    <h4 class="w3-opacity" style="text-align:center;"> Includes records without geographical information</h4>
-    <hr></hr>
-  </div>
+<div class="w3-container w3-padding-32" id="projects">
+  <h2 style="text-align:center; padding-top:30px;">Search All Records</h2>
+  <h4 class="w3-opacity" style="text-align:center;"> Includes records without geographical information</h4>
+  <hr></hr>
+</div>
 
-<div>
-<h3 style="text-align:center" class="w3-opacity">Ownership Events</h3>
-<script>
-$(document).ready(function() {
-    $('#example').DataTable( {
-        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+<div style="padding-left: 20px; padding-right: 20px;">
+  <h3 style="text-align:center" class="w3-opacity">Ownership Events</h3>
+  <script>
+    $(document).ready(function() {
+        $('#example').DataTable( {
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+        } );
     } );
-} );
-</script>
+  </script>
 
-<table id="example" class="display" style="width:95%; padding-top:0px;">
-        <thead>
-            <tr>
-                <th>Book Owner</th>
-                <th>Book Shelfmark</th>
-                <th>Dates of Ownership</th>
-	        
-            </tr>
-        </thead>
-        <tbody>
-	{% for date in dates %}
-            <tr>
-                <td><a href="https://booksofduchesses.com/owners/{{ date.book_owner }}">{{ date.book_owner }}</a></td>
-                <td><a href="https://booksofduchesses.com/books/{{ date.book_owned }}">{{ date.book_owned }}</a></td>
-                <td>{{ date.dateowned }}</td>
-            </tr>  
+  <table id="example" class="display" padding-top:0px;">
+    <thead>
+      <tr>
+        <th>Book Owner</th>
+        <th>Book Shelfmark</th>
+        <th>Dates of Ownership</th>	        
+      </tr>
+    </thead>
+      <tbody>
+        {% for date in dates %}
+          <tr>
+            <td><a href="https://booksofduchesses.com/owners/{{ date.book_owner }}">{{ date.book_owner }}</a></td>
+            <td><a href="https://booksofduchesses.com/books/{{ date.book_owned }}">{{ date.book_owned }}</a></td>
+            <td>{{ date.dateowned }}</td>
+          </tr>  
 	{% endfor %}
       </tbody>
-</table>
+  </table>
 </div>
+
 <br>
 <br>
-<div>
-<h3 style="text-align:center" class="w3-opacity">Owners</h3>
-<script>
-$(document).ready(function() {
-    $('#ownerstable').DataTable( {
-        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+
+<div style="padding-left: 20px; padding-right: 20px;">
+  <h3 style="text-align:center" class="w3-opacity">Owners</h3>
+  <script>
+    $(document).ready(function() {
+        $('#ownerstable').DataTable( {
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+        } );
     } );
-} );
-</script>
+  </script>
 
-<table id="ownerstable" class="display" style="width:95%; align:center; padding-top:0px;">
-        <thead>
-            <tr>
-                <th>Owner</th>
-		<th>Symbol</th>
-                <th>Birth date - Death Date</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for owner in owners %}
-            <tr>
-                <td><a href="https://booksofduchesses.com/owners/{{ owner.name }}">{{ owner.name }}</a></td>
-		<td>{{ owner.symbol }}</td>
-                <td>{{ owner.birth_year }} - {{ owner.death_year }}</td>
-            </tr>
-        {% endfor %}
-      </tbody>
-</table>
+  <table id="ownerstable" class="display" style="align:center; padding-top:0px;">
+    <thead>
+      <tr>
+        <th>Owner</th>
+	<th>Symbol</th>
+        <th>Birth date - Death Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for owner in owners %}
+        <tr>
+          <td><a href="https://booksofduchesses.com/owners/{{ owner.name }}">{{ owner.name }}</a></td>
+	  <td>{{ owner.symbol }}</td>
+          <td>{{ owner.birth_year }} - {{ owner.death_year }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 
 <br>
 <br>
-<div>
-<h3 style="text-align:center" class="w3-opacity">Books</h3>
-<script>
-$(document).ready(function() {
-    $('#bookstable').DataTable( {
-        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+
+<div style="padding-left: 20px; padding-right: 20px;">
+  <h3 style="text-align:center" class="w3-opacity">Books</h3>
+  <script>
+    $(document).ready(function() {
+        $('#bookstable').DataTable( {
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+        } );
     } );
-} );
-</script>
+  </script>
 
-<table id="bookstable" class="display" style="width:95%; align:center; padding-top:0px;">
-        <thead>
-            <tr>
-                <th>Shelfmark</th>
-                <th>Type</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for book in books %}
-            <tr>
-                <td><a href="https://booksofduchesses.com/books/{{ book.shelfmark }}">{{ book.shelfmark }}</a></td>
-                <td>{{ book.type }}</td>
-            </tr>
-        {% endfor %}
-      </tbody>
-</table>
+  <table id="bookstable" class="display" style="align:center; padding-top:0px;">
+    <thead>
+      <tr>    
+        <th>Shelfmark</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for book in books %}
+         <tr>
+           <td><a href="https://booksofduchesses.com/books/{{ book.shelfmark }}">{{ book.shelfmark }}</a></td>
+           <td>{{ book.type }}</td>
+         </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 
 <br>
 <br>
-<div>
-<h3 style="text-align:center" class="w3-opacity">Texts</h3>
-<script>
-$(document).ready(function() {
-    $('#textstable').DataTable( {
-        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+
+<div style="padding-left: 20px; padding-right: 20px;">
+  <h3 style="text-align:center" class="w3-opacity">Texts</h3>
+  <script>
+    $(document).ready(function() {
+       $('#textstable').DataTable( {
+           "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+        } );
     } );
-} );
-</script>
+  </script>
 
-<table id="textstable" class="display" style="width:95%; align:center; padding-top:0px;">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>English Name</th>
-		<th>Date Composed</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for text in texts %}
-            <tr>
-                <td><a href="https://booksofduchesses.com/texts/{{ text.title }}">{{ text.title }}</a></td>
-                <td>{{ text.name_eng }}</td>
-                <td>{{ text.date_composed }}</td>
-            </tr>
-        {% endfor %}
-      </tbody>
-</table>
+  <table id="textstable" class="display" style="align:center; padding-top:0px;">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>English Name</th>
+	<th>Date Composed</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for text in texts %}
+         <tr>
+           <td><a href="https://booksofduchesses.com/texts/{{ text.title }}">{{ text.title }}</a></td>
+           <td>{{ text.name_eng }}</td>
+           <td>{{ text.date_composed }}</td>
+         </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
-
 
 </body>
 

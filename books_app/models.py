@@ -44,6 +44,11 @@ class Owner(models.Model):
 	motto = models.CharField(max_length=200, blank=True, null=True)
 	symbol = models.CharField("Symbol(s)", max_length=200, blank=True, null=True)
 
+	arms = models.ImageField(null=True, blank=True)
+	arms_citation = models.CharField(max_length=500, blank=True, null=True)
+	signatures = models.ImageField(null=True, blank=True)
+	signatures_citation = models.CharField(max_length=500, blank=True, null=True)
+
 	# Helps us cross refernce and useful in templates
 	book_date = models.ManyToManyField('DateOwned', blank=True, verbose_name='Instance of Book Ownership')
 	# This is the object we search for the map- a date range where an owner was in a location
@@ -290,6 +295,10 @@ class DateOwned(models.Model):
 	def date_range(self):
 		from datetime import datetime, timedelta
 		# Split on the dash into two dates
+		if self.dateowned.find('post-') != -1:
+			self.dateowned = self.dateowned.replace("post-", "post")
+		if self.dateowned.find('pre-') != -1:
+                        self.dateowned = self.dateowned.replace("pre-", "pre")
 		dates = self.dateowned.split('-')
 		# Defaults
 		month = "January"
@@ -301,8 +310,8 @@ class DateOwned(models.Model):
 		if len(dates[0]) == 0 and len(dates[1]) == 0:
 			# If we just get a dash return the full possible date range
 			x = []
-			x.append(datetime.datetime(1350, 1, 1))
-			x.append(datetime.datetime(1500, 12, 31))
+			x.append(datetime(1350, 1, 1))
+			x.append(datetime(1500, 12, 31))
 			return x
 		# For start date and finish date
 		for date in dates:
@@ -310,19 +319,32 @@ class DateOwned(models.Model):
 			date = date.lstrip()
 			date = date.rstrip()
 			# How we want to organize uncertain dates
-			if date.find('?') != -1 and len(date) < 2:
+			if (date.find('?') != -1 and len(date) < 2) or date.find('???') != -1:
 				# When we get just a "?"
 				if firstDate:
-					date = "1350"
+					date = "1300"
 				else:
-					date = "1500"
+					date = "1600"
 			if date.find('?') != -1 and date.find('??') == -1:
 				# If we get a something like '1426?'
 				# Maybe add an uncertainty factor to this
 				# If we get a date with a ? i.e. "1460?"
 				date = date.replace("?", "")
+			if date.find('post') != -1:
+				if firstDate:
+					date = date.replace("post", "")
+				else:
+					date = "1500"
+			if date.find('pre') != -1:
+                                if firstDate:
+                                        date = "1350"
+                                else:
+                                        date = date.replace("pre", "")
 			if date.find('??') != -1:
-				date = date.replace("??", "00")
+				if firstDate:
+					date = date.replace("??", "00")
+				else:
+					date = date.replace("??", "99")
 			if "c." in date:
 				# 'c. 1450'
 				# Maybe do a +/- operation to just get a range straight off the bat
@@ -337,7 +359,8 @@ class DateOwned(models.Model):
 				else:
 					# Take the later date when its the second date- widest range
 					# (Makes "1450/60 "into "1460")
-					date = date[:chop-2]+date[chop+1:]
+					#date = date[:chop-2]+date[chop+1:]
+					date = date[chop+1:]
 			# We now have a certain date (no c., ?, /, etc.) we can format it for datetime
 			date = date.split(' ')
 			if len(date[0]) < 3:
@@ -350,6 +373,10 @@ class DateOwned(models.Model):
 				month = date[0]
 				year = date[1]
 			else:
+				if len(date[0]) == 3 and firstDate:
+					date[0] = date[0] + ""  + "0"
+				if len(date[0]) == 3 and not firstDate:
+					date[0] = date[0] + ""  + "9"
 				# e.g. 1443
 				year = date[0]
 			stringIt = str(year) + "-" + month + "-" + str(day)
@@ -571,3 +598,11 @@ class Evidence(models.Model):
 
 	def __str__(self):
 		return self.conf_or_possible + ", " + self.evidence
+
+
+class About(models.Model):
+	name = models.CharField(max_length=500, blank=True)
+	about = models.TextField(blank=True, help_text="Modify this field. DO NOT CREATE ANOTHER MODEL")
+
+	def __str__(self):
+		return self.name

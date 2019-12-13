@@ -162,3 +162,4 @@ class PrinterAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
 admin.site.register(Printer, PrinterAdmin)
+admin.site.register(About)

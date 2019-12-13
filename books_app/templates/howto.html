@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load geojson_tags %}
+{% load static %}
+
+{% block content %}
+  <!-- About section -->
+<div class="w3-content w3-wide">
+  <h2 style="text-align:center; padding-top:54px;">How To Use the Project </h2>
+   <p> {{about.about|linebreaks|urlize}} </p>
+</div>
+{% endblock %}

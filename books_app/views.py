@@ -18,7 +18,7 @@ def index(request):
             author = request.POST.get('author', '')
             start_date = request.POST.get('start_date', '')
             end_date = request.POST.get('end_date', '')
-            tag = request.POST.get('tag', '')
+            tag = request.POST.get('genre', '')
             text = request.POST.get('text', '')
             shelfmark = request.POST.get('shelfmark', '')
             owners_search = request.POST.get('owner', '')
@@ -62,13 +62,10 @@ def index(request):
                 texts_from_tag = []
                 books_from_tag = []
                 tag_result = Tag.objects.filter(tag__icontains=tag)
-                all_texts = Text.objects.all()
-                # Add the texts that have each tag
-                for tag_obj in tag_result:
-                    for a in all_texts:
-                        texttags = a.tags.filter(tag=tag_obj)
-                        if len(texttags) != 0:
-                             texts_from_tag.append(a)
+                for a in Text.objects.all():
+                    if set(tag_result) & set(a.tags.all()):
+                        texts_from_tag.append(a)
+
                 for text_obj_tag in texts_from_tag:
                     book = Book.objects.filter(text=text_obj_tag)
                     for c in book:
@@ -189,7 +186,9 @@ def index(request):
             for textquery in q:
                 for listing in textquery:
                     texts_from_books.append(listing)
-            texts_search = list(set(texts_from_text) & set(texts_from_books) & set(texts_from_tag) & set(texts_from_author))
+            texts_search = list(set(texts_from_text) & set(texts_from_tag) & set(texts_from_author))
+            if not (author or tag or text):
+                texts_search = list(set(texts_search).union(set(texts_from_books)))
             if not (books_search or owners_search) and not (author or text or tag):
                 texts_search = []
             texts_search_preview = []
@@ -233,13 +232,15 @@ def books(request, book_id):
     owners_date = sorted(DateOwned.objects.filter(book_owned=book), key=lambda a: a.date_range())
     #owners_date = DateOwned.objects.filter(book_owned=book).order_by('dateowned')
     owner_geo = []
-    for owner in owners_date:
+    evidences = []
+    for date in owners_date:
         try:
             # In case some misc dateowned objects appear- if everything has a link and we clean up this isn't necessary
-            owner_geo.append(owner)
+            owner_geo.append(date)
+            evidences.append([date, date.ownership_type.all()])
         except:
             pass
-    return render(request,'books.html', {'book':book, 'owners':owner_geo, 'texts': texts, 'bibs': bibs, 'places':places, 'iluminators': illuminators, 'scribes': scribes})
+    return render(request,'books.html', {'book':book, 'owners':owner_geo, 'texts': texts, 'bibs': bibs, 'places':places, 'iluminators': illuminators, 'scribes': scribes, 'evidences':evidences})
 
 def owners(request, owner_id):
     # owner_id is the name of an owner
@@ -314,7 +315,6 @@ def search(request):
     else:
         search_form = SearchForm()
         dates = DateOwned.objects.all()
-        #dates = dates[0:300]
         owners = Owner.objects.all()
         books = Book.objects.all()
         texts = Text.objects.all()
@@ -334,4 +334,12 @@ class BooksAutocomplete(autocomplete.Select2ListView):
             list = [book.shelfmark for book in filter_result]
         return list
 
+def about(request):
+	about = About.objects.all()
+	about = about[0]
+	return render(request, 'about.html', {'about': about})
 
+def howto(request):
+        about = About.objects.all()
+        about = about[1]
+        return render(request, 'howto.html', {'about': about})

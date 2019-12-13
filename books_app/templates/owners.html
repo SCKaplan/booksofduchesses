@@ -26,7 +26,7 @@
         <p style="text-align:left; font-size:11px;"><i>{{owner.image_citation}}</i></p>
   	{% endif %}
   	{% if owner.birth_year and owner.death_year %}
-       <p class="w3-opacity" style="text-align:center;">b. {{owner.birth_year}}- d. {{owner.death_year}}</p>
+        <p class="w3-opacity" style="text-align:center;">b. {{owner.birth_year}}- d. {{owner.death_year}}</p>
   	{% endif %}
   	{% if owner.titles %}
         <p>Title: {{owner.titles}}</p>
@@ -43,13 +43,27 @@
   	{% else %}
         <p>Symbol: Unknown</p>
   	{% endif %}
+  	{% if owner.arms %}
+	  <p style="text-align:center;">Arms</p>
+          <img src="http://booksofduchesses.com/media/{{owner.arms}}" style="height:150px; display:block; margin:auto;">
+	{% endif %}
+  	{% if owner.arms_citation %}
+        <p style="text-align:left; font-size:11px;"><i>{{owner.arms_citation}}</i></p>
+  	{% endif %}
+	{% if owner.signatures %}
+	  <p style="text-align:center;">Signatures</p>
+          <img src="http://booksofduchesses.com/media/{{owner.signatures}}" style="height:100px; display:block; margin: auto;">
+        {% endif %}
+  	{% if owner.signatures_citation %}
+        <p style="text-align:left; font-size:11px;"><i>{{owner.signatures_citation}}</i></p>
+  	{% endif %}
         <h4 style="text-align:center;"><strong>Family Tree</strong></h4>
   	{% if relatives %}
         {% for relative in relatives %}
   	{% if relative.person.gender == "Male" %}
   	<li>{{relative.person}}, {{relative.relation}}</li>
   	{% else %}
-        	<li><a style="color:blue;" href="https://booksofduchesses.com/owners/{{relative.person}}/">{{relative.person}}</a>, {{relative.relation}}</li>
+       	  <li><a style="color:blue;" href="https://booksofduchesses.com/owners/{{relative.person}}/">{{relative.person}}</a>, {{relative.relation}}</li>
   	{% endif %}
         {% endfor %}
   	{% else %}
@@ -128,7 +142,7 @@
     <br>
     <h3 style="text-align:center;"><strong>{{owner.name}}'s Library</strong></h3></p>
     {% for book in books %}
-      <p style="text-align:left;" ><a style="color:blue;" href="http://booksofduchesses.com/books/{{book.book_owned}}">{{book.book_owned}}</a> ({{book.dateowned}})</p>
+      <p style="text-align:left;" ><a style="color:blue;" href="http://booksofduchesses.com/books/{{book.book_owned}}">{{book.book_owned}}</a> ({{book.dateowned}}): {{book.book_owned.about}}.</p>
     {% endfor %}
   </div>
 
