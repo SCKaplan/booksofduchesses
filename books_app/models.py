@@ -513,7 +513,8 @@ class Illuminator(models.Model):
 
         Female = 'Female'
         Male = 'Male'
-        gen_choices = [(Female, "Female"),(Male, "Male")]
+        Unknown = 'Unknown'
+        gen_choices = [(Female, "Female"),(Male, "Male"),(Unknown, "Unknown")]
         gender = models.CharField(max_length=9, choices=gen_choices, default='Female')
 
         link = models.CharField(max_length=200, blank=True, null=True, verbose_name="Further Information (link)")
@@ -530,7 +531,8 @@ class Scribe(models.Model):
 
         Female = 'Female'
         Male = 'Male'
-        gen_choices = [(Female, "Female"),(Male, "Male")]
+        Unknown = 'Unknown'
+        gen_choices = [(Female, "Female"),(Male, "Male"),(Unknown, "Unknown")]
         gender = models.CharField(max_length=9, choices=gen_choices, default='Female')
 
         link = models.CharField(max_length=200, blank=True, null=True, verbose_name="Further Information (link)")

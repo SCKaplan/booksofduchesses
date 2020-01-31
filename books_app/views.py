@@ -48,7 +48,7 @@ def index(request):
                 books_objs = set(books_from_author) & set(books_objs)
 
             # Text Search Field- abbreviated version of author process
-            texts_from_text = Text.objects.filter(title__icontains=text)
+            texts_from_text = list(set(Text.objects.filter(title__icontains=text)) | set(Text.objects.filter(name_eng__icontains=text)))
             books_from_text = []
             for item in texts_from_text:
                 book = Book.objects.filter(text=item)
@@ -230,6 +230,9 @@ def books(request, book_id):
     # For owners we query DateOwned objects because they contain dates which we need to be on template
     # orders by date_range method... i think
     owners_date = sorted(DateOwned.objects.filter(book_owned=book), key=lambda a: a.date_range())
+    date_list = []
+    for date in owners_date:
+        date_list.append([date, date.ownership_type.all()])
     #owners_date = DateOwned.objects.filter(book_owned=book).order_by('dateowned')
     owner_geo = []
     evidences = []
@@ -240,7 +243,7 @@ def books(request, book_id):
             evidences.append([date, date.ownership_type.all()])
         except:
             pass
-    return render(request,'books.html', {'book':book, 'owners':owner_geo, 'texts': texts, 'bibs': bibs, 'places':places, 'iluminators': illuminators, 'scribes': scribes, 'evidences':evidences})
+    return render(request,'books.html', {'book':book, 'owners':owner_geo, 'texts': texts, 'bibs': bibs, 'places':places, 'iluminators': illuminators, 'scribes': scribes, 'evidences':evidences, 'date_list':date_list})
 
 def owners(request, owner_id):
     # owner_id is the name of an owner
@@ -264,6 +267,7 @@ def owners(request, owner_id):
         books = DateOwned.objects.filter(owner=owner).order_by('book_owned__shelfmark')
         relatives = owner.relation.all()
         order_form = OwnerLocationOrderForm()
+        library_size = len(books)
         if order=="alphabetical":
             location = owner.owner_location.all().order_by('the_place__name')
             order_list = ["selected", "", ""]
@@ -273,15 +277,19 @@ def owners(request, owner_id):
         elif order=="dateasc":
             location = owner.owner_location.all().order_by('-date_at_location')
             order_list = ["", "", "selected"]
-        return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list})
+        return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size})
 
     else:
         owner = Owner.objects.get(name=owner_id)
         location = owner.owner_location.all().order_by('-the_place')
         books = DateOwned.objects.filter(owner=owner).order_by('book_owned__shelfmark')
+        books_list = []
+        for date in books:
+            books_list.append([date, date.ownership_type.all()])
         relatives = owner.relation.all()
         order_form = OwnerLocationOrderForm()
-        return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books':books, 'order_form':order_form, 'owner':owner, 'locations':location,  'order_list':order_list})
+        library_size = len(books)
+        return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books':books, 'order_form':order_form, 'owner':owner, 'locations':location,  'order_list':order_list, 'library_size':library_size, 'books_list':books_list})
 
 def texts(request, text_id):
     # text_id is the title of a text
@@ -303,7 +311,10 @@ def texts(request, text_id):
         for date in toAdd:
             # Add DateOwned objects to a list for display
             dates.append(date)
-    return render(request, 'texts.html', {'text': text, 'books': books, 'languages': languages, 'tags': tags, 'places': places, 'dates' : dates, 'authors' : authors, 'translators': translators})
+    books_list = []
+    for date in dates:
+        books_list.append([date, date.ownership_type.all()])
+    return render(request, 'texts.html', {'text': text, 'books': books, 'languages': languages, 'tags': tags, 'places': places, 'dates' : dates, 'authors' : authors, 'translators': translators, 'books_list':books_list})
 
 def loadup(request):
     # Inactive- used for database loading

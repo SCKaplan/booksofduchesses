@@ -105,6 +105,7 @@
     <!-- Right Column content- linked information mostly-->
     <div class="w3-col l3 m6 w3-margin-bottom" style="float:right; text-align:center;">
       <h3 style="text-align:center;"><strong>Ownership Details</strong></h3>
+<!--
       {% for owner in owners %}
         {% if owner.book_owner.gender == "Male" %}
           <p>{{ owner.book_owner }}, Ownership {{owner.conf_or_possible}} ({{ owner.dateowned }})</p>
@@ -112,6 +113,19 @@
           <p><a href="http://booksofduchesses.com/owners/{{owner.book_owner}}/">{{ owner.book_owner }}</a>, Ownership {{ owner.conf_or_possible }} ({{ owner.dateowned }})</p>
         {% endif %}
       {% endfor %}
+-->
+      {% for owner in date_list %}
+        {% if owner.book_owner.gender == "Male" %}
+          <p>{{ owner.0.book_owner }}, Ownership {{owner.0.conf_or_possible}} ({{ owner.0.dateowned }})</p>
+        {% else %}
+          <p><a href="http://booksofduchesses.com/owners/{{owner.0.book_owner}}/">{{ owner.0.book_owner }}</a>, 
+        {% endif %}
+	  {% for a in owner.1 %}
+	    Ownership {{ a.conf_or_possible }} ({{ owner.0.dateowned }}) by {{ a.evidence }}.
+	  {% endfor %}
+	    </p>
+      {% endfor %}
+
       <br></br>
       <h3 style="text-align:center;"><strong>Bibliography</strong></h3>
       {% for bib in bibs %}

@@ -111,13 +111,33 @@
     <!-- Right column -->
     <div class="w3-col l3 m6 w3-margin-bottom" style="padding-right: 10px; width: 28%; float:right; text-align:center;">
       <h3 style="text-align:center;"><strong>Ownership Details</strong></h3>
+<!--
       {% for date in dates %}
 	{% if date.book_owner.gender == "Male" %}
-          <p style="font-size:13px;"><a style="color: blue;" href="https://booksofduchesses.com/books/{{date.book_owned}}">{{date.book_owned}}</a> <i>{{date.conf_or_possible}}</i> owned by {{date.book_owner}} ({{date.dateowned}})</p>
+          <p style="font-size:13px;"><a style="color: blue;" href="https://booksofduchesses.com/books/{{date.book_owned}}">{{date.book_owned}}</a> owned by {{date.book_owner}} ({{date.dateowned}})
+          ownership {{date.conf_or_possible}} with {{date.evidence}} as evidence.</p>
         {% else %}
-          <p style="font-size:13px;"><a style="color: blue;" href="https://booksofduchesses.com/books/{{date.book_owned}}">{{date.book_owned}}</a> <i>{{date.conf_or_possible}}</i> owned by <a style="color: blue;" href="https://booksofduchesses.com/owners/{{date.book_owner}}">{{date.book_owner}}</a> ({{date.dateowned}})</p>
+          <p style="font-size:13px;"><a style="color: blue;" href="https://booksofduchesses.com/books/{{date.book_owned}}">{{date.book_owned}}</a> owned by <a style="color: blue;" href="https://booksofduchesses.com/owners/{{date.book_owner}}">{{date.book_owner}}</a> ({{date.dateowned}})
+	   ownership {{date.conf_or_possible}} with {{date.evidence}} as evidence.</p>
 	{% endif %} 
      {% endfor %}
+-->
+      {% for date in books_list %}
+	{% if date.book_owner.gender == "Male" %}
+          <p style="font-size:13px;"><a style="color: blue;" href="https://booksofduchesses.com/books/{{date.0.book_owned}}">{{date.0.book_owned}}</a> owned by {{date.0.book_owner}} ({{date.0.dateowned}}).
+          {% for a in date.1 %}  
+            Ownership {{a.conf_or_possible}} with {{a.date.evidence}} as evidence.
+       	  {% endfor %}
+	    </p>
+        {% else %}
+           <p style="font-size:13px;"><a style="color: blue;" href="https://booksofduchesses.com/books/{{date.0.book_owned}}">{{date.0.book_owned}}</a> owned by <a style="color: blue;" href="https://booksofduchesses.com/owners/{{date.0.book_owner}}">{{date.0.book_owner}}</a> ({{date.0.dateowned}}).
+          {% for a in date.1 %}
+	   Ownership {{a.conf_or_possible}} with {{a.evidence}} as evidence.
+	  {% endfor %}
+	    </p> 
+	{% endif %} 
+     {% endfor %}
+
       <br></br>
       <h3 style="text-align:center;"><strong>Bibliography</strong></h3>
       {% if text.arlima_link %}
