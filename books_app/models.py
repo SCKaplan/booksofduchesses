@@ -1,4 +1,5 @@
 from django.contrib.gis.db import models
+from django.forms import ModelForm
 import datetime
 
 class Book(models.Model):
@@ -96,6 +97,10 @@ class OwnerPlaceDateLived(models.Model):
 	def date_range(self):
 		from datetime import datetime, timedelta
 		# Split on the dash into two dates
+		if self.date_at_location.find('post-') != -1:
+			self.date_at_location = self.date_at_location.replace("post-", "post")
+		if self.date_at_location.find('pre-') != -1:
+                        self.date_at_location = self.date_at_location.replace("pre-", "pre")
 		dates = self.date_at_location.split('-')
 		# Defaults
 		month = "January"
@@ -107,8 +112,8 @@ class OwnerPlaceDateLived(models.Model):
 		if len(dates[0]) == 0 and len(dates[1]) == 0:
 			# If we just get a dash return the full possible date range
 			x = []
-			x.append(datetime.datetime(1350, 1, 1))
-			x.append(datetime.datetime(1500, 12, 31))
+			x.append(datetime(1350, 1, 1))
+			x.append(datetime(1500, 12, 31))
 			return x
 		# For start date and finish date
 		for date in dates:
@@ -116,17 +121,32 @@ class OwnerPlaceDateLived(models.Model):
 			date = date.lstrip()
 			date = date.rstrip()
 			# How we want to organize uncertain dates
-			if date.find('?') != -1 and len(date) < 2:
+			if (date.find('?') != -1 and len(date) < 2) or date.find('???') != -1:
 				# When we get just a "?"
 				if firstDate:
-					date = "1350"
+					date = "1300"
 				else:
-					date = "1500"
-			if date.find('?') != -1:
+					date = "1600"
+			if date.find('?') != -1 and date.find('??') == -1:
 				# If we get a something like '1426?'
 				# Maybe add an uncertainty factor to this
 				# If we get a date with a ? i.e. "1460?"
 				date = date.replace("?", "")
+			if date.find('post') != -1:
+				if firstDate:
+					date = date.replace("post", "")
+				else:
+					date = "1500"
+			if date.find('pre') != -1:
+                                if firstDate:
+                                        date = "1350"
+                                else:
+                                        date = date.replace("pre", "")
+			if date.find('??') != -1:
+				if firstDate:
+					date = date.replace("??", "00")
+				else:
+					date = date.replace("??", "99")
 			if "c." in date:
 				# 'c. 1450'
 				# Maybe do a +/- operation to just get a range straight off the bat
@@ -141,7 +161,8 @@ class OwnerPlaceDateLived(models.Model):
 				else:
 					# Take the later date when its the second date- widest range
 					# (Makes "1450/60 "into "1460")
-					date = date[:chop-2]+date[chop+1:]
+					#date = date[:chop-2]+date[chop+1:]
+					date = date[chop+1:]
 			# We now have a certain date (no c., ?, /, etc.) we can format it for datetime
 			date = date.split(' ')
 			if len(date[0]) < 3:
@@ -154,6 +175,10 @@ class OwnerPlaceDateLived(models.Model):
 				month = date[0]
 				year = date[1]
 			else:
+				if len(date[0]) == 3 and firstDate:
+					date[0] = date[0] + ""  + "0"
+				if len(date[0]) == 3 and not firstDate:
+					date[0] = date[0] + ""  + "9"
 				# e.g. 1443
 				year = date[0]
 			stringIt = str(year) + "-" + month + "-" + str(day)
@@ -191,6 +216,10 @@ class BookLocation(models.Model):
 	def date_range(self):
 		from datetime import datetime, timedelta
 		# Split on the dash into two dates
+		if self.date.find('post-') != -1:
+			self.date = self.date.replace("post-", "post")
+		if self.date.find('pre-') != -1:
+                        self.date = self.date.replace("pre-", "pre")
 		dates = self.date.split('-')
 		# Defaults
 		month = "January"
@@ -202,8 +231,8 @@ class BookLocation(models.Model):
 		if len(dates[0]) == 0 and len(dates[1]) == 0:
 			# If we just get a dash return the full possible date range
 			x = []
-			x.append(datetime.datetime(1350, 1, 1))
-			x.append(datetime.datetime(1500, 12, 31))
+			x.append(datetime(1350, 1, 1))
+			x.append(datetime(1500, 12, 31))
 			return x
 		# For start date and finish date
 		for date in dates:
@@ -211,17 +240,32 @@ class BookLocation(models.Model):
 			date = date.lstrip()
 			date = date.rstrip()
 			# How we want to organize uncertain dates
-			if date.find('?') != -1 and len(date) < 2:
+			if (date.find('?') != -1 and len(date) < 2) or date.find('???') != -1:
 				# When we get just a "?"
 				if firstDate:
-					date = "1350"
+					date = "1300"
 				else:
-					date = "1500"
-			if date.find('?') != -1:
+					date = "1600"
+			if date.find('?') != -1 and date.find('??') == -1:
 				# If we get a something like '1426?'
 				# Maybe add an uncertainty factor to this
 				# If we get a date with a ? i.e. "1460?"
 				date = date.replace("?", "")
+			if date.find('post') != -1:
+				if firstDate:
+					date = date.replace("post", "")
+				else:
+					date = "1500"
+			if date.find('pre') != -1:
+                                if firstDate:
+                                        date = "1350"
+                                else:
+                                        date = date.replace("pre", "")
+			if date.find('??') != -1:
+				if firstDate:
+					date = date.replace("??", "00")
+				else:
+					date = date.replace("??", "99")
 			if "c." in date:
 				# 'c. 1450'
 				# Maybe do a +/- operation to just get a range straight off the bat
@@ -236,7 +280,8 @@ class BookLocation(models.Model):
 				else:
 					# Take the later date when its the second date- widest range
 					# (Makes "1450/60 "into "1460")
-					date = date[:chop-2]+date[chop+1:]
+					#date = date[:chop-2]+date[chop+1:]
+					date = date[chop+1:]
 			# We now have a certain date (no c., ?, /, etc.) we can format it for datetime
 			date = date.split(' ')
 			if len(date[0]) < 3:
@@ -249,6 +294,10 @@ class BookLocation(models.Model):
 				month = date[0]
 				year = date[1]
 			else:
+				if len(date[0]) == 3 and firstDate:
+					date[0] = date[0] + ""  + "0"
+				if len(date[0]) == 3 and not firstDate:
+					date[0] = date[0] + ""  + "9"
 				# e.g. 1443
 				year = date[0]
 			stringIt = str(year) + "-" + month + "-" + str(day)
@@ -608,3 +657,5 @@ class About(models.Model):
 
 	def __str__(self):
 		return self.name
+
+
