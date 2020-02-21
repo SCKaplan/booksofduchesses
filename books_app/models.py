@@ -25,6 +25,8 @@ class Book(models.Model):
 	# Helps us cross reference book ownership, also convenient to display on templates
 	owner_info = models.ManyToManyField('DateOwned', blank=True, verbose_name="Ownership Information/History")
 	bibliography = models.ManyToManyField('Bibliography', blank=True)
+	reviewed = models.BooleanField(null=True, default=False)
+	comments = models.TextField(blank=True, verbose_name="User Suggestion Comments")
 
 	def __str__(self):
 		return self.shelfmark

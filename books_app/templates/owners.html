@@ -134,7 +134,7 @@
 
     {% if locations %}
       {% for location in locations %}
-        <p style="font-size:13px;">{{location.the_place.City}} ({{location.date_at_location}})</p>
+        <p style="font-size:13px;">{{location.the_place.City}} ({{location.date_at_location}}) {{order}}</p>
       {% endfor %}
     {% else %}
       <p style="font-size:13px;">No known locations</p>
@@ -142,12 +142,12 @@
     <br>
     <h3 style="text-align:center;"><strong>{{owner.name}}'s Library</strong></h3></p>
     <p>Book Count: {{library_size}}</p>
-<!--
-    {% for book in books %}
+
+<!--    {% for book in books %}
       <p style="text-align:left;" ><a style="color:blue;" href="http://booksofduchesses.com/books/{{book.book_owned}}">{{book.book_owned}}</a>: {{book.book_owned.about}}. 
       {{book.conf_or_possible}} ownership {{book.dateowned}} by {{book.evidence}}</p>
     {% endfor %}
---> 
+ -->
    {% for date in books_list %}
         <p style="text-align:left;" ><a style="color:blue;" href="http://booksofduchesses.com/books/{{date.0.book_owned}}">{{date.0.book_owned}}</a>: {{date.0.book_owned.about}}. 
       {% for a in date.1 %}

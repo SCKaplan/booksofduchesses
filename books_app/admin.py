@@ -24,6 +24,8 @@ class BookAdmin(admin.ModelAdmin):
     search_fields = ['shelfmark']
     autocomplete_fields = ['text', 'bibliography', 'book_location', 'owner_info', 'scribes', 'illuminators', 'printer']
     ordering = ('shelfmark',)
+    list_filter = ('reviewed',)
+
 
 admin.site.register(Book, BookAdmin)
 
@@ -100,7 +102,7 @@ class BooksLanguageAdmin(admin.ModelAdmin):
 admin.site.register(BooksLanguage, BooksLanguageAdmin)
 
 class OwnerPlaceDateLivedAdmin(admin.ModelAdmin):
-    search_fields = ['the_place']
+    search_fields = ['the_place__City']
 
     def get_form(self, request, obj=None, **kwargs):
         if not obj:

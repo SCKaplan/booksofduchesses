@@ -35,7 +35,7 @@
       <!-- We need a case for a text without authors -->
       {% if authors %}
         {% for author in authors %}
-  	      {% if text.author.link %}
+  	      {% if author.link %}
   	        <p>Author: <a style="color:blue;" href="{{author.link}}"> {{author.name}}</a></p>
   	      {% else %}
                 <p>Author: {{author.name}}</p>
@@ -46,10 +46,10 @@
       {% endif %}
       {% if translators %}
         {% for translator in translators %}
-              {% if text.translator.arlima %}
-                <p>Translator: <a style="color:blue;" href="{{translator.arlima}}">{{translator}}</a></p>
+              {% if translator.link %}
+                <p>Translator: <a style="color:blue;" href="{{translator.link}}">{{translator}}</a></p>
               {% else %}
-                <p>Translator: {{text.translator}}</p>
+                <p>Translator: {{translator}}</p>
               {% endif %}
         {% endfor %}
       {% else %}

@@ -251,17 +251,6 @@ def owners(request, owner_id):
     order_list = ["selected", "", ""]
     if request.method == 'POST':
         order_form = OwnerLocationOrderForm(request.POST)
-        # if order_form.is_valid():
-        #     # Get form data
-        #     order = request.POST.get('order')
-        #     owner = Owner.objects.get(name=owner_id)
-        #     books = DateOwned.objects.filter(owner=owner).order_by('book_owned__shelfmark')
-        #     relatives = owner.relation.all()
-        #     order_form = OwnerLocationOrderForm()
-        #     if order=="datedesc":
-        #         location = owner.owner_location.all().order_by('date_at_location')
-        #     elif order=="alphabetical":
-        #         location = owner.owner_location.all().order_by('owner_location__the_place')
         order = request.POST.get('order')
         owner = Owner.objects.get(name=owner_id)
         books = DateOwned.objects.filter(owner=owner).order_by('book_owned__shelfmark')
@@ -272,12 +261,17 @@ def owners(request, owner_id):
             location = owner.owner_location.all().order_by('the_place__name')
             order_list = ["selected", "", ""]
         elif order=="datedesc":
-            location = owner.owner_location.all().order_by('date_at_location')
+            location = sorted(owner.owner_location.all(), key=lambda a: a.date_range())
             order_list = ["", "selected", ""]
         elif order=="dateasc":
-            location = owner.owner_location.all().order_by('-date_at_location')
+            location = sorted(owner.owner_location.all(), key=lambda a: a.date_range())
+            location.reverse()
             order_list = ["", "", "selected"]
-        return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size})
+        books_list = []
+        for date in books:
+            books_list.append([date, date.ownership_type.all()])
+        relatives = owner.relation.all()
+        return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list})
 
     else:
         owner = Owner.objects.get(name=owner_id)
@@ -354,3 +348,50 @@ def howto(request):
         about = About.objects.all()
         about = about[1]
         return render(request, 'howto.html', {'about': about})
+
+def suggest(request):
+	if request.method == 'POST':
+		f = BookForm(request.POST)
+		if f.is_valid():
+			new_article = f.save(commit=False)
+			text = request.POST.get('text', '')
+			email = request.POST.get('email','')
+			scribes = request.POST.get('scribes', '')
+			illuminators = request.POST.get('illuminators', '')
+			printer = request.POST.get('printer', '')
+			book_location = request.POST.get('book_location', '')
+			owner_info = request.POST.get('owner_info', '')
+			bibliography = request.POST.get('bibliography', '')
+
+			new_article.comments = "Submitter Contact Info: " + email + "\nText: " + text + "\nIlluminators: " + illuminators + "\nScribes: " + scribes + "\n"
+			new_article.comments += "Printers: " + printer + "\nBook Locations: " + book_location + "\nOwner Info" + owner_info + "\n"
+			new_article.comments += "Bibliography: : " + bibliography + "\n"
+			new_article.save()
+			text = request.POST.get('text', '')
+			return render(request, 'suggested.html', {})
+		else:
+			book_form = BookForm()
+			failed = True
+			return render(request, 'suggest.html', {'book_form': book_form, 'failed': failed})
+	else:
+		book_form = BookForm()
+		failed = False
+		return render(request, 'suggest.html', {'book_form': book_form, 'failed': failed})
+
+def tendies(request):
+    import requests
+    from bs4 import BeautifulSoup
+
+    URL = 'https://www.haverford.edu/dining-services/dining-center'
+    page = requests.get(URL)
+    #print(page.content)
+
+    soup = BeautifulSoup(page.content, 'html.parser')
+    results = soup.find(id='today_menu_1')
+
+    #print(results.prettify())
+    res = str(results.text)
+    veg_tendies = res.find('Vegan Nuggets')
+    tendies = res.find("Crispy Chicken")
+    yesorno = (tendies != -1 or veg_tendies != -1)
+    return render(request, 'tendies.html', {'yesorno': yesorno})
