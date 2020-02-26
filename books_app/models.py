@@ -2,6 +2,109 @@ from django.contrib.gis.db import models
 from django.forms import ModelForm
 import datetime
 
+def date_ranges(given_dates):
+    from datetime import datetime, timedelta
+    # Split on the dash into two dates
+    if given_dates.find('post-') != -1:
+        given_dates = given_dates.replace("post-", "post")
+    if given_dates.find('pre-') != -1:
+        given_dates = given_dates.replace("pre-", "pre")
+    dates = given_dates.split('-')
+    # Defaults
+    month = "January"
+    day = 1
+    year = 1350
+    final = []
+    chop = 0
+    firstDate = True
+    if len(dates[0]) == 0 and len(dates[1]) == 0:
+        # If we just get a dash return the full possible date range
+        x = []
+        x.append(datetime(1350, 1, 1))
+        x.append(datetime(1500, 12, 31))
+        return x
+    # For start date and finish date
+    for date in dates:
+        # Take off white space
+        uncertain = False
+        date = date.lstrip()
+        date = date.rstrip()
+        # How we want to organize uncertain dates
+        if (date.find('?') != -1 and len(date) < 2) or date.find('???') != -1:
+        	# When we get just a "?"
+        	if firstDate:
+        		date = "1300"
+        	else:
+        		date = "1600"
+        if date.find('?') != -1 and date.find('??') == -1:
+        	# Maybe add an uncertainty factor to this
+        	# If we get a date with a ? i.e. "1460?"
+        	date = date.replace("?", "")
+        	uncertain = True
+        if date.find('post') != -1:
+        	if firstDate:
+        		date = date.replace("post", "")
+        	else:
+        		date = "1500"
+        if date.find('pre') != -1:
+                              if firstDate:
+                                      date = "1350"
+                              else:
+                                      date = date.replace("pre", "")
+        if date.find('??') != -1:
+        	if firstDate:
+        		date = date.replace("??", "00")
+        	else:
+        		date = date.replace("??", "99")
+        if "c." in date:
+        	# 'c. 1450'
+        	# Maybe do a +/- operation to just get a range straight off the bat
+        	# For now just get rid of the c.
+        	date = date.replace("c. ", "")
+        	date = date.replace("c.", "")
+        if date.find('/') != -1:
+        	chop = date.index('/')
+        	if firstDate:
+        		# Take the earlier date- this is most/all of the dates we encounter
+        		date = date[:chop]
+        	else:
+        		# Take the later date when its the second date- widest range
+        		# (Makes "1450/60 "into "1460")
+        		#date = date[:chop-2]+date[chop+1:]
+        		date = date[chop+1:]
+        # We now have a certain date (no c., ?, /, etc.) we can format it for datetime
+        date = date.split(' ')
+        if len(date[0]) < 3:
+        	# e.g. 15 December 1443
+        	day = date[0]
+        	month = date[1]
+        	year = date[2]
+        elif len(date) == 2:
+        	# e.g. December 1443
+        	month = date[0]
+        	year = date[1]
+        else:
+		# Some shit going on here with spaces/tabs
+        	if len(date[0]) == 3 and firstDate:
+        		date[0] = date[0] + ""  + "0"
+        	if len(date[0]) == 3 and not firstDate:
+        		date[0] = date[0] + ""  + "9"
+        	# e.g. 1443
+        	year = date[0]
+        stringIt = str(year) + "-" + month + "-" + str(day)
+        # format for adding a datetime from a string
+        toAdd = datetime.strptime(stringIt, "%Y-%B-%d")
+        if uncertain and firstDate:
+            toAdd = toAdd - timedelta(days=1826)
+        if uncertain and not firstDate:
+            toAdd = toAdd + timedelta(days=1824)
+        final.append(toAdd)
+        firstDate = False
+    # If there is no dash we extend the window to a whole year
+    if len(final) == 1:
+        final.append(final[0]+ timedelta(days=364))
+    return final
+
 class Book(models.Model):
 	image = models.ImageField(null=True, blank=True)
 	shelfmark = models.CharField(max_length=200)
@@ -92,105 +195,12 @@ class OwnerPlaceDateLived(models.Model):
 	the_place = models.ForeignKey('Location', on_delete=models.CASCADE, null=True)
 	date_at_location = models.CharField(max_length=200, null=True)
 
-	def __str__(self):
-		return self.the_place.name + ", " + self.date_at_location
-
 	# Outputs a list of len 2- a range of datetimes from an ambigious string
 	def date_range(self):
-		from datetime import datetime, timedelta
-		# Split on the dash into two dates
-		if self.date_at_location.find('post-') != -1:
-			self.date_at_location = self.date_at_location.replace("post-", "post")
-		if self.date_at_location.find('pre-') != -1:
-                        self.date_at_location = self.date_at_location.replace("pre-", "pre")
-		dates = self.date_at_location.split('-')
-		# Defaults
-		month = "January"
-		day = 1
-		year = 1350
-		final = []
-		chop = 0
-		firstDate = True
-		if len(dates[0]) == 0 and len(dates[1]) == 0:
-			# If we just get a dash return the full possible date range
-			x = []
-			x.append(datetime(1350, 1, 1))
-			x.append(datetime(1500, 12, 31))
-			return x
-		# For start date and finish date
-		for date in dates:
-			# Take off white space
-			date = date.lstrip()
-			date = date.rstrip()
-			# How we want to organize uncertain dates
-			if (date.find('?') != -1 and len(date) < 2) or date.find('???') != -1:
-				# When we get just a "?"
-				if firstDate:
-					date = "1300"
-				else:
-					date = "1600"
-			if date.find('?') != -1 and date.find('??') == -1:
-				# If we get a something like '1426?'
-				# Maybe add an uncertainty factor to this
-				# If we get a date with a ? i.e. "1460?"
-				date = date.replace("?", "")
-			if date.find('post') != -1:
-				if firstDate:
-					date = date.replace("post", "")
-				else:
-					date = "1500"
-			if date.find('pre') != -1:
-                                if firstDate:
-                                        date = "1350"
-                                else:
-                                        date = date.replace("pre", "")
-			if date.find('??') != -1:
-				if firstDate:
-					date = date.replace("??", "00")
-				else:
-					date = date.replace("??", "99")
-			if "c." in date:
-				# 'c. 1450'
-				# Maybe do a +/- operation to just get a range straight off the bat
-				# For now just get rid of the c.
-				date = date.replace("c. ", "")
-				date = date.replace("c.", "")
-			if date.find('/') != -1:
-				chop = date.index('/')
-				if firstDate:
-					# Take the earlier date- this is most/all of the dates we encounter
-					date = date[:chop]
-				else:
-					# Take the later date when its the second date- widest range
-					# (Makes "1450/60 "into "1460")
-					#date = date[:chop-2]+date[chop+1:]
-					date = date[chop+1:]
-			# We now have a certain date (no c., ?, /, etc.) we can format it for datetime
-			date = date.split(' ')
-			if len(date[0]) < 3:
-				# e.g. 15 December 1443
-				day = date[0]
-				month = date[1]
-				year = date[2]
-			elif len(date) == 2:
-				# e.g. December 1443
-				month = date[0]
-				year = date[1]
-			else:
-				if len(date[0]) == 3 and firstDate:
-					date[0] = date[0] + ""  + "0"
-				if len(date[0]) == 3 and not firstDate:
-					date[0] = date[0] + ""  + "9"
-				# e.g. 1443
-				year = date[0]
-			stringIt = str(year) + "-" + month + "-" + str(day)
-			# format for adding a datetime from a string
-			final.append(datetime.strptime(stringIt, "%Y-%B-%d"))
-			firstDate = False
-		# If there is no dash we extend the window to a whole year
-		if len(final) == 1:
-			final.append(final[0]+ timedelta(days=364))
-		return final
+		return date_ranges(self.date_at_location)
+
+	def __str__(self):
+		return self.the_place.name + ", " + self.date_at_location
 
 	@property
 	def popupcontent(self):
@@ -213,103 +223,9 @@ class BookLocation(models.Model):
 	book_shelfmark = models.ForeignKey(Book, on_delete=models.CASCADE, null=True)
 	owner_at_time = models.ForeignKey(Owner, on_delete=models.CASCADE, null=True)
 
-
 	# Outputs a list of len 2- a range of datetimes from an ambigious string
 	def date_range(self):
-		from datetime import datetime, timedelta
-		# Split on the dash into two dates
-		if self.date.find('post-') != -1:
-			self.date = self.date.replace("post-", "post")
-		if self.date.find('pre-') != -1:
-                        self.date = self.date.replace("pre-", "pre")
-		dates = self.date.split('-')
-		# Defaults
-		month = "January"
-		day = 1
-		year = 1350
-		final = []
-		chop = 0
-		firstDate = True
-		if len(dates[0]) == 0 and len(dates[1]) == 0:
-			# If we just get a dash return the full possible date range
-			x = []
-			x.append(datetime(1350, 1, 1))
-			x.append(datetime(1500, 12, 31))
-			return x
-		# For start date and finish date
-		for date in dates:
-			# Take off white space
-			date = date.lstrip()
-			date = date.rstrip()
-			# How we want to organize uncertain dates
-			if (date.find('?') != -1 and len(date) < 2) or date.find('???') != -1:
-				# When we get just a "?"
-				if firstDate:
-					date = "1300"
-				else:
-					date = "1600"
-			if date.find('?') != -1 and date.find('??') == -1:
-				# If we get a something like '1426?'
-				# Maybe add an uncertainty factor to this
-				# If we get a date with a ? i.e. "1460?"
-				date = date.replace("?", "")
-			if date.find('post') != -1:
-				if firstDate:
-					date = date.replace("post", "")
-				else:
-					date = "1500"
-			if date.find('pre') != -1:
-                                if firstDate:
-                                        date = "1350"
-                                else:
-                                        date = date.replace("pre", "")
-			if date.find('??') != -1:
-				if firstDate:
-					date = date.replace("??", "00")
-				else:
-					date = date.replace("??", "99")
-			if "c." in date:
-				# 'c. 1450'
-				# Maybe do a +/- operation to just get a range straight off the bat
-				# For now just get rid of the c.
-				date = date.replace("c. ", "")
-				date = date.replace("c.", "")
-			if date.find('/') != -1:
-				chop = date.index('/')
-				if firstDate:
-					# Take the earlier date- this is most/all of the dates we encounter
-					date = date[:chop]
-				else:
-					# Take the later date when its the second date- widest range
-					# (Makes "1450/60 "into "1460")
-					#date = date[:chop-2]+date[chop+1:]
-					date = date[chop+1:]
-			# We now have a certain date (no c., ?, /, etc.) we can format it for datetime
-			date = date.split(' ')
-			if len(date[0]) < 3:
-				# e.g. 15 December 1443
-				day = date[0]
-				month = date[1]
-				year = date[2]
-			elif len(date) == 2:
-				# e.g. December 1443
-				month = date[0]
-				year = date[1]
-			else:
-				if len(date[0]) == 3 and firstDate:
-					date[0] = date[0] + ""  + "0"
-				if len(date[0]) == 3 and not firstDate:
-					date[0] = date[0] + ""  + "9"
-				# e.g. 1443
-				year = date[0]
-			stringIt = str(year) + "-" + month + "-" + str(day)
-			# format for adding a datetime from a string
-			final.append(datetime.strptime(stringIt, "%Y-%B-%d"))
-			firstDate = False
-		# If there is no dash we extend the window to a whole year
-		if len(final) == 1:
-			final.append(final[0]+ timedelta(days=364))
-		return final
+		return date_ranges(self.date)
 
 	@property
 	def popupcontent(self):
@@ -344,100 +260,7 @@ class DateOwned(models.Model):
 
 	# Outputs a list of len 2- a range of datetimes from an ambigious string
 	def date_range(self):
-		from datetime import datetime, timedelta
-		# Split on the dash into two dates
-		if self.dateowned.find('post-') != -1:
-			self.dateowned = self.dateowned.replace("post-", "post")
-		if self.dateowned.find('pre-') != -1:
-                        self.dateowned = self.dateowned.replace("pre-", "pre")
-		dates = self.dateowned.split('-')
-		# Defaults
-		month = "January"
-		day = 1
-		year = 1350
-		final = []
-		chop = 0
-		firstDate = True
-		if len(dates[0]) == 0 and len(dates[1]) == 0:
-			# If we just get a dash return the full possible date range
-			x = []
-			x.append(datetime(1350, 1, 1))
-			x.append(datetime(1500, 12, 31))
-			return x
-		# For start date and finish date
-		for date in dates:
-			# Take off white space
-			date = date.lstrip()
-			date = date.rstrip()
-			# How we want to organize uncertain dates
-			if (date.find('?') != -1 and len(date) < 2) or date.find('???') != -1:
-				# When we get just a "?"
-				if firstDate:
-					date = "1300"
-				else:
-					date = "1600"
-			if date.find('?') != -1 and date.find('??') == -1:
-				# If we get a something like '1426?'
-				# Maybe add an uncertainty factor to this
-				# If we get a date with a ? i.e. "1460?"
-				date = date.replace("?", "")
-			if date.find('post') != -1:
-				if firstDate:
-					date = date.replace("post", "")
-				else:
-					date = "1500"
-			if date.find('pre') != -1:
-                                if firstDate:
-                                        date = "1350"
-                                else:
-                                        date = date.replace("pre", "")
-			if date.find('??') != -1:
-				if firstDate:
-					date = date.replace("??", "00")
-				else:
-					date = date.replace("??", "99")
-			if "c." in date:
-				# 'c. 1450'
-				# Maybe do a +/- operation to just get a range straight off the bat
-				# For now just get rid of the c.
-				date = date.replace("c. ", "")
-				date = date.replace("c.", "")
-			if date.find('/') != -1:
-				chop = date.index('/')
-				if firstDate:
-					# Take the earlier date- this is most/all of the dates we encounter
-					date = date[:chop]
-				else:
-					# Take the later date when its the second date- widest range
-					# (Makes "1450/60 "into "1460")
-					#date = date[:chop-2]+date[chop+1:]
-					date = date[chop+1:]
-			# We now have a certain date (no c., ?, /, etc.) we can format it for datetime
-			date = date.split(' ')
-			if len(date[0]) < 3:
-				# e.g. 15 December 1443
-				day = date[0]
-				month = date[1]
-				year = date[2]
-			elif len(date) == 2:
-				# e.g. December 1443
-				month = date[0]
-				year = date[1]
-			else:
-				if len(date[0]) == 3 and firstDate:
-					date[0] = date[0] + ""  + "0"
-				if len(date[0]) == 3 and not firstDate:
-					date[0] = date[0] + ""  + "9"
-				# e.g. 1443
-				year = date[0]
-			stringIt = str(year) + "-" + month + "-" + str(day)
-			# format for adding a datetime from a string
-			final.append(datetime.strptime(stringIt, "%Y-%B-%d"))
-			firstDate = False
-		# If there is no dash we extend the window to a whole year
-		if len(final) == 1:
-			final.append(final[0]+ timedelta(days=364))
-		return final
+		return date_ranges(self.dateowned)
 
 	class Meta:
 		verbose_name = 'Date owned'
@@ -659,5 +482,6 @@ class About(models.Model):
 
 	def __str__(self):
 		return self.name
+
 
 

@@ -1,10 +1,11 @@
 from django import forms
+from captcha.fields import CaptchaField
 from books_app.models import *
 from django_select2.forms import Select2MultipleWidget
 from django.forms import ModelChoiceField
 from dal import autocomplete
 from mapwidgets.widgets import GooglePointFieldWidget, GoogleStaticMapWidget
-
+#from captcha.fields import ReCaptchaField
 
 class LocationAdminForm(forms.ModelForm):
     class Meta:
@@ -106,3 +107,23 @@ class SearchForm(forms.Form):
         widget=forms.CheckboxSelectMultiple,
         choices=book_or_owner,
     )
+
+class BookForm(forms.ModelForm):
+    captcha = CaptchaField()
+#    new_captcha = ReCaptchaField()
+    email = forms.EmailField(max_length=128, help_text="Valid contact information is required to approve your submission", required=True)
+    text = forms.CharField(max_length=128, help_text="Text(s) contained within the book", required=False)
+    scribes = forms.CharField(max_length=128, required=False)
+    illuminators = forms.CharField(max_length=128, required=False)
+    printer = forms.CharField(max_length=128, required=False)
+    book_location = forms.CharField(max_length=128, widget=forms.Textarea, help_text="List known locations and date at those locations", required=False)
+    owner_info = forms.CharField(max_length=128, help_text="Provide a list of owners and their dates of book ownership (if known)", widget=forms.Textarea, required=False)
+    bibliography = forms.CharField(max_length=128, help_text="Cite your sources", required=False, widget=forms.Textarea,)
+
+    class Meta:
+        model = Book
+        fields = ['image', 'shelfmark', 'about', 'text', 'type', 'ex_libris', 'date_created', 'catalog_entry', 'digital_version', 'scribes', 'illuminators', 'printer', 'book_location', 'owner_info', 'bibliography']
+
+    def __init__(self, *args, **kwargs):
+        super(BookForm, self).__init__(*args, **kwargs)
+        self.fields['text'].widget.attrs.update({'class' : 'myfieldclass'})

@@ -83,8 +83,7 @@ admin.site.register(Author, AuthorAdmin)
 class DateOwnedAdmin(admin.ModelAdmin):
     search_fields =['book_owned__shelfmark', 'book_owner__name']
     autocomplete_fields = ['book_owned', 'book_owner', 'ownership_type']
-    list_display = ['dateowned', 'book_owned', 'book_owner']
-    list_filter = ('book_owner','book_owned')
+    list_display = ['dateowned', 'book_owned', 'book_owner', 'date_range']
 
 admin.site.register(DateOwned, DateOwnedAdmin)
 
@@ -103,6 +102,7 @@ admin.site.register(BooksLanguage, BooksLanguageAdmin)
 
 class OwnerPlaceDateLivedAdmin(admin.ModelAdmin):
     search_fields = ['the_place__City']
+    list_display = ("the_place", "date_at_location", "date_range")
 
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
@@ -133,6 +133,7 @@ admin.site.register(Translator, TranslatorAdmin)
 
 class BookLocationAdmin(admin.ModelAdmin):
     search_fields = ['book_location__name', 'book_shelfmark__shelfmark']
+    list_display = ('book_shelfmark','owner_at_time','book_location','date','date_range')
 
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
