@@ -270,8 +270,24 @@ def owners(request, owner_id):
         books_list = []
         for date in books:
             books_list.append([date, date.ownership_type.all()])
+        if len(books_list) > 6:
+            books_list_preview = books_list[:6]
+            books_list = books_list[6:]
         relatives = owner.relation.all()
-        return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list})
+        up_one = []
+        same_gen = []
+        down_one = []
+        other_rel = []
+        for relative in relatives:
+            if "Father" in relative.relation or "Mother" in relative.relation or "Aunt" in relative.relation or "Uncle" in relative.relation or "Parent" in relative.relation:
+                up_one.append(relative)
+            elif "Spouse" in relative.relation or "Brother" in relative.relation or "Cousin" in relative.relation or "Sister" in relative.relation:
+                same_gen.append(relative)
+            elif "Son" in relative.relation or "Daughter" in relative.relation or "son" in relative.relation or "daughter" in relative.relation or "Niece" in relative.relation or "Nephew":
+                down_one.append(relative)
+            else:
+                other.append(relative)
+        return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'books_list_preview':books_list_preview})
 
     else:
         owner = Owner.objects.get(name=owner_id)
@@ -280,10 +296,26 @@ def owners(request, owner_id):
         books_list = []
         for date in books:
             books_list.append([date, date.ownership_type.all()])
+        if len(books_list) > 6:
+            books_list_preview = books_list[:6]
+            books_list = books_list[6:]
         relatives = owner.relation.all()
         order_form = OwnerLocationOrderForm()
         library_size = len(books)
-        return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books':books, 'order_form':order_form, 'owner':owner, 'locations':location,  'order_list':order_list, 'library_size':library_size, 'books_list':books_list})
+        up_one = []
+        same_gen = []
+        down_one = []
+        other_rel = []
+        for relative in relatives:
+            if "Father" in relative.relation or "Mother" in relative.relation or "Aunt" in relative.relation or "Uncle" in relative.relation or "Parent" in relative.relation:
+                up_one.append(relative)
+            elif "Spouse" in relative.relation or "Brother" in relative.relation or "Cousin" in relative.relation or "Sister" in relative.relation:
+                same_gen.append(relative)
+            elif "Son" in relative.relation or "Daughter" in relative.relation or "son" in relative.relation or "daughter" in relative.relation or "Niece" in relative.relation or "Nephew":
+                down_one.append(relative)
+            else:
+                other.append(relative)
+        return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books':books, 'order_form':order_form, 'owner':owner, 'locations':location,  'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'books_list_preview':books_list_preview})
 
 def texts(request, text_id):
     # text_id is the title of a text

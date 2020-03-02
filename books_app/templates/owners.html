@@ -59,13 +59,51 @@
   	{% endif %}
         <h4 style="text-align:center;"><strong>Family Tree</strong></h4>
   	{% if relatives %}
-        {% for relative in relatives %}
-  	{% if relative.person.gender == "Male" %}
-  	<li>{{relative.person}}, {{relative.relation}}</li>
-  	{% else %}
-       	  <li><a style="color:blue;" href="https://booksofduchesses.com/owners/{{relative.person}}/">{{relative.person}}</a>, {{relative.relation}}</li>
-  	{% endif %}
+
+	{% if same_gen %}
+        <p style="text-align:center;"><i>Same generation</i></p>
+	{% endif %}
+        {% for relative in same_gen %}
+      	  {% if relative.person.gender == "Male" %}
+  	    <li>{{relative.person}}, {{relative.relation}}</li>
+  	  {% else %}
+       	    <li><a style="color:blue;" href="https://booksofduchesses.com/owners/{{relative.person}}/">{{relative.person}}</a>, {{relative.relation}}</li>
+  	  {% endif %}
         {% endfor %}
+
+	{% if up_one %}
+	  <p style="text-align:center;"><i>Parents/Up one generation</i></p>
+	{% endif %}
+        {% for relative in up_one %}
+      	  {% if relative.person.gender == "Male" %}
+  	    <li>{{relative.person}}, {{relative.relation}}</li>
+  	  {% else %}
+       	    <li><a style="color:blue;" href="https://booksofduchesses.com/owners/{{relative.person}}/">{{relative.person}}</a>, {{relative.relation}}</li>
+  	  {% endif %}
+        {% endfor %}
+
+	{% if down_one %}
+	<p style="text-align:center;"><i>Children/Down one generation</i></p>
+	{% endif %}
+        {% for relative in down_one %}
+      	  {% if relative.person.gender == "Male" %}
+  	    <li>{{relative.person}}, {{relative.relation}}</li>
+  	  {% else %}
+       	    <li><a style="color:blue;" href="https://booksofduchesses.com/owners/{{relative.person}}/">{{relative.person}}</a>, {{relative.relation}}</li>
+  	  {% endif %}
+        {% endfor %}
+
+	{% if other_rel %}
+	  <p style="text-align:center;"><i>Other/Unknown</i></p>
+	{% endif %}
+        {% for relative in other_rel %}
+      	  {% if relative.person.gender == "Male" %}
+  	    <li>{{relative.person}}, {{relative.relation}}</li>
+  	  {% else %}
+       	    <li><a style="color:blue;" href="https://booksofduchesses.com/owners/{{relative.person}}/">{{relative.person}}</a>, {{relative.relation}}</li>
+  	  {% endif %}
+        {% endfor %}
+
   	{% else %}
   	<p style="font-size:13px;">No known relatives</p>
   	{% endif %}
@@ -148,13 +186,55 @@
       {{book.conf_or_possible}} ownership {{book.dateowned}} by {{book.evidence}}</p>
     {% endfor %}
  -->
+
+<script>
+function libraryFunction() {
+  var dots = document.getElementById("booksMore");
+  var moreText = document.getElementById("booksAdd");
+  var btnText = document.getElementById("booksBtn");
+
+  btnText.setAttribute("style","border: 2px solid #9400D3;font-size:10px;background-color:white");
+  if (dots.style.display === "none") {
+    dots.style.display = "inline";
+    btnText.innerHTML = "Show all " + {{library_size}} + " books";
+    moreText.style.display = "none";
+  } else {
+    dots.style.display = "none";
+    btnText.innerHTML = "Show less";
+    moreText.style.display = "inline";
+  }
+}
+</script>
+
+ {% if books_list_preview %}
+   {% for date in books_list_preview %}
+        <p style="text-align:left;" ><a style="color:blue;" href="http://booksofduchesses.com/books/{{date.0.book_owned}}">{{date.0.book_owned}}</a>: {{date.0.book_owned.about}}. 
+      {% for a in date.1 %}
+        {{a.conf_or_possible}} ownership {{date.0.dateowned}} by {{a.evidence}}.
+      {% endfor %}
+	</p>
+   {% endfor %}
+   <span id="booksMore"></span><span id="booksAdd" style="display: none;">
    {% for date in books_list %}
         <p style="text-align:left;" ><a style="color:blue;" href="http://booksofduchesses.com/books/{{date.0.book_owned}}">{{date.0.book_owned}}</a>: {{date.0.book_owned.about}}. 
       {% for a in date.1 %}
         {{a.conf_or_possible}} ownership {{date.0.dateowned}} by {{a.evidence}}.
       {% endfor %}
 	</p>
-    {% endfor %}
+   {% endfor %}
+   </span>
+   <button onclick="libraryFunction()" id="booksBtn" style="border: 2px solid #9400D3;font-size:10px;background-color:white">Show all {{ library_size }} books</button>
+ {% else %}
+   {% for date in books_list %}
+        <p style="text-align:left;" ><a style="color:blue;" href="http://booksofduchesses.com/books/{{date.0.book_owned}}">{{date.0.book_owned}}</a>: {{date.0.book_owned.about}}. 
+      {% for a in date.1 %}
+        {{a.conf_or_possible}} ownership {{date.0.dateowned}} by {{a.evidence}}.
+      {% endfor %}
+	</p>
+   {% endfor %}
+ {% endif %}
+
+
   </div>
 
 </div>
