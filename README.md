@@ -2,7 +2,7 @@
 
 
 
-This project was commissioned by Sarah Watson of Haverford College and S.C Kaplan of Rice University. The projects aims to
+This project was commissioned by Sarah Watson of Haverford College and S.C. Kaplan of Rice University. The project aims to
 
 * organize, collect, and visualize data about medieval laywomen and their books      
 * chart networks of texts, manuscripts, and readers
