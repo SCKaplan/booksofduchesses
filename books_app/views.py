@@ -287,6 +287,10 @@ def owners(request, owner_id):
                 down_one.append(relative)
             else:
                 other.append(relative)
+        #This is a temp fix for issues 74,74,76; Exception Value: local variable 'books_list_preview' referenced before assignment
+        context = {'places': location, 'relatives': relatives, 'books':books, 'order_form':order_form, 'owner':owner, 'locations':location,  'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel}
+        if books_list_preview:
+            context['books_list_preview'] =books_list_preview
         return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'books_list_preview':books_list_preview})
 
     else:
@@ -315,7 +319,13 @@ def owners(request, owner_id):
                 down_one.append(relative)
             else:
                 other.append(relative)
-        return render(request, 'owners.html', {'places': location, 'relatives': relatives, 'books':books, 'order_form':order_form, 'owner':owner, 'locations':location,  'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'books_list_preview':books_list_preview})
+
+        #This is a temp fix for issues 74,74,76; Exception Value: local variable 'books_list_preview' referenced before assignment
+        context = {'places': location, 'relatives': relatives, 'books':books, 'order_form':order_form, 'owner':owner, 'locations':location,  'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel}
+        if books_list_preview:
+            context['books_list_preview'] =books_list_preview
+
+        return render(request, 'owners.html', context)
 
 def texts(request, text_id):
     # text_id is the title of a text
