@@ -270,6 +270,7 @@ def owners(request, owner_id):
         books_list = []
         for date in books:
             books_list.append([date, date.ownership_type.all()])
+        books_list_preview = False
         if len(books_list) > 6:
             books_list_preview = books_list[:6]
             books_list = books_list[6:]
@@ -302,6 +303,7 @@ def owners(request, owner_id):
         books_list = []
         for date in books:
             books_list.append([date, date.ownership_type.all()])
+        books_list_preview=False
         if len(books_list) > 6:
             books_list_preview = books_list[:6]
             books_list = books_list[6:]
