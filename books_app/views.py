@@ -373,13 +373,8 @@ class BooksAutocomplete(autocomplete.Select2ListView):
 
 def about(request):
 	about = About.objects.all()
-	about = about[0]
+	about = [about[0],about[1]]
 	return render(request, 'about.html', {'about': about})
-
-def howto(request):
-        about = About.objects.all()
-        about = about[1]
-        return render(request, 'howto.html', {'about': about})
 
 def suggest(request):
 	if request.method == 'POST':
@@ -425,5 +420,6 @@ def tendies(request):
     res = str(results.text)
     veg_tendies = res.find('Vegan Nuggets')
     tendies = res.find("Crispy Chicken")
-    yesorno = (tendies != -1 or veg_tendies != -1)
+    lunch_tendies = res.find("Breaded Chicken")
+    yesorno = (tendies != -1 or veg_tendies != -1 or lunch_tendies != -1)
     return render(request, 'tendies.html', {'yesorno': yesorno})

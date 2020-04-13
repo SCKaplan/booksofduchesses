@@ -4,9 +4,25 @@
 {% load static %}
 
 {% block content %}
-  <!-- About section -->
+  <!-- About section 
 <div class="w3-content w3-wide">
   <h2 style="text-align:center; padding-top:54px;">About</h2>
    <p> {{about.about|linebreaks|urlize}} </p>
 </div>
+-->
+<style>
+#head {
+  padding-top:40px !important;
+}
+
+</style>
+  <div class="w3-container w3-padding-32" id="about">
+    <h3 id="head" class="w3-border-bottom w3-border-light-grey w3-padding-16">About</h3>
+    <p> {{about.0.about|linebreaks|urlize}}
+   <h3 id="head" class="w3-border-bottom w3-border-light-grey w3-padding-16">How to use the project</h3>
+    </p>
+    <p> {{about.1.about|linebreaks|urlize}}
+    </p>
+  </div>
+<br>
 {% endblock %}

@@ -24,11 +24,10 @@
       <a href="/" class="w3-bar-item w3-button">Books of Duchesses</a>
       <!-- Float links to the right. Hide them on small screens -->
       <div class="w3-right w3-hide-small">
-        <a href="https://booksofduchesses.com/about" class="w3-bar-item w3-button">About</a>
+        <a href="https://booksofduchesses.com/about" class="w3-bar-item w3-button">About/Usage</a>
         <a href="https://booksofduchesses.com/#map" class="w3-bar-item w3-button">Map</a>
-	<a href="https://booksofduchesses.com/suggest" class="w3-bar-item w3-button">Suggest</a>
         <a href="https://booksofduchesses.com/search" class="w3-bar-item w3-button">Search</a>
-        <a href="https://booksofduchesses.com/howto" class="w3-bar-item w3-button">How To Use</a>
+	<a href="https://booksofduchesses.com/suggest" class="w3-bar-item w3-button">Suggest</a>
        <!-- <a href="#owners" class="w3-bar-item w3-button">Books & Book Owners</a> -->
       </div>
     </div>
@@ -60,8 +59,10 @@
 <p style="text-align:center; font-size:13px">Fill out the form below to add information to the project</p>
 <p style="text-align:center; font-size:13px">For any feedback or suggestions that can't fit in the form, send us an email at <a href="mailto:booksofduchesses@gmail.com">booksofduchesses@gmail.com</a></p>
 {% if failed %}
-	<h3 style="text-align:center; padding-top:50px;">Failed Captcha, press back to refill form</h3>
+	<h3 style="text-align:center; padding-top:50px;">Invalid Email/Failed Captcha, press back to refill form</h3>
 {% endif %}
+
+
 <form action="/suggest" method="post" style="padding-top:10px;  margin: auto; width: 50%; padding-left: 10px">
     {% csrf_token %}
     {{ book_form.email|as_crispy_field }}<br>
@@ -81,26 +82,23 @@
 {{ book_form.bibliography|as_crispy_field }}<br>
 {{ book_form.catalog_entry|as_crispy_field }}<br>
 {{ book_form.digital_version|as_crispy_field }}<br>
-{{book_form.captcha|as_crispy_field}}<br>
-
-<!--    <p>About:</p>{{ book_form.about }}<br>
-    <p>Text:</p>{{ book_form.text }}<br>
-    <p>Type:</p>{{ book_form.type }}<br>
-    <p>Ex Libris:</p>{{ book_form.ex_libris }}<br>
-    <p>Date Created:</p>{{ book_form.date_created }}<br>
-    <p>Scribes:</p>{{ book_form.scribes }}<br>
-    <p>Illuminators:</p>{{ book_form.illuminators }}<br>
-    <p>Printer:</p>{{ book_form.printer }}<br>
-    <p>Location:</p>{{ book_form.book_location }}<br>
-    <p>Owner Information:</p>{{ book_form.owner_info }}<br>
-    <p>Bibliography:</p>{{ book_form.bibliography }}<br>
-    <p>Catalog Entry:</p>{{ book_form.catalog_entry }}<br>
-    <p>Digital Version:</p>{{ book_form.digital_version }}<br>
-    <p>Confirm you are not a robot:</p> {{book_form.captcha}}<br>
--->
+<!-- Could add captcha model in here but removing in favor of callback processing -->
+<div class="g-recaptcha" data-callback="recaptcha_callback" data-expired-callback="exp_callback"  data-sitekey="6LfLzN4UAAAAALKoRVv7Ndx72dJWBlb41MIBKykn"></div>
     <br>
-    <input type="submit" value="Submit">
+    <input type="submit" id="recaptcha-submit" class="button"  disabled>
 </form>
+
+<script src='https://www.google.com/recaptcha/api.js'></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>    
+<script type="text/javascript">
+    function recaptcha_callback(){
+      $('.button').prop("disabled", false);
+    }
+    function exp_callback(){
+      $('.button').prop("disabled", true);
+    }
+</script>
+
 <br>
 <br>
 <br>
