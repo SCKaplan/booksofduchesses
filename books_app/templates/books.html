@@ -115,8 +115,8 @@
       {% endfor %}
 -->
       {% for owner in date_list %}
-        {% if owner.book_owner.gender == "Male" %}
-          <p>{{ owner.0.book_owner }}, Ownership {{owner.0.conf_or_possible}} ({{ owner.0.dateowned }})</p>
+        {% if owner.0.book_owner.gender == "Male" %}
+          <p>{{ owner.0.book_owner }},
         {% else %}
           <p><a href="http://booksofduchesses.com/owners/{{owner.0.book_owner}}/">{{ owner.0.book_owner }}</a>, 
         {% endif %}

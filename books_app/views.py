@@ -279,11 +279,17 @@ def owners(request, owner_id):
         same_gen = []
         down_one = []
         other_rel = []
+        down_two = []
+        up_two = []
         for relative in relatives:
-            if "Father" in relative.relation or "Mother" in relative.relation or "Aunt" in relative.relation or "Uncle" in relative.relation or "Parent" in relative.relation:
-                up_one.append(relative)
-            elif "Spouse" in relative.relation or "Brother" in relative.relation or "Cousin" in relative.relation or "Sister" in relative.relation:
+            if "Spouse" in relative.relation or "Brother" in relative.relation or "Cousin" in relative.relation or "Sister" in relative.relation:
                 same_gen.append(relative)
+            elif  "Grandmother" == relative.relation or "Grandfather" == relative.relation or "Great Aunt" == relative.relation or "Great Uncle" == relative.relation:
+                up_two.append(relative)
+            elif "Grandson" == relative.relation or "Granddaughter" == relative.relation or "Grand Niece" == relative.relation or "Grand Nephew" == relative.relation:
+                down_two.append(relative)
+            elif "Father" in relative.relation or "Mother" in relative.relation or "Aunt" in relative.relation or "Uncle" in relative.relation or "Parent" in relative.relation:
+                up_one.append(relative)
             elif "Son" in relative.relation or "Daughter" in relative.relation or "son" in relative.relation or "daughter" in relative.relation or "Niece" in relative.relation or "Nephew":
                 down_one.append(relative)
             else:
@@ -387,7 +393,7 @@ class BooksAutocomplete(autocomplete.Select2ListView):
 
 def about(request):
 	about = About.objects.all()
-	about = [about[0],about[1]]
+	about = [about[0],about[1],about[2]]
 	return render(request, 'about.html', {'about': about})
 
 def suggest(request):
@@ -419,21 +425,3 @@ def suggest(request):
 		failed = False
 		return render(request, 'suggest.html', {'book_form': book_form, 'failed': failed})
 
-def tendies(request):
-    import requests
-    from bs4 import BeautifulSoup
-
-    URL = 'https://www.haverford.edu/dining-services/dining-center'
-    page = requests.get(URL)
-    #print(page.content)
-
-    soup = BeautifulSoup(page.content, 'html.parser')
-    results = soup.find(id='today_menu_1')
-
-    #print(results.prettify())
-    res = str(results.text)
-    veg_tendies = res.find('Vegan Nuggets')
-    tendies = res.find("Crispy Chicken")
-    lunch_tendies = res.find("Breaded Chicken")
-    yesorno = (tendies != -1 or veg_tendies != -1 or lunch_tendies != -1)
-    return render(request, 'tendies.html', {'yesorno': yesorno})

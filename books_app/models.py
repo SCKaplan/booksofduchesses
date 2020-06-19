@@ -137,6 +137,7 @@ class Book(models.Model):
 class Owner(models.Model):
 	image = models.ImageField(null=True, blank=True)
 	image_citation = models.CharField(max_length=500, blank=True, null=True)
+	bio = models.URLField(null=True, blank=True, max_length=500)
 	name = models.CharField(max_length=200)
 	titles = models.CharField(max_length=200, blank=True, null=True)
 	birth_year = models.CharField(max_length=200, blank=True, null=True)
@@ -182,6 +183,7 @@ class Text(models.Model):
 	me_compendium_link = models.CharField(max_length=200, blank=True, verbose_name="ME Compendium Link")
 	ihrt_link = models.CharField(max_length=800, blank=True)
 	estc_link = models.CharField(max_length=800, blank=True, verbose_name="ESTC Link")
+	ustc_link = models.CharField(max_length=800, blank=True, verbose_name="USTC Link")
 
 	def __str__(self):
 		return self.title
@@ -344,18 +346,30 @@ class Relative(models.Model):
 	Uncle = 'Uncle'
 	Cousin = 'Cousin'
 	DiL = 'Daughter-in-law'
-	SiL = 'Son-in-law'
+	SoniL = 'Son-in-law'
 	MiL = 'Mother-in-law'
 	FiL = 'Father-in-law'
-	SiL = 'Sister-in-law'
+	SisiL = 'Sister-in-law'
 	BiL = 'Brother-in-law'
 	God_son = 'God-son'
 	God_parent = 'God-parent'
 	God_daughter = 'God-Daughter'
 	Niece = 'Niece'
 	Nephew = 'Nephew'
+	Grandmother = 'Grandmother'
+	Grandfather = 'Grandfather'
+	GreatAunt = 'Great Aunt'
+	GreatUncle = 'Great Uncle'
+	Granddaughter = 'Granddaughter'
+	Grandson = 'Grandson'
+	GrandNiece = 'Grand Niece'
+	GrandNephew = 'Grand Nephew'
 	Other = 'Other'
-	rel_choices = [(Father, "Father"), (Mother, "Mother"), (Spouse, "Spouse"), (Son, "Son"), (Daughter, 'Daughter'), (Brother, 'Brother'), (Sister, 'Sister'),(Aunt, 'Aunt'),(Uncle, 'Uncle'),(Cousin, 'Cousin'),(DiL, 'Daughter-in-law'),(SiL, 'Son-in-Law'), (MiL, 'Mother-in-law'), (FiL, 'Father-in-law'), (SiL, 'Sister-in-law'), (BiL, 'Brother-in-law'), (God_son, 'God-son'), (God_parent, 'God-parent'), (God_parent, 'God-parent'), (God_daughter, 'God-Daughter'), (Niece, "Niece"), (Nephew, "Nephew"), (Other, 'Other')]
+	rel_choices = [(Father, "Father"), (Mother, "Mother"), (Spouse, "Spouse"), (Son, "Son"), (Daughter, 'Daughter'), (Brother, 'Brother'), (Sister, 'Sister'),\
+	(Aunt, 'Aunt'),(Uncle, 'Uncle'),(Cousin, 'Cousin'),(DiL, 'Daughter-in-law'),(SoniL, 'Son-in-Law'), (MiL, 'Mother-in-law'), (FiL, 'Father-in-law'), (SisiL, 'Sister-in-law'),\
+	(BiL, 'Brother-in-law'), (God_son, 'God-son'), (God_parent, 'God-parent'), (God_parent, 'God-parent'), (God_daughter, 'God-Daughter'), (Niece, "Niece"),\
+	(Nephew, "Nephew"), (Grandmother, "Grandmother"), (Grandfather, "Grandafather"), (GreatAunt, "Great Aunt"), (GreatUncle, "Great Uncle"), \
+	(Granddaughter, "Granddaughter"), (Grandson, "Grandson"), (GrandNiece, "Grand Niece"), (GrandNephew, "Grand Nephew"), (Other, 'Other')]
 	relation = models.CharField(max_length=40, choices=rel_choices, default='Father')
 
 	def __str__(self):

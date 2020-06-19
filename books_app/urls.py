@@ -19,5 +19,4 @@ urlpatterns = [
     path('about', views.about, name='about'),
     path('suggest', views.suggest, name='suggest'),
 #    url(r'^captcha/', include('captcha.urls')),
-    path('tendies', views.tendies, name='tendies'),
 ]

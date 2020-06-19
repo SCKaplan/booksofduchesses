@@ -102,7 +102,7 @@ admin.site.register(BooksLanguage, BooksLanguageAdmin)
 
 class OwnerPlaceDateLivedAdmin(admin.ModelAdmin):
     search_fields = ['the_place__City']
-    list_display = ("the_place", "date_at_location", "date_range")
+    list_display = ("the_place", "date_at_location")
 
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
