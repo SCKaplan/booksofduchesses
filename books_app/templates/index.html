@@ -259,9 +259,10 @@
 	          
    	      }  
 	      var props = "";
-              props = props + d[k][0]
+              var first_break = d[k][0].indexOf("br>")
+              props = props + d[k][0].substring(0,first_break+3)
 	      var booksStart = true;
-	      for (t = 1; t < d[k].length; t++) {
+	      for (t = 0; t < d[k].length; t++) {
 		  var x = d[k][t].indexOf("br>")
 		  d[k][t] = d[k][t].substring(x+3,d[k][t].length)
 		  if (d[k][t].indexOf("owned by") > 0 && booksStart == true) {

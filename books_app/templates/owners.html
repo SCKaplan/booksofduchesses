@@ -180,7 +180,7 @@
   </div>
   <!-- Right column -->
   <div class="w3-col l3 m6 w3-margin-bottom" style="float:right; text-align:center;">
-    <h3 style="text-align:center;"><strong>{{owner.name}}'s Locations</strong></h3>
+    <h3 style="text-align:center;"><strong>{{short_name}}'s Locations</strong></h3>
 
         <form action="" method="post" id="map">
             {% csrf_token %}
@@ -203,7 +203,7 @@
       <p style="font-size:13px;">No known locations</p>
     {% endif %}
     <br>
-    <h3 style="text-align:center;"><strong>{{owner.name}}'s Library</strong></h3></p>
+    <h3 style="text-align:center;"><strong>{{short_name}}'s Library</strong></h3></p>
     <p>Book Count: {{library_size}}</p>
 
 <!--    {% for book in books %}

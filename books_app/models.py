@@ -168,6 +168,14 @@ class Owner(models.Model):
 	def __str__(self):
 		return self.name
 
+	def name_abbr(self):
+		comma = self.name.find(',')
+		if comma != -1:
+			return self.name[0:comma]
+		else:
+			return self.name
+
+
 # A text can appear in multiple books and a book can have multiple texts, this mostly helps fill out the template
 class Text(models.Model):
 	title = models.CharField(max_length=200)
@@ -243,21 +251,6 @@ class DateOwned(models.Model):
 	book_owned = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
 	dateowned = models.CharField(max_length=200, null = True)
 	book_owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, null=True, help_text="If you don't have a known owner for this entry, select No known Owner")
-	Conf = 'confirmed'
-	Poss = 'possibly'
-	conf_choices = [(Conf, "confirmed"),(Poss, "possibly")]
-	conf_or_possible = models.CharField(max_length=9, choices=conf_choices, default='confirmed')
-
-	inscription = 'Inscription'
-	patron_portrait = 'Patron Portrait'
-	inventory = 'Inventory'
-	archival_mention = 'Archival Mention'
-	arms = 'Arms'
-	will = 'Will'
-	other = 'Other'
-
-	type_choices = [(inscription, "Inscription"), (patron_portrait, "Patron Portrait"), (inventory,"Inventory"), (archival_mention, "Archival Mention"), (arms, "Arms"), (will, "Will"), (other, "Other")]
-	evidence = models.CharField(max_length=40, choices=type_choices, default='Inscription')
 	ownership_type = models.ManyToManyField('Evidence')
 
 	# Outputs a list of len 2- a range of datetimes from an ambigious string

@@ -253,6 +253,7 @@ def owners(request, owner_id):
         order_form = OwnerLocationOrderForm(request.POST)
         order = request.POST.get('order')
         owner = Owner.objects.get(name=owner_id)
+        short_name = owner.name_abbr()
         books = DateOwned.objects.filter(owner=owner).order_by('book_owned__shelfmark')
         relatives = owner.relation.all()
         order_form = OwnerLocationOrderForm()
@@ -297,13 +298,14 @@ def owners(request, owner_id):
         #This is a temp fix for issues 74,74,76; Exception Value: local variable 'books_list_preview' referenced before assignment
         #This is a temp fix for issues 74,74,76; Exception Value: local variable 'books_list_preview' referenced before assignment
         if not books_list_preview:
-            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel}
+            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'short_name':short_name}
         else:
-            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'books_list_preview':books_list_preview}
+            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'books_list_preview':books_list_preview, 'short_name':short_name}
         return render(request, 'owners.html', context)
 
     else:
         owner = Owner.objects.get(name=owner_id)
+        short_name = owner.name_abbr()
         location = owner.owner_location.all().order_by('-the_place')
         books = DateOwned.objects.filter(owner=owner).order_by('book_owned__shelfmark')
         books_list = []
@@ -332,9 +334,9 @@ def owners(request, owner_id):
 
         #This is a temp fix for issues 74,74,76; Exception Value: local variable 'books_list_preview' referenced before assignment
         if not books_list_preview:
-            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel}
+            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'short_name':short_name}
         else:
-            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'books_list_preview':books_list_preview}
+            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'books_list_preview':books_list_preview, 'short_name':short_name}
         return render(request, 'owners.html', context)
 
 def texts(request, text_id):
