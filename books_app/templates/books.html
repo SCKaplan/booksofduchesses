@@ -42,17 +42,23 @@
         <li><a href="http://booksofduchesses.com/texts/{{text.title}}/">{{ text.title }}</a></li>
       {% endfor %}
       </p>
-      {% if illuminators %}
-        <p class="w3-opacity">Illuminators:</p>
+      {% if iluminators %}
+        <p class="w3-opacity">Illuminator(s):</p>
       {% endif %}
-      {% for illum in illuminators %}
+      {% for illum in iluminators %}
         <li>{{ illum.name }}</a></li>
       {% endfor %}
       {% if scribes %}
-        <p class="w3-opacity">Scribes:</p>
+        <p class="w3-opacity">Scribe(s):</p>
       {% endif %}
       {% for scribe in scribes %}
         <li>{{ scribe.name }}</a></li>
+      {% endfor %}
+      {% if printers %}
+        <p class="w3-opacity">Printer(s):</p>
+      {% endif %}
+      {% for printer in printers %}
+        <li>{{ printer.name }}</a></li>
       {% endfor %}
     </div>
     <!-- Map -->

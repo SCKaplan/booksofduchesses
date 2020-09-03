@@ -116,8 +116,12 @@ tr:nth-child(even) {
       <tbody>
         {% for date in dates %}
           <tr>
-            <td><a href="https://booksofduchesses.com/owners/{{ date.book_owner }}">{{ date.book_owner }}</a></td>
-            <td><a href="https://booksofduchesses.com/books/{{ date.book_owned }}">{{ date.book_owned }}</a></td>
+	    {% if date.book_owner.gender == 'Male' %}	    
+	      <td>{{ date.book_owner }}</td>
+            {% else %}
+              <td><a href="https://booksofduchesses.com/owners/{{ date.book_owner }}">{{ date.book_owner }}</a></td>
+	    {% endif %}
+	    <td><a href="https://booksofduchesses.com/books/{{ date.book_owned }}">{{ date.book_owned }}</a></td>
             <td>{{ date.dateowned }}</td>
           </tr>  
 	{% endfor %}
@@ -149,7 +153,11 @@ tr:nth-child(even) {
     <tbody>
       {% for owner in owners %}
         <tr>
-          <td><a href="https://booksofduchesses.com/owners/{{ owner.name }}">{{ owner.name }}</a></td>
+	  {% if owner.gender == 'Male' %}
+      	    <td>{{ owner.name }}</td>
+	  {% else %}
+            <td><a href="https://booksofduchesses.com/owners/{{ owner.name }}">{{ owner.name }}</a></td>
+	  {% endif %}
 	  <td>{{ owner.symbol }}</td>
           <td>{{ owner.birth_year }} - {{ owner.death_year }}</td>
         </tr>

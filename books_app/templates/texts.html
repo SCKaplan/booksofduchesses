@@ -123,7 +123,7 @@
      {% endfor %}
 -->
       {% for date in books_list %}
-	{% if date.book_owner.gender == "Male" %}
+	{% if date.0.book_owner.gender == "Male" %}
           <p style="font-size:13px;"><a style="color: blue;" href="https://booksofduchesses.com/books/{{date.0.book_owned}}">{{date.0.book_owned}}</a> owned by {{date.0.book_owner}} ({{date.0.dateowned}}).
           {% for a in date.1 %}  
             Ownership {{a.conf_or_possible}} with {{a.date.evidence}} as evidence.

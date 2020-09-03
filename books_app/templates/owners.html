@@ -193,7 +193,7 @@
             </select>
 
             <input type="submit" value="Sort">
-  </form>
+         </form>
 
     {% if locations %}
       {% for location in locations %}
@@ -205,6 +205,19 @@
     <br>
     <h3 style="text-align:center;"><strong>{{short_name}}'s Library</strong></h3></p>
     <p>Book Count: {{library_size}}</p>
+
+        <form action="" method="post" id="map">
+            {% csrf_token %}
+        Order:
+            <select name="order_books">
+
+                <option type="radio" {{ order_list.0 }} value="alphabetical"> Alphabetical</option>
+                <option type="radio" {{ order_list.1 }} value="datedesc"> Descending date</option>>
+                <option type="radio" {{ order_list.2 }} value="dateasc">  Ascending date</option>>
+            </select>
+
+            <input type="submit" value="Sort">
+         </form>
 
 <!--    {% for book in books %}
       <p style="text-align:left;" ><a style="color:blue;" href="http://booksofduchesses.com/books/{{book.book_owned}}">{{book.book_owned}}</a>: {{book.book_owned.about}}. 

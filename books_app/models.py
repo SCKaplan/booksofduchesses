@@ -84,7 +84,7 @@ def date_ranges(given_dates):
         	month = date[0]
         	year = date[1]
         else:
-		# Some shit going on here with spaces/tabs
+		# Some stuff going on here with spaces/tabs
         	if len(date[0]) == 3 and firstDate:
         		date[0] = date[0] + ""  + "0"
         	if len(date[0]) == 3 and not firstDate:
@@ -216,7 +216,10 @@ class OwnerPlaceDateLived(models.Model):
 	def popupcontent(self):
 		# The content that goes in the popup on the map- html formatted
 		owner = Owner.objects.get(owner_location=self)
-		str = '<a href="https://booksofduchesses.com/owners/{}/" target="_blank">{}</a>, {} <br>'.format(owner.name, owner.name, self.date_at_location)
+		if owner.gender == "Male":
+			str = '{}, {} <br>'.format(owner.name, self.date_at_location)
+		else:
+			str = '<a href="https://booksofduchesses.com/owners/{}/" target="_blank">{}</a>, {} <br>'.format(owner.name, owner.name, self.date_at_location)
 		return '<strong>{}, {}</strong><br>{}'.format(self.the_place.City, self.the_place.Country, str)
 
 	class Meta:
@@ -240,7 +243,10 @@ class BookLocation(models.Model):
 	@property
 	def popupcontent(self):
 		book = self.book_shelfmark
-		str = '<a href="http://booksofduchesses.com/books/{}" target="_blank">{}</a>, owned by <a href="http://booksofduchesses.com/owners/{}/" target="_blank">{}</a> ({}) <br>'.format(book.shelfmark, book.shelfmark, self.owner_at_time, self.owner_at_time, self.date)
+		if self.owner_at_time.gender == "Male":
+			str = '<a href="http://booksofduchesses.com/books/{}" target="_blank">{}</a>, owned by {} ({}) <br>'.format(book.shelfmark, book.shelfmark, self.owner_at_time, self.date)
+		else:
+			str = '<a href="http://booksofduchesses.com/books/{}" target="_blank">{}</a>, owned by <a href="http://booksofduchesses.com/owners/{}/" target="_blank">{}</a> ({}) <br>'.format(book.shelfmark, book.shelfmark, self.owner_at_time, self.owner_at_time, self.date)
 		return '<strong>{}, {}</strong><br>{}'.format(self.book_location.City, self.book_location.Country, str)
 
 	def __str__(self):
@@ -267,6 +273,13 @@ class DateOwned(models.Model):
 	def __str__(self):
 		return self.book_owned.shelfmark + ", " + self.book_owner.name + ", " + self.dateowned
 		#return self.book_owner.name + ", " + self.dateowned
+
+	def clean(self):
+		try:
+			self.date_range()
+		except:
+			from django.core.exceptions import ValidationError
+			raise ValidationError("Invalid date range")
 
 # Not necesarilly useful or necessary but I'm keeping this around until we figure out stacking on the map
 class Location(models.Model):
