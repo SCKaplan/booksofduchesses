@@ -253,6 +253,7 @@ def owners(request, owner_id):
     if request.method == 'POST':
         order_form = OwnerLocationOrderForm(request.POST)
         order = request.POST.get('order')
+        order_books = request.POST.get('order_books')
         owner = Owner.objects.get(name=owner_id)
         short_name = owner.name_abbr()
         books = DateOwned.objects.filter(owner=owner).order_by('book_owned__shelfmark')
@@ -265,13 +266,25 @@ def owners(request, owner_id):
         elif order=="datedesc":
             location = sorted(owner.owner_location.all(), key=lambda a: a.date_range())
             order_list = ["", "selected", ""]
-        elif order=="dateasc":
+        else:
             location = sorted(owner.owner_location.all(), key=lambda a: a.date_range())
             location.reverse()
             order_list = ["", "", "selected"]
+
         books_list = []
         for date in books:
             books_list.append([date, date.ownership_type.all()])
+
+        if order_books=="alphabetical":
+            order_list = ["selected", "", ""]
+        elif order_books=="datedesc":
+            books_list = sorted(books_list, key=lambda a: a[0].date_range())
+            order_list = ["", "selected", ""]
+        elif order_books=="dateasc":
+            books_list = sorted(books_list, key=lambda a: a[0].date_range())
+            books_list.reverse()
+            order_list = ["", "", "selected"]
+
         books_list_preview = False
         if len(books_list) > 6:
             books_list_preview = books_list[:6]
