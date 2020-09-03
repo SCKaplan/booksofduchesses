@@ -227,6 +227,7 @@ def books(request, book_id):
     places = BookLocation.objects.filter(book_shelfmark=book)
     illuminators = book.illuminators.all()
     scribes = book.scribes.all()
+    printers = book.printer.all()
     # For owners we query DateOwned objects because they contain dates which we need to be on template
     # orders by date_range method... i think
     owners_date = sorted(DateOwned.objects.filter(book_owned=book), key=lambda a: a.date_range())
@@ -243,7 +244,7 @@ def books(request, book_id):
             evidences.append([date, date.ownership_type.all()])
         except:
             pass
-    return render(request,'books.html', {'book':book, 'owners':owner_geo, 'texts': texts, 'bibs': bibs, 'places':places, 'iluminators': illuminators, 'scribes': scribes, 'evidences':evidences, 'date_list':date_list})
+    return render(request,'books.html', {'book':book, 'owners':owner_geo, 'texts': texts, 'bibs': bibs, 'places':places, 'iluminators': illuminators, 'scribes': scribes, 'printers': printers, 'evidences':evidences, 'date_list':date_list})
 
 def owners(request, owner_id):
     # owner_id is the name of an owner
