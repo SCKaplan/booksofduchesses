@@ -117,7 +117,7 @@
 <div class="column right" style="margin-top: 30px; padding-right:25px; padding-left:10px;">
   <div id="mapid" style="width: 100%; height:800px;">
     <script>
-      // Definte green icons, to represent books
+      // Define green icons, to represent books
       var greenIcon = new L.Icon({
         iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -150,7 +150,7 @@
       // Send two values to legend, book and owner
       legend.onAdd = function (mymap) {
           var div = L.DomUtil.create('div', 'info legend'), grades = ["Owner", "Book"],
-      // "label" said values with images of their pin
+      // label said values with images of their pin
       	  labels = ["https://github.com/pointhi/leaflet-color-markers/raw/master/img/marker-icon-2x-violet.png","https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png"];
       // Style/html to make legend content fit and look good
           div.innerHTML = '<p style="text-align:center;">Legend</p>';
@@ -164,62 +164,73 @@
       // Get owners data
       var owners = {{ owners|geojsonfeature:'popupcontent'|safe }};
 
+      // Will be filled with geom, popupcontent from above
       var coords = [];
       var popups = [];
+      // Loop counter vars
       var i;
       var j;
-      var inArray = false;
-      var k;      
+      var k;
       var z;
       var t = 0;
+      // For tracking matching locations
+      var unique_place = false;
 
+      // Begin with owners
       var ownerLayer = L.geoJSON(owners, {
           pointToLayer: function (feature, latlng) {
               return L.marker(latlng, {icon: violetIcon});
           },
           onEachFeature: function(feature, layer) {
-              c = [];
-              d = [];
-       	      props = [];
-
-              coords.push(feature.geometry.coordinates);
-  	      popups.push(feature.properties.popupcontent);
-              for (i = 0; i < coords.length; i++) {  
-                  for (j = 0; j < c.length; j++) {
- 		      if (c[j][0][0] == (coords[i][0])) {
-  		          c[j].push(coords[i]);
-  			  d[j].push(popups[i]);
- 	                  inArray = true;
-			  break;
-  	   	      }              
-                  }
-  		  if (inArray == false) {
-    		      c.push([coords[i]]);
-      		      d.push([popups[i]]);
-		  }
-  		  inArray = false;
-	      }
-
-	      for (k = 0; k < c.length; k++) {
-		  if (c[k].includes(feature.geometry.coordinates)) { break; }	          
-   	      }  
+            matched_coords = [];
+            matched_popups = [];
+            // Create a list of coords grouped into lists of same coordinates
+            // Popups list matches order for indexing
+            coords.push(feature.geometry.coordinates);
+            popups.push(feature.properties.popupcontent);
+            for (i = 0; i < coords.length; i++) {
+              for (j = 0; j < matched_coords.length; j++) {
+	                 if (matched_coords[j][0][0] == (coords[i][0])) {
+                       matched_coords[j].push(coords[i]);
+    	                 matched_popups[j].push(popups[i]);
+                       unique_place = true;
+    	                 break;
+	   	           }
+               }
+              // If a new location, create a new list inside matched_coords, matched_popups
+        		  if (unique_place == false) {
+          		      matched_coords.push([coords[i]]);
+            		    matched_popups.push([popups[i]]);
+  		        }
+  		        unique_place = false;
+	          }
+        // Go through nested array
+	      for (k = 0; k < matched_coords.length; k++) {
+            // k is the important index where we can get the information we want from matched_popups
+		        if (matched_coords[k].includes(feature.geometry.coordinates)) { break; }
+   	    }
+        // Start assembling the popupcontent
 	      var props = "";
-              props = props + d[k][0]
-	      for (t = 1; t < d[k].length; t++) {
-		  var x = d[k][t].indexOf("br>")
-		  d[k][t] = d[k][t].substring(x+3,d[k][t].length)
-		  props = props + d[k][t];
-                  if (t > 10) {
-                      props = props + "<p>and " + ((d[k].length) + -t) + " more results. Narrow down your search!</p>";
-                      break;
-                  }
-	      } 
-              var content = `<p>${props}</p>`;
-              layer.bindPopup(content);
-           }
+        // Adds the city information
+        props = props + matched_popups[k][0];
+        // Go through the list at same location, assemble stacked popupcontent
+	      for (t = 1; t < matched_popups[k].length; t++) {
+    		  var br_marker = matched_popups[k][t].indexOf("br>")
+    		  matched_popups[k][t] = matched_popups[k][t].substring(br_marker + 3,matched_popups[k][t].length)
+    		  props = props + matched_popups[k][t];
+          // If we get more than 10 elements at a location, we cut it off
+          if (t > 10) {
+              props = props + "<p>and " + ((matched_popups[k].length) + -t) + " more results. Narrow down your search!</p>";
+              break;
+          }
+	      }
+        // Format props
+        var content = `<p>${props}</p>`;
+        layer.bindPopup(content);
+      }
       }).addTo(mymap);
 
-      inArray = false;
+      var inArray = false;
       t = 0;
 
       // Follow the same process for books
