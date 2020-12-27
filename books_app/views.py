@@ -7,6 +7,9 @@ from books_app.forms import *
 # Create your views here.
 # Disclaimer: this doesn't seem efficient but this version runs the fastest
 def index(request):
+    texts_about = len(Text.objects.all())
+    owners_about = len(Owner.objects.filter(gender="Female"))
+    books_about = len(Book.objects.filter(reviewed=True))
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         search_form = SearchForm(request.POST)
@@ -198,7 +201,7 @@ def index(request):
                 texts_search = texts_search[5:]
             display_search = True
 
-            return render(request, 'index.html',{'books_search': books_search, 'owners_search': owners_search, 'search_form': search_form, 'owners': owners_final, 'display':display, 'books': books_final, 'book_len': book_len, 'owner_len': owner_len, 'text_len': text_len, 'texts_search': texts_search, 'books_search_preview': books_search_preview, 'owners_search_preview': owners_search_preview, 'texts_search_preview': texts_search_preview, 'display_search': display_search})
+            return render(request, 'index.html',{'books_search': books_search, 'owners_search': owners_search, 'search_form': search_form, 'owners': owners_final, 'display':display, 'books': books_final, 'book_len': book_len, 'owner_len': owner_len, 'text_len': text_len, 'texts_search': texts_search, 'books_search_preview': books_search_preview, 'owners_search_preview': owners_search_preview, 'texts_search_preview': texts_search_preview, 'display_search': display_search, 'books_about': books_about, 'owners_about': owners_about, 'texts_about': texts_about})
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -215,7 +218,7 @@ def index(request):
         search_form = SearchForm()
         display_search = False
 
-        return render(request, 'index.html',{'books':books, 'locations':locations, 'search_form': search_form, 'authors': authors, 'owners':owners_default, 'display_search': display_search})
+        return render(request, 'index.html',{'books':books, 'locations':locations, 'search_form': search_form, 'authors': authors, 'owners':owners_default, 'display_search': display_search, 'books_about': books_about, 'owners_about': owners_about, 'texts_about': texts_about})
 
 def books(request, book_id):
     # book_id comes from the url- is a book's shelfmark
