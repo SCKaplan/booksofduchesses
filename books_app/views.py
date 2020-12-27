@@ -308,13 +308,13 @@ def owners(request, owner_id):
             elif "Son" in relative.relation or "Daughter" in relative.relation or "son" in relative.relation or "daughter" in relative.relation or "Niece" in relative.relation or "Nephew":
                 down_one.append(relative)
             else:
-                other.append(relative)
+                other_rel.append(relative)
         #This is a temp fix for issues 74,74,76; Exception Value: local variable 'books_list_preview' referenced before assignment
         #This is a temp fix for issues 74,74,76; Exception Value: local variable 'books_list_preview' referenced before assignment
         if not books_list_preview:
-            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'short_name':short_name}
+            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'short_name':short_name, 'down_two':down_two, 'up_two':up_two}
         else:
-            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'books_list_preview':books_list_preview, 'short_name':short_name}
+            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'books_list_preview':books_list_preview, 'short_name':short_name, 'down_two':down_two, 'up_two':up_two}
         return render(request, 'owners.html', context)
 
     else:
@@ -335,22 +335,27 @@ def owners(request, owner_id):
         up_one = []
         same_gen = []
         down_one = []
+        down_two = []
+        up_two = []
         other_rel = []
         for relative in relatives:
-            if "Father" in relative.relation or "Mother" in relative.relation or "Aunt" in relative.relation or "Uncle" in relative.relation or "Parent" in relative.relation:
-                up_one.append(relative)
-            elif "Spouse" in relative.relation or "Brother" in relative.relation or "Cousin" in relative.relation or "Sister" in relative.relation:
+            if "Spouse" in relative.relation or "Brother" in relative.relation or "Cousin" in relative.relation or "Sister" in relative.relation:
                 same_gen.append(relative)
+            elif  "Grandmother" == relative.relation or "Grandfather" == relative.relation or "Great Aunt" == relative.relation or "Great Uncle" == relative.relation:
+                up_two.append(relative)
+            elif "Grandson" == relative.relation or "Granddaughter" == relative.relation or "Grand Niece" == relative.relation or "Grand Nephew" == relative.relation:
+                down_two.append(relative)
+            elif "Father" in relative.relation or "Mother" in relative.relation or "Aunt" in relative.relation or "Uncle" in relative.relation or "Parent" in relative.relation:
+                up_one.append(relative)
             elif "Son" in relative.relation or "Daughter" in relative.relation or "son" in relative.relation or "daughter" in relative.relation or "Niece" in relative.relation or "Nephew":
                 down_one.append(relative)
             else:
-                other.append(relative)
-
+                other_rel.append(relative)
         #This is a temp fix for issues 74,74,76; Exception Value: local variable 'books_list_preview' referenced before assignment
         if not books_list_preview:
-            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'short_name':short_name}
+            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'short_name':short_name, 'down_two':down_two, 'up_two':up_two}
         else:
-            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'books_list_preview':books_list_preview, 'short_name':short_name}
+            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'books_list_preview':books_list_preview, 'short_name':short_name, 'down_two':down_two, 'up_two':up_two}
         return render(request, 'owners.html', context)
 
 def texts(request, text_id):
