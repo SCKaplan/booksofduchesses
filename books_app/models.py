@@ -120,6 +120,7 @@ class Book(models.Model):
 	date_created= models.CharField(max_length=200, blank=True, null=True)
 	catalog_entry = models.CharField(max_length=2000, blank=True)
 	digital_version = models.CharField(max_length=200, blank=True)
+	format = models.TextField('Form/Format', blank=True)
 	scribes = models.ManyToManyField('Scribe', blank=True)
 	illuminators = models.ManyToManyField('Illuminator', blank=True)
 	printer = models.ManyToManyField('Printer', blank=True, verbose_name="Printer Information")
@@ -192,6 +193,9 @@ class Text(models.Model):
 	ihrt_link = models.CharField(max_length=800, blank=True)
 	estc_link = models.CharField(max_length=800, blank=True, verbose_name="ESTC Link")
 	ustc_link = models.CharField(max_length=800, blank=True, verbose_name="USTC Link")
+	hsc_link = models.CharField(max_length=800, blank=True, verbose_name="HSC link")
+	gw_link = models.CharField(max_length=800, blank=True, verbose_name="GW link")
+	vd16_link = models.CharField(max_length=800, blank=True, verbose_name="VD16 link")
 
 	def __str__(self):
 		return self.title

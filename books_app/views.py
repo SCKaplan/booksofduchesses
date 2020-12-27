@@ -7,6 +7,9 @@ from books_app.forms import *
 # Create your views here.
 # Disclaimer: this doesn't seem efficient but this version runs the fastest
 def index(request):
+    texts_about = len(Text.objects.all())
+    owners_about = len(Owner.objects.filter(gender="Female"))
+    books_about = len(Book.objects.filter(reviewed=True))
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         search_form = SearchForm(request.POST)
@@ -198,7 +201,7 @@ def index(request):
                 texts_search = texts_search[5:]
             display_search = True
 
-            return render(request, 'index.html',{'books_search': books_search, 'owners_search': owners_search, 'search_form': search_form, 'owners': owners_final, 'display':display, 'books': books_final, 'book_len': book_len, 'owner_len': owner_len, 'text_len': text_len, 'texts_search': texts_search, 'books_search_preview': books_search_preview, 'owners_search_preview': owners_search_preview, 'texts_search_preview': texts_search_preview, 'display_search': display_search})
+            return render(request, 'index.html',{'books_search': books_search, 'owners_search': owners_search, 'search_form': search_form, 'owners': owners_final, 'display':display, 'books': books_final, 'book_len': book_len, 'owner_len': owner_len, 'text_len': text_len, 'texts_search': texts_search, 'books_search_preview': books_search_preview, 'owners_search_preview': owners_search_preview, 'texts_search_preview': texts_search_preview, 'display_search': display_search, 'books_about': books_about, 'owners_about': owners_about, 'texts_about': texts_about})
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -215,7 +218,7 @@ def index(request):
         search_form = SearchForm()
         display_search = False
 
-        return render(request, 'index.html',{'books':books, 'locations':locations, 'search_form': search_form, 'authors': authors, 'owners':owners_default, 'display_search': display_search})
+        return render(request, 'index.html',{'books':books, 'locations':locations, 'search_form': search_form, 'authors': authors, 'owners':owners_default, 'display_search': display_search, 'books_about': books_about, 'owners_about': owners_about, 'texts_about': texts_about})
 
 def books(request, book_id):
     # book_id comes from the url- is a book's shelfmark
@@ -308,13 +311,13 @@ def owners(request, owner_id):
             elif "Son" in relative.relation or "Daughter" in relative.relation or "son" in relative.relation or "daughter" in relative.relation or "Niece" in relative.relation or "Nephew":
                 down_one.append(relative)
             else:
-                other.append(relative)
+                other_rel.append(relative)
         #This is a temp fix for issues 74,74,76; Exception Value: local variable 'books_list_preview' referenced before assignment
         #This is a temp fix for issues 74,74,76; Exception Value: local variable 'books_list_preview' referenced before assignment
         if not books_list_preview:
-            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'short_name':short_name}
+            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'short_name':short_name, 'down_two':down_two, 'up_two':up_two}
         else:
-            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'books_list_preview':books_list_preview, 'short_name':short_name}
+            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'books_list_preview':books_list_preview, 'short_name':short_name, 'down_two':down_two, 'up_two':up_two}
         return render(request, 'owners.html', context)
 
     else:
@@ -335,22 +338,27 @@ def owners(request, owner_id):
         up_one = []
         same_gen = []
         down_one = []
+        down_two = []
+        up_two = []
         other_rel = []
         for relative in relatives:
-            if "Father" in relative.relation or "Mother" in relative.relation or "Aunt" in relative.relation or "Uncle" in relative.relation or "Parent" in relative.relation:
-                up_one.append(relative)
-            elif "Spouse" in relative.relation or "Brother" in relative.relation or "Cousin" in relative.relation or "Sister" in relative.relation:
+            if "Spouse" in relative.relation or "Brother" in relative.relation or "Cousin" in relative.relation or "Sister" in relative.relation:
                 same_gen.append(relative)
+            elif  "Grandmother" == relative.relation or "Grandfather" == relative.relation or "Great Aunt" == relative.relation or "Great Uncle" == relative.relation:
+                up_two.append(relative)
+            elif "Grandson" == relative.relation or "Granddaughter" == relative.relation or "Grand Niece" == relative.relation or "Grand Nephew" == relative.relation:
+                down_two.append(relative)
+            elif "Father" in relative.relation or "Mother" in relative.relation or "Aunt" in relative.relation or "Uncle" in relative.relation or "Parent" in relative.relation:
+                up_one.append(relative)
             elif "Son" in relative.relation or "Daughter" in relative.relation or "son" in relative.relation or "daughter" in relative.relation or "Niece" in relative.relation or "Nephew":
                 down_one.append(relative)
             else:
-                other.append(relative)
-
+                other_rel.append(relative)
         #This is a temp fix for issues 74,74,76; Exception Value: local variable 'books_list_preview' referenced before assignment
         if not books_list_preview:
-            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'short_name':short_name}
+            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'short_name':short_name, 'down_two':down_two, 'up_two':up_two}
         else:
-            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'books_list_preview':books_list_preview, 'short_name':short_name}
+            context = {'places': location, 'relatives': relatives, 'books': books, 'order_form': order_form, 'owner': owner, 'locations': location, 'order_list':order_list, 'library_size':library_size, 'books_list':books_list, 'up_one':up_one, 'down_one':down_one, 'same_gen':same_gen, 'other_rel':other_rel, 'books_list_preview':books_list_preview, 'short_name':short_name, 'down_two':down_two, 'up_two':up_two}
         return render(request, 'owners.html', context)
 
 def texts(request, text_id):
