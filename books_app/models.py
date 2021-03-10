@@ -188,6 +188,7 @@ class Text(models.Model):
 	authors = models.ManyToManyField('Author', blank=True)
 	#translator = models.ForeignKey('Translator', on_delete=models.CASCADE, blank=True, null=True, related_name='old_translator')
 	translators = models.ManyToManyField('Translator', blank=True)
+	parent_text = models.ManyToManyField('Text', blank=True)
 	arlima_link = models.CharField(max_length=200, blank=True)
 	me_compendium_link = models.CharField(max_length=200, blank=True, verbose_name="ME Compendium Link")
 	ihrt_link = models.CharField(max_length=800, blank=True)
@@ -275,8 +276,10 @@ class DateOwned(models.Model):
 		ordering = ('book_owner',)
 
 	def __str__(self):
-		return self.book_owned.shelfmark + ", " + self.book_owner.name + ", " + self.dateowned
-		#return self.book_owner.name + ", " + self.dateowned
+		try:
+			return self.book_owned.shelfmark + ", " + self.book_owner.name + ", " + self.dateowned
+		except:
+			return self.book_owner.name + ", " + self.dateowned
 
 	def clean(self):
 		try:

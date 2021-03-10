@@ -32,7 +32,7 @@ admin.site.register(Book, BookAdmin)
 
 class TextAdmin(admin.ModelAdmin):
     search_fields = ['title']
-    autocomplete_fields = ['tags', 'language', 'authors', 'translators']
+    autocomplete_fields = ['tags', 'language', 'authors', 'translators', 'parent_text']
     ordering = ('title',)
 
 admin.site.register(Text, TextAdmin)
