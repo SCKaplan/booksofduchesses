@@ -56,6 +56,8 @@ admin.site.register(Tag, TagAdmin)
 class OwnerAdmin(admin.ModelAdmin):
     search_fields = ['name']
     autocomplete_fields = ['book_date', 'relation','owner_location']
+    ordering = ('name',)
+    list_filter = ('reviewed',)
 
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
