@@ -1,0 +1,79 @@
+{% extends "base_bootstrap.html" %}
+{% load staticfiles %}
+{% load geojson_tags %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+
+<style>
+.myfieldclass {
+	width:50%;
+	text-align: center;	
+        display: inline-block;
+}
+.everything {
+	font-family: Verdana,sans-serif;
+}
+</style>
+
+<h2 style="text-align:center; padding-top:65px;">Suggest a Book</h2>
+<br>
+<p style="text-align:center; font-size:13px">Fill out the form below to add information to the project</p>
+<p style="text-align:center; font-size:13px">For any feedback or suggestions that can't fit in the form, send us an email at <a href="mailto:booksofduchesses@gmail.com">booksofduchesses@gmail.com</a></p>
+{% if failed %}
+	<h3 style="text-align:center; padding-top:50px;">Invalid Email/Failed Captcha, press back to refill form</h3>
+{% endif %}
+
+
+<form action="/suggest/book" method="post" style="padding-top:10px;  margin: auto; width: 50%; padding-left: 10px">
+    {% csrf_token %}
+    {{ book_form.email|as_crispy_field }}<br>
+{{ book_form.image|as_crispy_field  }}<br>
+{{ book_form.shelfmark|as_crispy_field }}<br>
+
+{{ book_form.about|as_crispy_field }}<br>
+{{ book_form.text|as_crispy_field }}<br>
+{{ book_form.type|as_crispy_field }}<br>
+{{ book_form.ex_libris|as_crispy_field }}<br>
+{{ book_form.date_created|as_crispy_field }}<br>
+{{ book_form.scribes|as_crispy_field }}<br>
+{{ book_form.illuminators|as_crispy_field }}<br>
+{{ book_form.printer|as_crispy_field }}<br>
+{{ book_form.book_location|as_crispy_field }}<br>
+{{ book_form.owner_info|as_crispy_field }}<br>
+{{ book_form.bibliography|as_crispy_field }}<br>
+{{ book_form.catalog_entry|as_crispy_field }}<br>
+{{ book_form.digital_version|as_crispy_field }}<br>
+<!-- Could add captcha model in here but removing in favor of callback processing -->
+<div class="g-recaptcha" data-callback="recaptcha_callback" data-expired-callback="exp_callback"  data-sitekey="6LfLzN4UAAAAALKoRVv7Ndx72dJWBlb41MIBKykn"></div>
+    <br>
+    <input type="submit" id="recaptcha-submit" class="button"  disabled>
+</form>
+
+<script src='https://www.google.com/recaptcha/api.js'></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>    
+<script type="text/javascript">
+    function recaptcha_callback(){
+      $('.button').prop("disabled", false);
+    }
+    function exp_callback(){
+      $('.button').prop("disabled", true);
+    }
+</script>
+
+<br>
+<br>
+<br>
+{% endblock %}
+
+</div>
+</html>

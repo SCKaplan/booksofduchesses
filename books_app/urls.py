@@ -17,6 +17,9 @@ urlpatterns = [
     path('books-autocomplete/', views.BooksAutocomplete.as_view(), name='books-autocomplete'),
     path('search', views.search, name='search'),
     path('about', views.about, name='about'),
-    path('suggest', views.suggest, name='suggest'),
-#    url(r'^captcha/', include('captcha.urls')),
+    path('suggest', views.suggest_sel, name='suggest_sel'),
+    path('suggest/book', views.suggest_book, name='suggest_book'),
+    path('suggest/owner', views.suggest_owner, name='suggest_owner'),
+    path('bibliography', views.bibliography, name='bibliography'),
+    #    url(r'^captcha/', include('captcha.urls')),
 ]

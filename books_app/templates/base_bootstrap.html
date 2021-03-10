@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<title>Books of Duchesses</title>
+<link rel="shortcut icon" type="image/png" href="https://lh3.googleusercontent.com/proxy/ropw1-qPxCyit3DtxuQtWmoUHPC7HC9FikXUnr_IdMZRzdA5srDWrGbIRlr1lL8CmP2u2CLMCK2RjokQy6ktHSSjpotjcPNticEshujjtxSeOadImA"/>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-144638211-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-144638211-1');
+</script>
+</head>
+<div class="everything">
+  <div class="w3-top">
+    <div class="w3-bar w3-white w3-wide w3-padding w3-card">
+      <a href="/" class="w3-bar-item w3-button">Books of Duchesses</a>
+      <!-- Float links to the right. Hide them on small screens -->
+      <div class="w3-right w3-hide-small">
+        <a href="/about" class="w3-bar-item w3-button">About/Usage</a>
+        <a href="/#map" class="w3-bar-item w3-button">Map</a>
+        <a href="/search" class="w3-bar-item w3-button">Search</a>
+	<a href="/suggest" class="w3-bar-item w3-button">Suggest</a>
+	<a href="/bibliography" class="w3-bar-item w3-button">Bibliography</a>
+       <!-- <a href="#owners" class="w3-bar-item w3-button">Books & Book Owners</a> -->
+      </div>
+    </div>
+  </div>
+{% block content %}{% endblock %}
+<!-- No footer w/ bootstrap stylesheet  -->
+
+</div>
+</html>

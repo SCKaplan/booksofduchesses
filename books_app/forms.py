@@ -126,3 +126,17 @@ class BookForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(BookForm, self).__init__(*args, **kwargs)
         self.fields['text'].widget.attrs.update({'class' : 'myfieldclass'})
+
+class OwnerForm(forms.ModelForm):
+    new_captcha = ReCaptchaField(required=True)
+    email = forms.EmailField(max_length=128, help_text="Valid contact information is required to approve your submission", required=True)
+    books = forms.CharField(max_length=128, help_text="List books owned, preferably with dates and any geographic information", required=False, widget=forms.Textarea)
+    location = forms.CharField(max_length=128, help_text="List known owner locations", required=False, widget=forms.Textarea)
+    relatives = forms.CharField(max_length=128, help_text="List known relatives/family", required=False, widget=forms.Textarea)
+
+    class Meta:
+        model = Owner
+        fields = ['image','image_citation','bio', 'name', 'titles', 'birth_year', 'death_year', 'gender', 'motto', 'symbol', 'arms', 'arms_citation', 'signatures', 'signatures_citation']
+
+    def __init__(self, *args, **kwargs):
+        super(OwnerForm, self).__init__(*args, **kwargs)

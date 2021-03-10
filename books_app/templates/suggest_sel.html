@@ -1,0 +1,27 @@
+{% extends "base_bootstrap.html" %}
+{% load staticfiles %}
+{% load geojson_tags %}
+{% load static %}
+
+{% block content %}
+<style>
+#head {
+  padding-top:40px !important;
+}
+</style>
+ 
+<div class="w3-container w3-padding-32" id="about">
+  <center> <h2 id="head" class="w3-border-bottom w3-border-light-grey w3-padding-16">Add information to the project</h2></center>
+<p style="text-align:center; font-size:13px">Select one of the data types below to begin.</p>
+<p style="text-align:center; font-size:13px">For any feedback or suggestions that can't fit in a form, send us an email at <a href="mailto:booksofduchesses@gmail.com">booksofduchesses@gmail.com</a></p>
+</div>
+<br>
+<form action="/suggest/book">
+    <center><input type="submit" value="Suggest a Book" /></center>
+</form>
+<br>
+<form action="/suggest/owner">
+    <center><input type="submit" value="Suggest an Owner" /></center>
+</form>
+
+{% endblock %}

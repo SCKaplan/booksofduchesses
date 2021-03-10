@@ -162,6 +162,8 @@ class Owner(models.Model):
 	# This is the object we search for the map- a date range where an owner was in a location
 	owner_location = models.ManyToManyField('OwnerPlaceDateLived', blank=True)
 	relation = models.ManyToManyField('Relative', blank=True, verbose_name='Relatives')
+	reviewed = models.BooleanField(null=True, default=False)
+	comments = models.TextField(blank=True, verbose_name="User Suggestion Comments")
 
 	class Meta:
 		ordering = ('name',)
@@ -334,9 +336,13 @@ class Author(models.Model):
 class Bibliography(models.Model):
 	author_date = models.CharField(max_length=200, verbose_name="Author Last Name, Date")
 	source = models.CharField(max_length=10000)
+	page = models.CharField(max_length=100, blank=True)
 
 	def __str__(self):
-		return self.author_date
+		if self.page:
+			return self.author_date + ", page " + self.page
+		else:
+			return self.author_date
 	class Meta:
 		verbose_name_plural = 'Bibliographies'
 

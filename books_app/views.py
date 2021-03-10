@@ -420,7 +420,10 @@ def about(request):
 	about = [about[0],about[1],about[2]]
 	return render(request, 'about.html', {'about': about})
 
-def suggest(request):
+def suggest_sel(request):
+	return render(request, 'suggest_sel.html', {})
+
+def suggest_book(request):
 	if request.method == 'POST':
 		f = BookForm(request.POST)
 		if f.is_valid():
@@ -443,9 +446,40 @@ def suggest(request):
 		else:
 			book_form = BookForm()
 			failed = True
-			return render(request, 'suggest.html', {'book_form': book_form, 'failed': failed})
+			return render(request, 'suggest_book.html', {'book_form': book_form, 'failed': failed})
 	else:
 		book_form = BookForm()
 		failed = False
-		return render(request, 'suggest.html', {'book_form': book_form, 'failed': failed})
+		return render(request, 'suggest_book.html', {'book_form': book_form, 'failed': failed})
 
+
+def suggest_owner(request):
+	if request.method == 'POST':
+		f = OwnerForm(request.POST)
+		if f.is_valid():
+			new_article = f.save(commit=False)
+			email = request.POST.get('email','')
+			books = request.POST.get('books','')
+			location = request.POST.get('location','')
+			relatives = request.POST.get('relatives','')
+
+			new_article.comments = "Submitter Contact Info: " + email + "\nBooks information: " + books + "\nLocations: " + location + "\nRelatives: " + relatives
+			new_article.save()
+			return render(request, 'suggested.html', {})
+		else:
+			owner_form = OwnerForm()
+			failed = True
+			return render(request, 'suggest_owner.html', {'owner_form': owner_form, 'failed': failed})
+	else:
+		owner_form = OwnerForm()
+		failed = False
+		return render(request, 'suggest_owner.html', {'owner_form': owner_form, 'failed': failed})
+
+
+def bibliography(request):
+    if request.method == 'POST':
+        search_form = SearchForm(request.POST)
+    else:
+        search_form = SearchForm()
+        bibs = Bibliography.objects.all()
+    return render(request, 'bibliography.html', {'search_form': search_form, 'bibs': bibs})
