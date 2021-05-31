@@ -199,6 +199,7 @@ class Text(models.Model):
 	hsc_link = models.CharField(max_length=800, blank=True, verbose_name="HSC link")
 	gw_link = models.CharField(max_length=800, blank=True, verbose_name="GW link")
 	vd16_link = models.CharField(max_length=800, blank=True, verbose_name="VD16 link")
+	fama_link = models.CharField(max_length=800, blank=True, verbose_name="FAMA link")
 
 	def __str__(self):
 		return self.title
@@ -322,8 +323,9 @@ class Author(models.Model):
 
 	Female = 'Female'
 	Male = 'Male'
-	gen_choices = [(Female, "Female"),(Male, "Male")]
-	gender = models.CharField(max_length=9, choices=gen_choices, default='Female')
+	Unknown = 'Unknown'
+	gen_choices = [(Female, "Female"),(Male, "Male"),(Unknown, "Unknown")]
+	gender = models.CharField(max_length=12, choices=gen_choices, default='Female')
 
 	image = models.ImageField(null=True, blank=True)
 	geom = models.PointField(null=True, blank=True)
@@ -402,7 +404,8 @@ class Translator(models.Model):
 
 	Female = 'Female'
 	Male = 'Male'
-	gen_choices = [(Female, "Female"),(Male, "Male")]
+	Unknown = 'Unknown'
+	gen_choices = [(Female, "Female"),(Male, "Male"), (Unknown, "Unknown")]
 	gender = models.CharField(max_length=9, choices=gen_choices, default='Female')
 
 	link = models.CharField(max_length=200, blank=True, null=True, verbose_name="Further Information (link)")
