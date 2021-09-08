@@ -12,7 +12,7 @@ django-recaptcha==2.0.6
 django-select2==7.1.0
 idna==2.8
 mysqlclient==1.4.2.post1
-Pillow==8.1.1
+Pillow==8.3.2
 pkg-resources==0.0.0
 pyspotlight==0.7.2
 pytz==2019.1
