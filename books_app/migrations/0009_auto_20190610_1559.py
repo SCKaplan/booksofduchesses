@@ -5,29 +5,25 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0008_dateowned_book_owned'),
-    ]
+    dependencies = [("books_app", "0008_dateowned_book_owned")]
 
     operations = [
         migrations.AddField(
-            model_name='author',
-            name='abstract',
-            field=models.TextField(blank=True),
+            model_name="author", name="abstract", field=models.TextField(blank=True)
         ),
         migrations.AddField(
-            model_name='author',
-            name='birth_date',
+            model_name="author",
+            name="birth_date",
             field=models.CharField(blank=True, max_length=200),
         ),
         migrations.AddField(
-            model_name='author',
-            name='death_date',
+            model_name="author",
+            name="death_date",
             field=models.CharField(blank=True, max_length=200),
         ),
         migrations.AddField(
-            model_name='author',
-            name='gender',
+            model_name="author",
+            name="gender",
             field=models.CharField(blank=True, max_length=200),
         ),
     ]

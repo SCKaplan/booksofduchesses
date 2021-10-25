@@ -6,14 +6,17 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0007_auto_20190610_1517'),
-    ]
+    dependencies = [("books_app", "0007_auto_20190610_1517")]
 
     operations = [
         migrations.AddField(
-            model_name='dateowned',
-            name='book_owned',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='books_app.Book'),
-        ),
+            model_name="dateowned",
+            name="book_owned",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="books_app.Book",
+            ),
+        )
     ]

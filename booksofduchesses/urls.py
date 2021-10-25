@@ -17,8 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('books_app.urls')),
-    #url(r'^captcha/', include('captcha.urls')),
+    path("admin/", admin.site.urls),
+    path("", include("books_app.urls")),
+    # url(r'^captcha/', include('captcha.urls')),
 ]
-

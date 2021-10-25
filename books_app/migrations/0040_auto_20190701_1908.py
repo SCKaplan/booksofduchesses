@@ -5,14 +5,31 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0039_auto_20190627_1822'),
-    ]
+    dependencies = [("books_app", "0039_auto_20190627_1822")]
 
     operations = [
         migrations.AlterField(
-            model_name='relative',
-            name='relation',
-            field=models.CharField(choices=[('Father', 'Father'), ('Mother', 'Mother'), ('Spouse', 'Spouse'), ('Son', 'Son'), ('Daughter', 'Daughter'), ('Brother', 'Brother'), ('Sister', 'Sister'), ('Aunt', 'Aunt'), ('Uncle', 'Uncle'), ('Cousin', 'Cousin'), ('Daughter-in-law', 'Daughter-in-law'), ('Son-in-law', 'Son-in-Law'), ('Mother-in-law', 'Mother-in-law'), ('Father-in-law', 'Father-in-law')], default='Father', max_length=20),
-        ),
+            model_name="relative",
+            name="relation",
+            field=models.CharField(
+                choices=[
+                    ("Father", "Father"),
+                    ("Mother", "Mother"),
+                    ("Spouse", "Spouse"),
+                    ("Son", "Son"),
+                    ("Daughter", "Daughter"),
+                    ("Brother", "Brother"),
+                    ("Sister", "Sister"),
+                    ("Aunt", "Aunt"),
+                    ("Uncle", "Uncle"),
+                    ("Cousin", "Cousin"),
+                    ("Daughter-in-law", "Daughter-in-law"),
+                    ("Son-in-law", "Son-in-Law"),
+                    ("Mother-in-law", "Mother-in-law"),
+                    ("Father-in-law", "Father-in-law"),
+                ],
+                default="Father",
+                max_length=20,
+            ),
+        )
     ]

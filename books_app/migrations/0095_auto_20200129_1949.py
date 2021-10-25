@@ -5,19 +5,33 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0094_auto_20191213_1846'),
-    ]
+    dependencies = [("books_app", "0094_auto_20191213_1846")]
 
     operations = [
         migrations.AlterField(
-            model_name='illuminator',
-            name='gender',
-            field=models.CharField(choices=[('Female', 'Female'), ('Male', 'Male'), ('Unknown', 'Unknown')], default='Female', max_length=9),
+            model_name="illuminator",
+            name="gender",
+            field=models.CharField(
+                choices=[
+                    ("Female", "Female"),
+                    ("Male", "Male"),
+                    ("Unknown", "Unknown"),
+                ],
+                default="Female",
+                max_length=9,
+            ),
         ),
         migrations.AlterField(
-            model_name='scribe',
-            name='gender',
-            field=models.CharField(choices=[('Female', 'Female'), ('Male', 'Male'), ('Unknown', 'Unknown')], default='Female', max_length=9),
+            model_name="scribe",
+            name="gender",
+            field=models.CharField(
+                choices=[
+                    ("Female", "Female"),
+                    ("Male", "Male"),
+                    ("Unknown", "Unknown"),
+                ],
+                default="Female",
+                max_length=9,
+            ),
         ),
     ]

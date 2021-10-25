@@ -5,14 +5,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0035_remove_ownerplacedatelived_test'),
-    ]
+    dependencies = [("books_app", "0035_remove_ownerplacedatelived_test")]
 
     operations = [
         migrations.AddField(
-            model_name='owner',
-            name='owner_location',
-            field=models.ManyToManyField(blank=True, to='books_app.OwnerPlaceDateLived'),
-        ),
+            model_name="owner",
+            name="owner_location",
+            field=models.ManyToManyField(
+                blank=True, to="books_app.OwnerPlaceDateLived"
+            ),
+        )
     ]

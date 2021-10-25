@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0027_bibliography'),
-    ]
+    dependencies = [("books_app", "0027_bibliography")]
 
     operations = [
         migrations.AlterField(
-            model_name='bibliography',
-            name='source',
+            model_name="bibliography",
+            name="source",
             field=models.CharField(max_length=10000),
-        ),
+        )
     ]

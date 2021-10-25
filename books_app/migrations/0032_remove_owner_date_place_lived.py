@@ -5,13 +5,6 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0031_auto_20190620_1444'),
-    ]
+    dependencies = [("books_app", "0031_auto_20190620_1444")]
 
-    operations = [
-        migrations.RemoveField(
-            model_name='owner',
-            name='date_place_lived',
-        ),
-    ]
+    operations = [migrations.RemoveField(model_name="owner", name="date_place_lived")]

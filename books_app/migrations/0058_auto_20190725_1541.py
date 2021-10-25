@@ -5,21 +5,27 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0057_remove_author_abstract'),
-    ]
+    dependencies = [("books_app", "0057_remove_author_abstract")]
 
     operations = [
         migrations.CreateModel(
-            name='Illuminator',
+            name="Illuminator",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200)),
             ],
         ),
         migrations.AlterField(
-            model_name='text',
-            name='tags',
-            field=models.ManyToManyField(blank=True, to='books_app.Tag'),
+            model_name="text",
+            name="tags",
+            field=models.ManyToManyField(blank=True, to="books_app.Tag"),
         ),
     ]

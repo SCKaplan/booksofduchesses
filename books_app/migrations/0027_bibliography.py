@@ -5,17 +5,23 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0026_auto_20190617_2055'),
-    ]
+    dependencies = [("books_app", "0026_auto_20190617_2055")]
 
     operations = [
         migrations.CreateModel(
-            name='Bibliography',
+            name="Bibliography",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('source', models.CharField(max_length=200)),
-                ('author_date', models.CharField(max_length=200)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("source", models.CharField(max_length=200)),
+                ("author_date", models.CharField(max_length=200)),
             ],
-        ),
+        )
     ]

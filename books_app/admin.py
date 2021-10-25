@@ -7,7 +7,7 @@ from books_app.forms import *
 # If you want to add search capabilities within the admin follow the search_field examples
 # If you want to add autocomplete fields within the admin (for editing/adding models) follow the corresponsing examples
 class LocationAdmin(admin.ModelAdmin):
-    search_fields = ['name']
+    search_fields = ["name"]
 
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
@@ -21,25 +21,34 @@ admin.site.register(Location, LocationAdmin)
 
 
 class BookAdmin(admin.ModelAdmin):
-    search_fields = ['shelfmark']
-    autocomplete_fields = ['text', 'bibliography', 'book_location', 'owner_info', 'scribes', 'illuminators', 'printer']
-    ordering = ('shelfmark',)
-    list_filter = ('reviewed',)
+    search_fields = ["shelfmark"]
+    autocomplete_fields = [
+        "text",
+        "bibliography",
+        "book_location",
+        "owner_info",
+        "scribes",
+        "illuminators",
+        "printer",
+    ]
+    ordering = ("shelfmark",)
+    list_filter = ("reviewed",)
 
 
 admin.site.register(Book, BookAdmin)
 
 
 class TextAdmin(admin.ModelAdmin):
-    search_fields = ['title']
-    autocomplete_fields = ['tags', 'language', 'authors', 'translators', 'parent_text']
-    ordering = ('title',)
+    search_fields = ["title"]
+    autocomplete_fields = ["tags", "language", "authors", "translators", "parent_text"]
+    ordering = ("title",)
+
 
 admin.site.register(Text, TextAdmin)
 
 
 class TagAdmin(admin.ModelAdmin):
-    search_fields = ['tag']
+    search_fields = ["tag"]
 
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
@@ -54,10 +63,10 @@ admin.site.register(Tag, TagAdmin)
 
 
 class OwnerAdmin(admin.ModelAdmin):
-    search_fields = ['name']
-    autocomplete_fields = ['book_date', 'relation','owner_location']
-    ordering = ('name',)
-    list_filter = ('reviewed',)
+    search_fields = ["name"]
+    autocomplete_fields = ["book_date", "relation", "owner_location"]
+    ordering = ("name",)
+    list_filter = ("reviewed",)
 
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
@@ -66,12 +75,13 @@ class OwnerAdmin(admin.ModelAdmin):
             self.form = OwnerAdminForm
         return super(OwnerAdmin, self).get_form(request, obj, **kwargs)
 
+
 admin.site.register(Owner, OwnerAdmin)
 
 
 class AuthorAdmin(admin.ModelAdmin):
-    search_fields = ['name']
-    ordering = ['name']
+    search_fields = ["name"]
+    ordering = ["name"]
 
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
@@ -80,19 +90,21 @@ class AuthorAdmin(admin.ModelAdmin):
             self.form = AuthorAdminForm
         return super(AuthorAdmin, self).get_form(request, obj, **kwargs)
 
+
 admin.site.register(Author, AuthorAdmin)
 
 
 class DateOwnedAdmin(admin.ModelAdmin):
-    search_fields =['book_owned__shelfmark', 'book_owner__name']
-    autocomplete_fields = ['book_owned', 'book_owner', 'ownership_type']
-    list_display = ['dateowned', 'book_owned', 'book_owner', 'date_range']
+    search_fields = ["book_owned__shelfmark", "book_owner__name"]
+    autocomplete_fields = ["book_owned", "book_owner", "ownership_type"]
+    list_display = ["dateowned", "book_owned", "book_owner", "date_range"]
+
 
 admin.site.register(DateOwned, DateOwnedAdmin)
 
 
 class BooksLanguageAdmin(admin.ModelAdmin):
-    search_fields = ['books_language']
+    search_fields = ["books_language"]
 
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
@@ -101,10 +113,12 @@ class BooksLanguageAdmin(admin.ModelAdmin):
             self.form = BooksLanguageAdminForm
         return super(BooksLanguageAdmin, self).get_form(request, obj, **kwargs)
 
+
 admin.site.register(BooksLanguage, BooksLanguageAdmin)
 
+
 class OwnerPlaceDateLivedAdmin(admin.ModelAdmin):
-    search_fields = ['the_place__City']
+    search_fields = ["the_place__City"]
     list_display = ("the_place", "date_at_location")
 
     def get_form(self, request, obj=None, **kwargs):
@@ -117,26 +131,39 @@ class OwnerPlaceDateLivedAdmin(admin.ModelAdmin):
 
 admin.site.register(OwnerPlaceDateLived, OwnerPlaceDateLivedAdmin)
 
+
 class BibliographyAdmin(admin.ModelAdmin):
-    search_fields = ['author_date']
+    search_fields = ["author_date"]
+
 
 admin.site.register(Bibliography, BibliographyAdmin)
 
+
 class RelativeAdmin(admin.ModelAdmin):
-    search_fields = ['person']
-    autocomplete_fields = ['person']
+    search_fields = ["person"]
+    autocomplete_fields = ["person"]
+
 
 admin.site.register(Relative, RelativeAdmin)
 
+
 class TranslatorAdmin(admin.ModelAdmin):
-    search_fields = ['name']
-    ordering = ['name']
+    search_fields = ["name"]
+    ordering = ["name"]
+
 
 admin.site.register(Translator, TranslatorAdmin)
 
+
 class BookLocationAdmin(admin.ModelAdmin):
-    search_fields = ['book_location__name', 'book_shelfmark__shelfmark']
-    list_display = ('book_shelfmark','owner_at_time','book_location','date','date_range')
+    search_fields = ["book_location__name", "book_shelfmark__shelfmark"]
+    list_display = (
+        "book_shelfmark",
+        "owner_at_time",
+        "book_location",
+        "date",
+        "date_range",
+    )
 
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
@@ -145,27 +172,36 @@ class BookLocationAdmin(admin.ModelAdmin):
             self.form = BookLocationAdminForm
         return super(BookLocationAdmin, self).get_form(request, obj, **kwargs)
 
+
 admin.site.register(BookLocation, BookLocationAdmin)
 
+
 class IlluminatorAdmin(admin.ModelAdmin):
-    search_fields = ['name']
-    ordering = ['name']
+    search_fields = ["name"]
+    ordering = ["name"]
+
 
 admin.site.register(Illuminator, IlluminatorAdmin)
 
+
 class ScribeAdmin(admin.ModelAdmin):
-    search_fields = ['name']
-    ordering = ['name']
+    search_fields = ["name"]
+    ordering = ["name"]
+
 
 admin.site.register(Scribe, ScribeAdmin)
 
+
 class EvidenceAdmin(admin.ModelAdmin):
-    search_fields = ['evidence', 'conf_or_possible']
+    search_fields = ["evidence", "conf_or_possible"]
+
 
 admin.site.register(Evidence, EvidenceAdmin)
 
+
 class PrinterAdmin(admin.ModelAdmin):
-    search_fields = ['name']
+    search_fields = ["name"]
+
 
 admin.site.register(Printer, PrinterAdmin)
 admin.site.register(About)

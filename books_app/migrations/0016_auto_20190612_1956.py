@@ -5,38 +5,35 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0015_auto_20190612_1337'),
-    ]
+    dependencies = [("books_app", "0015_auto_20190612_1337")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='bookslanguage',
-            options={'verbose_name': 'Language'},
+            name="bookslanguage", options={"verbose_name": "Language"}
         ),
         migrations.AddField(
-            model_name='author',
-            name='image',
-            field=models.ImageField(blank=True, null=True, upload_to=''),
+            model_name="author",
+            name="image",
+            field=models.ImageField(blank=True, null=True, upload_to=""),
         ),
         migrations.AddField(
-            model_name='book',
-            name='image',
-            field=models.ImageField(blank=True, null=True, upload_to=''),
+            model_name="book",
+            name="image",
+            field=models.ImageField(blank=True, null=True, upload_to=""),
         ),
         migrations.AddField(
-            model_name='location',
-            name='image',
-            field=models.ImageField(blank=True, null=True, upload_to=''),
+            model_name="location",
+            name="image",
+            field=models.ImageField(blank=True, null=True, upload_to=""),
         ),
         migrations.AddField(
-            model_name='owner',
-            name='gender',
+            model_name="owner",
+            name="gender",
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
         migrations.AddField(
-            model_name='owner',
-            name='image',
-            field=models.ImageField(blank=True, null=True, upload_to=''),
+            model_name="owner",
+            name="image",
+            field=models.ImageField(blank=True, null=True, upload_to=""),
         ),
     ]

@@ -5,17 +5,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0101_text_ustc_link'),
-    ]
+    dependencies = [("books_app", "0101_text_ustc_link")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='dateowned',
-            name='conf_or_possible',
-        ),
-        migrations.RemoveField(
-            model_name='dateowned',
-            name='evidence',
-        ),
+        migrations.RemoveField(model_name="dateowned", name="conf_or_possible"),
+        migrations.RemoveField(model_name="dateowned", name="evidence"),
     ]

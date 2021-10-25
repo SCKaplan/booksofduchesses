@@ -6,19 +6,21 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0033_auto_20190620_1522'),
-    ]
+    dependencies = [("books_app", "0033_auto_20190620_1522")]
 
     operations = [
         migrations.AddField(
-            model_name='ownerplacedatelived',
-            name='date_at_location',
+            model_name="ownerplacedatelived",
+            name="date_at_location",
             field=models.CharField(max_length=200, null=True),
         ),
         migrations.AddField(
-            model_name='ownerplacedatelived',
-            name='the_place',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='books_app.Location'),
+            model_name="ownerplacedatelived",
+            name="the_place",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="books_app.Location",
+            ),
         ),
     ]
