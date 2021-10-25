@@ -6,47 +6,76 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0030_auto_20190620_1440'),
-    ]
+    dependencies = [("books_app", "0030_auto_20190620_1440")]
 
     operations = [
         migrations.AddField(
-            model_name='book',
-            name='bibliography',
-            field=models.ManyToManyField(blank=True, to='books_app.Bibliography'),
+            model_name="book",
+            name="bibliography",
+            field=models.ManyToManyField(blank=True, to="books_app.Bibliography"),
         ),
         migrations.AddField(
-            model_name='ownerplacedatelived',
-            name='test',
+            model_name="ownerplacedatelived",
+            name="test",
             field=models.IntegerField(null=True),
         ),
         migrations.AlterField(
-            model_name='ownerplacedatelived',
-            name='place',
+            model_name="ownerplacedatelived",
+            name="place",
             field=models.IntegerField(null=True),
         ),
         migrations.AlterField(
-            model_name='ownerplacedatelived',
-            name='place_date_lived',
+            model_name="ownerplacedatelived",
+            name="place_date_lived",
             field=models.IntegerField(null=True),
         ),
         migrations.AlterField(
-            model_name='ownerplacedatelived',
-            name='place_name',
+            model_name="ownerplacedatelived",
+            name="place_name",
             field=models.IntegerField(null=True),
         ),
         migrations.CreateModel(
-            name='Relative',
+            name="Relative",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('relation', models.CharField(choices=[('Father', 'Father'), ('Mother', 'Mother'), ('Spouse', 'Spouse'), ('Son', 'Son'), ('Daughter', 'Daughter'), ('Other', 'Other')], default='Father', max_length=9)),
-                ('person', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='books_app.Owner')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "relation",
+                    models.CharField(
+                        choices=[
+                            ("Father", "Father"),
+                            ("Mother", "Mother"),
+                            ("Spouse", "Spouse"),
+                            ("Son", "Son"),
+                            ("Daughter", "Daughter"),
+                            ("Other", "Other"),
+                        ],
+                        default="Father",
+                        max_length=9,
+                    ),
+                ),
+                (
+                    "person",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="books_app.Owner",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='owner',
-            name='relation',
-            field=models.ManyToManyField(blank=True, to='books_app.Relative', verbose_name='Relatives'),
+            model_name="owner",
+            name="relation",
+            field=models.ManyToManyField(
+                blank=True, to="books_app.Relative", verbose_name="Relatives"
+            ),
         ),
     ]

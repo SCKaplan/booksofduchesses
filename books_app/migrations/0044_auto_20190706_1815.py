@@ -5,19 +5,15 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0043_translator_arlima'),
-    ]
+    dependencies = [("books_app", "0043_translator_arlima")]
 
     operations = [
         migrations.AlterField(
-            model_name='book',
-            name='catalog_entry',
+            model_name="book",
+            name="catalog_entry",
             field=models.CharField(blank=True, max_length=2000),
         ),
         migrations.AlterField(
-            model_name='book',
-            name='ex_libris',
-            field=models.TextField(blank=True),
+            model_name="book", name="ex_libris", field=models.TextField(blank=True)
         ),
     ]

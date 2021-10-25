@@ -5,21 +5,12 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0032_remove_owner_date_place_lived'),
-    ]
+    dependencies = [("books_app", "0032_remove_owner_date_place_lived")]
 
     operations = [
+        migrations.RemoveField(model_name="ownerplacedatelived", name="place"),
         migrations.RemoveField(
-            model_name='ownerplacedatelived',
-            name='place',
+            model_name="ownerplacedatelived", name="place_date_lived"
         ),
-        migrations.RemoveField(
-            model_name='ownerplacedatelived',
-            name='place_date_lived',
-        ),
-        migrations.RemoveField(
-            model_name='ownerplacedatelived',
-            name='place_name',
-        ),
+        migrations.RemoveField(model_name="ownerplacedatelived", name="place_name"),
     ]

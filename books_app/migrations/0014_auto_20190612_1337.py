@@ -6,32 +6,49 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0013_auto_20190610_1851'),
-    ]
+    dependencies = [("books_app", "0013_auto_20190610_1851")]
 
     operations = [
         migrations.CreateModel(
-            name='BooksLanguage',
+            name="BooksLanguage",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('books_language', models.CharField(max_length=200)),
-                ('geom', django.contrib.gis.db.models.fields.PolygonField(blank=True, null=True, srid=4326)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("books_language", models.CharField(max_length=200)),
+                (
+                    "geom",
+                    django.contrib.gis.db.models.fields.PolygonField(
+                        blank=True, null=True, srid=4326
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='author',
-            name='geom',
-            field=django.contrib.gis.db.models.fields.PointField(blank=True, null=True, srid=4326),
+            model_name="author",
+            name="geom",
+            field=django.contrib.gis.db.models.fields.PointField(
+                blank=True, null=True, srid=4326
+            ),
         ),
         migrations.AddField(
-            model_name='owner',
-            name='geom',
-            field=django.contrib.gis.db.models.fields.PointField(blank=True, null=True, srid=4326),
+            model_name="owner",
+            name="geom",
+            field=django.contrib.gis.db.models.fields.PointField(
+                blank=True, null=True, srid=4326
+            ),
         ),
         migrations.AddField(
-            model_name='tag',
-            name='geom',
-            field=django.contrib.gis.db.models.fields.PointField(blank=True, null=True, srid=4326),
+            model_name="tag",
+            name="geom",
+            field=django.contrib.gis.db.models.fields.PointField(
+                blank=True, null=True, srid=4326
+            ),
         ),
     ]

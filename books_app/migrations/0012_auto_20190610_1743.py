@@ -6,28 +6,28 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0011_auto_20190610_1735'),
-    ]
+    dependencies = [("books_app", "0011_auto_20190610_1735")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='dateowned',
-            name='book_owned',
-        ),
+        migrations.RemoveField(model_name="dateowned", name="book_owned"),
         migrations.AddField(
-            model_name='dateowned',
-            name='book_owned',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='books_app.Book'),
+            model_name="dateowned",
+            name="book_owned",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="books_app.Book",
+            ),
         ),
         migrations.AlterField(
-            model_name='owner',
-            name='motto',
+            model_name="owner",
+            name="motto",
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
         migrations.AlterField(
-            model_name='owner',
-            name='symbol',
+            model_name="owner",
+            name="symbol",
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
     ]

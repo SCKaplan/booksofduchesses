@@ -5,14 +5,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0088_remove_book_printer'),
-    ]
+    dependencies = [("books_app", "0088_remove_book_printer")]
 
     operations = [
         migrations.AddField(
-            model_name='book',
-            name='printer',
-            field=models.ManyToManyField(blank=True, to='books_app.Printer', verbose_name='Printer Information'),
-        ),
+            model_name="book",
+            name="printer",
+            field=models.ManyToManyField(
+                blank=True, to="books_app.Printer", verbose_name="Printer Information"
+            ),
+        )
     ]

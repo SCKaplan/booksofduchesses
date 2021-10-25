@@ -6,23 +6,29 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0002_location_geom'),
-    ]
+    dependencies = [("books_app", "0002_location_geom")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='dateowned',
-            options={'verbose_name': 'Date owned', 'verbose_name_plural': 'Dates owned'},
+            name="dateowned",
+            options={
+                "verbose_name": "Date owned",
+                "verbose_name_plural": "Dates owned",
+            },
         ),
         migrations.AlterField(
-            model_name='book',
-            name='author',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='books_app.Author'),
+            model_name="book",
+            name="author",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="books_app.Author",
+            ),
         ),
         migrations.AlterField(
-            model_name='book',
-            name='date_created',
+            model_name="book",
+            name="date_created",
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
     ]

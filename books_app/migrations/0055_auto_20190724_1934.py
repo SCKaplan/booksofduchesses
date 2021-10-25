@@ -5,19 +5,23 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0054_dateowned_book_owner'),
-    ]
+    dependencies = [("books_app", "0054_dateowned_book_owner")]
 
     operations = [
         migrations.AddField(
-            model_name='text',
-            name='date_composed',
-            field=models.CharField(blank=True, max_length=200, verbose_name='Date Composed (if known)'),
+            model_name="text",
+            name="date_composed",
+            field=models.CharField(
+                blank=True, max_length=200, verbose_name="Date Composed (if known)"
+            ),
         ),
         migrations.AlterField(
-            model_name='book',
-            name='type',
-            field=models.CharField(choices=[('Print', 'Print'), ('Manuscript', 'Manuscript')], default='Manuscript', max_length=30),
+            model_name="book",
+            name="type",
+            field=models.CharField(
+                choices=[("Print", "Print"), ("Manuscript", "Manuscript")],
+                default="Manuscript",
+                max_length=30,
+            ),
         ),
     ]

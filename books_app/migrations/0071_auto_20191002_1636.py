@@ -5,19 +5,17 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0070_auto_20191002_1611'),
-    ]
+    dependencies = [("books_app", "0070_auto_20191002_1611")]
 
     operations = [
         migrations.AddField(
-            model_name='translator',
-            name='birth_year',
+            model_name="translator",
+            name="birth_year",
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
         migrations.AddField(
-            model_name='translator',
-            name='death_year',
+            model_name="translator",
+            name="death_year",
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
     ]

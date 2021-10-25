@@ -8,84 +8,179 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Author',
+            name="Author",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200)),
             ],
         ),
         migrations.CreateModel(
-            name='Book',
+            name="Book",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200)),
-                ('type', models.CharField(blank=True, max_length=200)),
-                ('ex_libris', models.CharField(blank=True, max_length=200)),
-                ('bibliography', models.CharField(blank=True, max_length=200)),
-                ('digital_version', models.CharField(blank=True, max_length=200)),
-                ('date_created', models.DateTimeField(blank=True, null=True)),
-                ('book_movements', models.CharField(blank=True, max_length=200)),
-                ('scribes', models.CharField(blank=True, max_length=200)),
-                ('illuminators', models.CharField(blank=True, max_length=200)),
-                ('language', models.CharField(choices=[('Latin', 'Latin'), ('French', 'French'), ('English', 'English')], default='Unknown', max_length=20)),
-                ('author', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='books_app.Author')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=200)),
+                ("type", models.CharField(blank=True, max_length=200)),
+                ("ex_libris", models.CharField(blank=True, max_length=200)),
+                ("bibliography", models.CharField(blank=True, max_length=200)),
+                ("digital_version", models.CharField(blank=True, max_length=200)),
+                ("date_created", models.DateTimeField(blank=True, null=True)),
+                ("book_movements", models.CharField(blank=True, max_length=200)),
+                ("scribes", models.CharField(blank=True, max_length=200)),
+                ("illuminators", models.CharField(blank=True, max_length=200)),
+                (
+                    "language",
+                    models.CharField(
+                        choices=[
+                            ("Latin", "Latin"),
+                            ("French", "French"),
+                            ("English", "English"),
+                        ],
+                        default="Unknown",
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "author",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="books_app.Author",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='DateOwned',
+            name="DateOwned",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('dateowned', models.DateTimeField()),
-                ('conf_or_possible', models.CharField(choices=[('Confirmed', 'Confirmed'), ('Possible', 'Possible')], default='Possible', max_length=9)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("dateowned", models.DateTimeField()),
+                (
+                    "conf_or_possible",
+                    models.CharField(
+                        choices=[("Confirmed", "Confirmed"), ("Possible", "Possible")],
+                        default="Possible",
+                        max_length=9,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Location',
+            name="Location",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200)),
-                ('City', models.CharField(max_length=200)),
-                ('Country', models.CharField(max_length=200)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200)),
+                ("City", models.CharField(max_length=200)),
+                ("Country", models.CharField(max_length=200)),
             ],
         ),
         migrations.CreateModel(
-            name='Tag',
+            name="Tag",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tag', models.CharField(max_length=200)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("tag", models.CharField(max_length=200)),
             ],
         ),
         migrations.CreateModel(
-            name='Text',
+            name="Text",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200)),
-                ('book', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='books_app.Book')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200)),
+                (
+                    "book",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="books_app.Book",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Owner',
+            name="Owner",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200)),
-                ('motto', models.CharField(max_length=200, null=True)),
-                ('symbol', models.CharField(max_length=200, null=True)),
-                ('book_date', models.ManyToManyField(blank=True, to='books_app.DateOwned')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200)),
+                ("motto", models.CharField(max_length=200, null=True)),
+                ("symbol", models.CharField(max_length=200, null=True)),
+                (
+                    "book_date",
+                    models.ManyToManyField(blank=True, to="books_app.DateOwned"),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='book',
-            name='library',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='books_app.Location'),
+            model_name="book",
+            name="library",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="books_app.Location",
+            ),
         ),
         migrations.AddField(
-            model_name='book',
-            name='owner',
-            field=models.ManyToManyField(blank=True, to='books_app.Owner'),
+            model_name="book",
+            name="owner",
+            field=models.ManyToManyField(blank=True, to="books_app.Owner"),
         ),
     ]

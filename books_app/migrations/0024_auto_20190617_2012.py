@@ -6,92 +6,89 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0023_text_book'),
-    ]
+    dependencies = [("books_app", "0023_text_book")]
 
     operations = [
         migrations.RenameField(
-            model_name='author',
-            old_name='abstract',
-            new_name='about',
+            model_name="author", old_name="abstract", new_name="about"
         ),
         migrations.RenameField(
-            model_name='book',
-            old_name='title',
-            new_name='shelfmark',
+            model_name="book", old_name="title", new_name="shelfmark"
         ),
-        migrations.RenameField(
-            model_name='text',
-            old_name='name',
-            new_name='title',
-        ),
-        migrations.RemoveField(
-            model_name='book',
-            name='author',
-        ),
-        migrations.RemoveField(
-            model_name='book',
-            name='language',
-        ),
+        migrations.RenameField(model_name="text", old_name="name", new_name="title"),
+        migrations.RemoveField(model_name="book", name="author"),
+        migrations.RemoveField(model_name="book", name="language"),
         migrations.AddField(
-            model_name='book',
-            name='catalog_entry',
+            model_name="book",
+            name="catalog_entry",
             field=models.CharField(blank=True, max_length=200),
         ),
         migrations.AddField(
-            model_name='owner',
-            name='birth_year',
+            model_name="owner",
+            name="birth_year",
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
         migrations.AddField(
-            model_name='owner',
-            name='death_year',
+            model_name="owner",
+            name="death_year",
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
         migrations.AddField(
-            model_name='owner',
-            name='titles',
+            model_name="owner",
+            name="titles",
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
         migrations.AddField(
-            model_name='text',
-            name='arlima_link',
+            model_name="text",
+            name="arlima_link",
             field=models.CharField(blank=True, max_length=200),
         ),
         migrations.AddField(
-            model_name='text',
-            name='author',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='books_app.Author'),
+            model_name="text",
+            name="author",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="books_app.Author",
+            ),
         ),
         migrations.AddField(
-            model_name='text',
-            name='ihrt_link',
+            model_name="text",
+            name="ihrt_link",
             field=models.CharField(blank=True, max_length=200),
         ),
         migrations.AddField(
-            model_name='text',
-            name='language',
-            field=models.ManyToManyField(blank=True, to='books_app.BooksLanguage'),
+            model_name="text",
+            name="language",
+            field=models.ManyToManyField(blank=True, to="books_app.BooksLanguage"),
         ),
         migrations.AddField(
-            model_name='text',
-            name='me_compendium_link',
+            model_name="text",
+            name="me_compendium_link",
             field=models.CharField(blank=True, max_length=200),
         ),
         migrations.AlterField(
-            model_name='book',
-            name='owner',
-            field=models.ManyToManyField(blank=True, help_text='Owner(s)', to='books_app.Owner'),
+            model_name="book",
+            name="owner",
+            field=models.ManyToManyField(
+                blank=True, help_text="Owner(s)", to="books_app.Owner"
+            ),
         ),
         migrations.AlterField(
-            model_name='owner',
-            name='gender',
-            field=models.CharField(choices=[('Female', 'Female'), ('Male', 'Male')], default='Female', max_length=9),
+            model_name="owner",
+            name="gender",
+            field=models.CharField(
+                choices=[("Female", "Female"), ("Male", "Male")],
+                default="Female",
+                max_length=9,
+            ),
         ),
         migrations.AlterField(
-            model_name='owner',
-            name='symbol',
-            field=models.CharField(blank=True, help_text='Symbol(s)', max_length=200, null=True),
+            model_name="owner",
+            name="symbol",
+            field=models.CharField(
+                blank=True, help_text="Symbol(s)", max_length=200, null=True
+            ),
         ),
     ]

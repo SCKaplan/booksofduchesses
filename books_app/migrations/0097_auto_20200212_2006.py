@@ -5,19 +5,15 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0096_book_reviewed'),
-    ]
+    dependencies = [("books_app", "0096_book_reviewed")]
 
     operations = [
         migrations.AddField(
-            model_name='book',
-            name='comments',
-            field=models.TextField(blank=True),
+            model_name="book", name="comments", field=models.TextField(blank=True)
         ),
         migrations.AlterField(
-            model_name='book',
-            name='reviewed',
+            model_name="book",
+            name="reviewed",
             field=models.BooleanField(default=False, null=True),
         ),
     ]

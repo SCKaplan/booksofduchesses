@@ -5,16 +5,22 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0092_auto_20191206_1859'),
-    ]
+    dependencies = [("books_app", "0092_auto_20191206_1859")]
 
     operations = [
         migrations.CreateModel(
-            name='About',
+            name="About",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('about', models.TextField(blank=True, verbose_name='About/Content')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("about", models.TextField(blank=True, verbose_name="About/Content")),
             ],
-        ),
+        )
     ]

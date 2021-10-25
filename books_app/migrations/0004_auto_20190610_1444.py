@@ -5,19 +5,17 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0003_auto_20190610_1402'),
-    ]
+    dependencies = [("books_app", "0003_auto_20190610_1402")]
 
     operations = [
         migrations.AddField(
-            model_name='text',
-            name='name_eng',
+            model_name="text",
+            name="name_eng",
             field=models.CharField(blank=True, max_length=200),
         ),
         migrations.AddField(
-            model_name='text',
-            name='tags',
-            field=models.ManyToManyField(to='books_app.Tag'),
+            model_name="text",
+            name="tags",
+            field=models.ManyToManyField(to="books_app.Tag"),
         ),
     ]

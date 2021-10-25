@@ -5,19 +5,23 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0072_book_printer'),
-    ]
+    dependencies = [("books_app", "0072_book_printer")]
 
     operations = [
         migrations.CreateModel(
-            name='OwnershipEvidence',
+            name="OwnershipEvidence",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('evidence', models.CharField(max_length=500)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("evidence", models.CharField(max_length=500)),
             ],
-            options={
-                'verbose_name': 'Evidence',
-            },
-        ),
+            options={"verbose_name": "Evidence"},
+        )
     ]

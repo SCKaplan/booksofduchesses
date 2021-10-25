@@ -5,24 +5,24 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0103_book_format'),
-    ]
+    dependencies = [("books_app", "0103_book_format")]
 
     operations = [
         migrations.AddField(
-            model_name='text',
-            name='gw_link',
-            field=models.CharField(blank=True, max_length=800, verbose_name='GW link'),
+            model_name="text",
+            name="gw_link",
+            field=models.CharField(blank=True, max_length=800, verbose_name="GW link"),
         ),
         migrations.AddField(
-            model_name='text',
-            name='hsc_link',
-            field=models.CharField(blank=True, max_length=800, verbose_name='HSC link'),
+            model_name="text",
+            name="hsc_link",
+            field=models.CharField(blank=True, max_length=800, verbose_name="HSC link"),
         ),
         migrations.AddField(
-            model_name='text',
-            name='vd16_link',
-            field=models.CharField(blank=True, max_length=800, verbose_name='VD16 link'),
+            model_name="text",
+            name="vd16_link",
+            field=models.CharField(
+                blank=True, max_length=800, verbose_name="VD16 link"
+            ),
         ),
     ]

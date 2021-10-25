@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0014_auto_20190612_1337'),
-    ]
+    dependencies = [("books_app", "0014_auto_20190612_1337")]
 
     operations = [
         migrations.AlterField(
-            model_name='book',
-            name='language',
-            field=models.ManyToManyField(blank=True, to='books_app.BooksLanguage'),
-        ),
+            model_name="book",
+            name="language",
+            field=models.ManyToManyField(blank=True, to="books_app.BooksLanguage"),
+        )
     ]
