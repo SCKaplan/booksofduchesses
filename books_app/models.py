@@ -195,32 +195,28 @@ class Owner(models.Model):
 
 # A text can appear in multiple books and a book can have multiple texts, this mostly helps fill out the template
 class Text(models.Model):
-    title = models.CharField(max_length=200)
-    name_eng = models.CharField(max_length=200, blank=True)
-    tags = models.ManyToManyField("Tag", blank=True)
-    language = models.ManyToManyField("BooksLanguage", blank=True)
-    date_composed = models.CharField(
-        max_length=200, blank=True, verbose_name="Date Composed (if known)"
-    )
-    # author = models.ForeignKey('Author', on_delete=models.CASCADE, blank=True, null=True, related_name='old_author')
-    authors = models.ManyToManyField("Author", blank=True)
-    # translator = models.ForeignKey('Translator', on_delete=models.CASCADE, blank=True, null=True, related_name='old_translator')
-    translators = models.ManyToManyField("Translator", blank=True)
-    parent_text = models.ManyToManyField("Text", blank=True)
-    arlima_link = models.CharField(max_length=200, blank=True)
-    me_compendium_link = models.CharField(
-        max_length=200, blank=True, verbose_name="ME Compendium Link"
-    )
-    ihrt_link = models.CharField(max_length=800, blank=True)
-    estc_link = models.CharField(max_length=800, blank=True, verbose_name="ESTC Link")
-    ustc_link = models.CharField(max_length=800, blank=True, verbose_name="USTC Link")
-    hsc_link = models.CharField(max_length=800, blank=True, verbose_name="HSC link")
-    gw_link = models.CharField(max_length=800, blank=True, verbose_name="GW link")
-    vd16_link = models.CharField(max_length=800, blank=True, verbose_name="VD16 link")
+	title = models.CharField(max_length=200)
+	name_eng = models.CharField(max_length=200, blank=True)
+	tags = models.ManyToManyField('Tag', blank=True)
+	language = models.ManyToManyField('BooksLanguage', blank=True)
+	date_composed = models.CharField(max_length=200, blank=True, verbose_name="Date Composed (if known)")
+	#author = models.ForeignKey('Author', on_delete=models.CASCADE, blank=True, null=True, related_name='old_author')
+	authors = models.ManyToManyField('Author', blank=True)
+	#translator = models.ForeignKey('Translator', on_delete=models.CASCADE, blank=True, null=True, related_name='old_translator')
+	translators = models.ManyToManyField('Translator', blank=True)
+	parent_text = models.ManyToManyField('Text', blank=True)
+	arlima_link = models.CharField(max_length=200, blank=True)
+	me_compendium_link = models.CharField(max_length=200, blank=True, verbose_name="ME Compendium Link")
+	ihrt_link = models.CharField(max_length=800, blank=True)
+	estc_link = models.CharField(max_length=800, blank=True, verbose_name="ESTC Link")
+	ustc_link = models.CharField(max_length=800, blank=True, verbose_name="USTC Link")
+	hsc_link = models.CharField(max_length=800, blank=True, verbose_name="HSC link")
+	gw_link = models.CharField(max_length=800, blank=True, verbose_name="GW link")
+	vd16_link = models.CharField(max_length=800, blank=True, verbose_name="VD16 link")
+	fama_link = models.CharField(max_length=800, blank=True, verbose_name="FAMA link")
 
-    def __str__(self):
-        return self.title
-
+	def __str__(self):
+		return self.title
 
 # These are the owner related objects we map- first we will find the owners which fit a search criteria in the view,
 # then we decide which of these to send to the template based on their date_range()
@@ -386,7 +382,6 @@ class Author(models.Model):
     Male = "Male"
     gen_choices = [(Female, "Female"), (Male, "Male")]
     gender = models.CharField(max_length=9, choices=gen_choices, default="Female")
-
     image = models.ImageField(null=True, blank=True)
     geom = models.PointField(null=True, blank=True)
 
@@ -495,7 +490,6 @@ class Translator(models.Model):
     name = models.CharField(max_length=200)
     birth_year = models.CharField(max_length=200, blank=True, null=True)
     death_year = models.CharField(max_length=200, blank=True, null=True)
-
     Female = "Female"
     Male = "Male"
     gen_choices = [(Female, "Female"), (Male, "Male")]
