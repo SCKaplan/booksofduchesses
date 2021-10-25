@@ -747,7 +747,7 @@ def bibliography(request):
         search_form = SearchForm(request.POST)
     else:
         search_form = SearchForm()
-        bibs = Bibliography.objects.all()
+        bibs = Bibliography.objects.all().values('source', 'author_date').distinct()
     return render(
         request, "bibliography.html", {"search_form": search_form, "bibs": bibs}
     )
