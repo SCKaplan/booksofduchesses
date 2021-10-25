@@ -20,6 +20,7 @@ urlpatterns = [
     path('suggest', views.suggest_sel, name='suggest_sel'),
     path('suggest/book', views.suggest_book, name='suggest_book'),
     path('suggest/owner', views.suggest_owner, name='suggest_owner'),
+    path('teach', views.teach, name='teach'),
     path('bibliography', views.bibliography, name='bibliography'),
     #    url(r'^captcha/', include('captcha.urls')),
 ]

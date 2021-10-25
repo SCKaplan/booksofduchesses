@@ -402,6 +402,9 @@ def search(request):
 
     return render(request, 'search.html', {'search_form': search_form, 'dates':dates, 'owners':owners, 'books':books, 'texts':texts})
 
+def teach(request):
+    return render(request, 'teach.html')
+    
 # Inactive- to be used for autocomplete
 class BooksAutocomplete(autocomplete.Select2ListView):
     def create(self, text): # To create a new object
