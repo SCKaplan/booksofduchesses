@@ -5,19 +5,21 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0024_auto_20190617_2012'),
-    ]
+    dependencies = [("books_app", "0024_auto_20190617_2012")]
 
     operations = [
         migrations.AlterField(
-            model_name='book',
-            name='owner',
-            field=models.ManyToManyField(blank=True, to='books_app.Owner', verbose_name='Owner(s)'),
+            model_name="book",
+            name="owner",
+            field=models.ManyToManyField(
+                blank=True, to="books_app.Owner", verbose_name="Owner(s)"
+            ),
         ),
         migrations.AlterField(
-            model_name='owner',
-            name='symbol',
-            field=models.CharField(blank=True, max_length=200, null=True, verbose_name='Symbol(s)'),
+            model_name="owner",
+            name="symbol",
+            field=models.CharField(
+                blank=True, max_length=200, null=True, verbose_name="Symbol(s)"
+            ),
         ),
     ]

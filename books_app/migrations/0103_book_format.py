@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0102_auto_20200623_2046'),
-    ]
+    dependencies = [("books_app", "0102_auto_20200623_2046")]
 
     operations = [
         migrations.AddField(
-            model_name='book',
-            name='format',
-            field=models.TextField(blank=True, verbose_name='Form/Format'),
-        ),
+            model_name="book",
+            name="format",
+            field=models.TextField(blank=True, verbose_name="Form/Format"),
+        )
     ]

@@ -6,14 +6,14 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0001_initial'),
-    ]
+    dependencies = [("books_app", "0001_initial")]
 
     operations = [
         migrations.AddField(
-            model_name='location',
-            name='geom',
-            field=django.contrib.gis.db.models.fields.PointField(blank=True, null=True, srid=4326),
-        ),
+            model_name="location",
+            name="geom",
+            field=django.contrib.gis.db.models.fields.PointField(
+                blank=True, null=True, srid=4326
+            ),
+        )
     ]

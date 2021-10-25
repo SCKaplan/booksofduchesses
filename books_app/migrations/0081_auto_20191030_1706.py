@@ -5,14 +5,16 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0080_auto_20191030_1701'),
-    ]
+    dependencies = [("books_app", "0080_auto_20191030_1701")]
 
     operations = [
         migrations.AlterField(
-            model_name='dateowned',
-            name='conf_or_possible',
-            field=models.CharField(choices=[('confirmed', 'confirmed'), ('possibly', 'possibly')], default='Confirmed', max_length=9),
-        ),
+            model_name="dateowned",
+            name="conf_or_possible",
+            field=models.CharField(
+                choices=[("confirmed", "confirmed"), ("possibly", "possibly")],
+                default="Confirmed",
+                max_length=9,
+            ),
+        )
     ]

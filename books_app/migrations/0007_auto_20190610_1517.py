@@ -5,18 +5,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0006_auto_20190610_1507'),
-    ]
+    dependencies = [("books_app", "0006_auto_20190610_1507")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='book',
-            name='language',
-        ),
+        migrations.RemoveField(model_name="book", name="language"),
         migrations.AddField(
-            model_name='book',
-            name='language',
-            field=models.ManyToManyField(blank=True, to='books_app.Tag'),
+            model_name="book",
+            name="language",
+            field=models.ManyToManyField(blank=True, to="books_app.Tag"),
         ),
     ]

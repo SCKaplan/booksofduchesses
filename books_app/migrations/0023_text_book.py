@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0022_remove_text_book'),
-    ]
+    dependencies = [("books_app", "0022_remove_text_book")]
 
     operations = [
         migrations.AddField(
-            model_name='text',
-            name='book',
-            field=models.ManyToManyField(to='books_app.Book'),
-        ),
+            model_name="text",
+            name="book",
+            field=models.ManyToManyField(to="books_app.Book"),
+        )
     ]

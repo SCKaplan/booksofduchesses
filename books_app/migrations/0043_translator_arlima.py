@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0042_text_translator'),
-    ]
+    dependencies = [("books_app", "0042_text_translator")]
 
     operations = [
         migrations.AddField(
-            model_name='translator',
-            name='arlima',
+            model_name="translator",
+            name="arlima",
             field=models.CharField(blank=True, max_length=200, null=True),
-        ),
+        )
     ]

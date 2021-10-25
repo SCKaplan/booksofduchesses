@@ -5,11 +5,6 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0020_auto_20190617_1618'),
-    ]
+    dependencies = [("books_app", "0020_auto_20190617_1618")]
 
-    operations = [
-	migrations.AddField('Text', 'book', models.IntegerField(default=0)
-        ),
-    ]
+    operations = [migrations.AddField("Text", "book", models.IntegerField(default=0))]

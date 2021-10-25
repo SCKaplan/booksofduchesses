@@ -1,6 +1,10 @@
 # [Books of Ducheses](https://booksofduchesses.com/): Visualizing Women Book Ownership in Late Medieval Francophone Europe: 1350-1500
 
-
+---
+Links for Early Book Society panel: 
+- data.csv https://bit.ly/booksofduchesses
+- Palladio https://hdlab.stanford.edu/palladio/
+---
 
 This project was commissioned by Sarah Watson of Haverford College and S.C. Kaplan of Rice University. The project aims to
 

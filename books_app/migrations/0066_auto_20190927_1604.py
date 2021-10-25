@@ -6,19 +6,23 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0065_auto_20190925_1811'),
-    ]
+    dependencies = [("books_app", "0065_auto_20190925_1811")]
 
     operations = [
         migrations.AddField(
-            model_name='text',
-            name='translators',
-            field=models.ManyToManyField(to='books_app.Translator'),
+            model_name="text",
+            name="translators",
+            field=models.ManyToManyField(to="books_app.Translator"),
         ),
         migrations.AlterField(
-            model_name='text',
-            name='translator',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='old_translator', to='books_app.Translator'),
+            model_name="text",
+            name="translator",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="old_translator",
+                to="books_app.Translator",
+            ),
         ),
     ]

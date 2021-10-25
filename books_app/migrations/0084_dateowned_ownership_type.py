@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0083_auto_20191104_1725'),
-    ]
+    dependencies = [("books_app", "0083_auto_20191104_1725")]
 
     operations = [
         migrations.AddField(
-            model_name='dateowned',
-            name='ownership_type',
-            field=models.ManyToManyField(blank=True, to='books_app.Evidence'),
-        ),
+            model_name="dateowned",
+            name="ownership_type",
+            field=models.ManyToManyField(blank=True, to="books_app.Evidence"),
+        )
     ]

@@ -5,17 +5,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0074_auto_20191008_1420'),
-    ]
+    dependencies = [("books_app", "0074_auto_20191008_1420")]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='owner',
-            options={'ordering': ('name',)},
-        ),
-        migrations.AlterModelOptions(
-            name='tag',
-            options={'ordering': ('tag',)},
-        ),
+        migrations.AlterModelOptions(name="owner", options={"ordering": ("name",)}),
+        migrations.AlterModelOptions(name="tag", options={"ordering": ("tag",)}),
     ]

@@ -5,13 +5,6 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0021_remove_text_book'),
-    ]
+    dependencies = [("books_app", "0021_remove_text_book")]
 
-    operations = [
-        migrations.RemoveField(
-            model_name='text',
-            name='book',
-        ),
-    ]
+    operations = [migrations.RemoveField(model_name="text", name="book")]

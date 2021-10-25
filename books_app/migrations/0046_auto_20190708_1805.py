@@ -5,14 +5,24 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('books_app', '0045_auto_20190708_1600'),
-    ]
+    dependencies = [("books_app", "0045_auto_20190708_1600")]
 
     operations = [
         migrations.AlterField(
-            model_name='dateowned',
-            name='evidence',
-            field=models.CharField(choices=[('Inscription', 'Inscription'), ('Patron Portrait', 'Patron Portrait'), ('Inventory', 'Inventory'), ('Archival Mention', 'Archival Mention'), ('Arms', 'Arms'), ('Will', 'Will'), ('Other', 'Other')], default='Inscription', max_length=40),
-        ),
+            model_name="dateowned",
+            name="evidence",
+            field=models.CharField(
+                choices=[
+                    ("Inscription", "Inscription"),
+                    ("Patron Portrait", "Patron Portrait"),
+                    ("Inventory", "Inventory"),
+                    ("Archival Mention", "Archival Mention"),
+                    ("Arms", "Arms"),
+                    ("Will", "Will"),
+                    ("Other", "Other"),
+                ],
+                default="Inscription",
+                max_length=40,
+            ),
+        )
     ]
