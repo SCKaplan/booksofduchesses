@@ -42,6 +42,9 @@
       {% if book.catalog_entry %}
         <p><button class="w3-button w3-light-grey w3-block"><a href="{{book.catalog_entry}}">Catalog</a></button></p>
       {% endif %}
+      {% if book.format %}
+      <p class="w3-opacity">Format: {{book.format}}</p>
+      {% endif %}
         <p class="w3-opacity">Texts:
       {% for text in texts %}
         <li><a href="http://booksofduchesses.com/texts/{{text.title}}/">{{ text.title }}</a></li>
@@ -141,7 +144,7 @@
       <br></br>
       <h3 style="text-align:center;"><strong>Bibliography</strong></h3>
       {% for bib in bibs %}
-        <p style="text-align:left; font-size:11px;">{{bib.source}}</p>
+        <p style="text-align:left; font-size:11px;">{{bib.source}}{% if bib.page %}: {{ bib.page }}{% endif %}</p>
       {% endfor %}
     </div>
 
