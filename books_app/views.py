@@ -644,7 +644,7 @@ class BooksAutocomplete(autocomplete.Select2ListView):
 
 def about(request):
     about = About.objects.all()
-    about = [about[0], about[1], about[2]]
+    about = [about[0], about[1], about[2], about[3]]
     return render(request, "about.html", {"about": about})
 
 
