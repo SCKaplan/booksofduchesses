@@ -395,6 +395,7 @@ def owners(request, owner_id):
                 or "Aunt" in relative.relation
                 or "Uncle" in relative.relation
                 or "Parent" in relative.relation
+                or "God-parent" in relative.relation
             ):
                 up_one.append(relative)
             elif (
