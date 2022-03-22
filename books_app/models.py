@@ -434,7 +434,7 @@ class Relative(models.Model):
     BiL = "Brother-in-law"
     God_son = "God-son"
     God_parent = "God-parent"
-    God_daughter = "God-Daughter"
+    God_daughter = "God-daughter"
     Niece = "Niece"
     Nephew = "Nephew"
     Grandmother = "Grandmother"
@@ -465,12 +465,11 @@ class Relative(models.Model):
         (BiL, "Brother-in-law"),
         (God_son, "God-son"),
         (God_parent, "God-parent"),
-        (God_parent, "God-parent"),
         (God_daughter, "God-Daughter"),
         (Niece, "Niece"),
         (Nephew, "Nephew"),
         (Grandmother, "Grandmother"),
-        (Grandfather, "Grandafather"),
+        (Grandfather, "Grandfather"),
         (GreatAunt, "Great Aunt"),
         (GreatUncle, "Great Uncle"),
         (Granddaughter, "Granddaughter"),
@@ -479,7 +478,7 @@ class Relative(models.Model):
         (GrandNephew, "Grand Nephew"),
         (Other, "Other"),
     ]
-    relation = models.CharField(max_length=40, choices=rel_choices, default="Father")
+    relation = models.CharField(max_length=40, choices=rel_choices, default="Mother")
 
     def __str__(self):
         return self.person.name + ", " + self.relation
