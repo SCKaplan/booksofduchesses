@@ -65,23 +65,6 @@ def index(request):
             if len(text) != 0:
                 books_objs = set(books_from_text) & set(books_objs)
 
-            # Language Search Field - find all books in which text in specific language appears - having trouble naming objects in this properly
-            if len(language) !=0:
-                texts_from_language = []
-                books_from_language = []
-                language_result = Language.objects.filter(language__icontains=language)
-                for a in Text.objects.all():
-                   if set(language_result) & set(a.languages.all()):
-                      texts_from_language.append(a)
-
-                for text_obj_language in texts_from_language:
-                   book = Book.obects.filter(text=text_obj_language)
-                   for c in book:
-                       books_from_language.append(c)
-                books_objs = set(books_from_language) & set(books_objs)
-            else:
-               texts_from_language = Text.objects.all()       
-            
             # Tag Search Field- same as author, but tags are ManyToManyField
             if len(tag) != 0:
                 texts_from_tag = []
