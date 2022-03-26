@@ -103,18 +103,18 @@ class DateOwnedAdmin(admin.ModelAdmin):
 admin.site.register(DateOwned, DateOwnedAdmin)
 
 
-class LanguageAdmin(admin.ModelAdmin):
-    search_fields = ["language"]
+class BooksLanguageAdmin(admin.ModelAdmin):
+    search_fields = ["books_language"]
 
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
-            self.form = LanguageAdminForm
+            self.form = BooksLanguageAdminForm
         else:
-            self.form = LanguageAdminForm
-        return super(LanguageAdmin, self).get_form(request, obj, **kwargs)
+            self.form = BooksLanguageAdminForm
+        return super(BooksLanguageAdmin, self).get_form(request, obj, **kwargs)
 
 
-admin.site.register(Language, LanguageAdmin)
+admin.site.register(BooksLanguage, BooksLanguageAdmin)
 
 
 class OwnerPlaceDateLivedAdmin(admin.ModelAdmin):

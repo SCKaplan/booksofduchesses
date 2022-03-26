@@ -29,9 +29,9 @@ class TagAdminForm(forms.ModelForm):
         }
 
 
-class LanguageAdminForm(forms.ModelForm):
+class BooksLanguageAdminForm(forms.ModelForm):
     class Meta:
-        model = Language
+        model = BooksLanguage
         fields = "__all__"
         widgets = {
             "geom": GooglePointFieldWidget(
@@ -118,7 +118,7 @@ class SearchForm(forms.Form):
     #     widget=autocomplete.ListSelect2(url='books-autocomplete')
     # )
     text = forms.CharField(label="Text", max_length=100, required=False)
-    language = forms.CharField(label="Language", max_length=100, required=False)
+    #language = forms.CharField(label="Language", max_length=100, required=False)
     author = forms.CharField(label="Author", max_length=100, required=False)
     genre = forms.CharField(label="Genre", max_length=100, required=False)
     book_or_owner = [("owners", "Owners (default)"), ("books", "Books")]
