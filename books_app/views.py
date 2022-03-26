@@ -65,7 +65,8 @@ def index(request):
             if len(text) != 0:
                 books_objs = set(books_from_text) & set(books_objs)
 
-            
+            # Language Search Field will go here
+
             # Tag Search Field- same as author, but tags are ManyToManyField
             if len(tag) != 0:
                 texts_from_tag = []
