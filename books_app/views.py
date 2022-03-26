@@ -70,7 +70,7 @@ def index(request):
                 texts_from_language = []
                 books_from_language = []
                 language_result = BooksLanguage.objects.filter(language__icontains=language)
-                for a in BooksLanguage.objects.all():
+                for a in Text.objects.all():
                     if set(language_result) & set(a.laguages.all()):
                         texts_from_language.append(a)
 
