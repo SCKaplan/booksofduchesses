@@ -29,9 +29,9 @@ class TagAdminForm(forms.ModelForm):
         }
 
 
-class BooksLanguageAdminForm(forms.ModelForm):
+class LanguageAdminForm(forms.ModelForm):
     class Meta:
-        model = BooksLanguage
+        model = Language
         fields = "__all__"
         widgets = {
             "geom": GooglePointFieldWidget(

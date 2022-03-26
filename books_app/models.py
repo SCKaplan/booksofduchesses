@@ -198,7 +198,7 @@ class Text(models.Model):
 	title = models.CharField(max_length=200)
 	name_eng = models.CharField(max_length=200, blank=True)
 	tags = models.ManyToManyField('Tag', blank=True)
-	language = models.ManyToManyField('BooksLanguage', blank=True)
+	language = models.ManyToManyField('Language', blank=True)
 	date_composed = models.CharField(max_length=200, blank=True, verbose_name="Date Composed (if known)")
 	#author = models.ForeignKey('Author', on_delete=models.CASCADE, blank=True, null=True, related_name='old_author')
 	authors = models.ManyToManyField('Author', blank=True)
@@ -559,14 +559,14 @@ class Tag(models.Model):
         return self.tag
 
 
-class BooksLanguage(models.Model):
-    books_language = models.CharField(max_length=200)
+class Language(models.Model):
+    language = models.CharField(max_length=200)
     # geom = models.PolygonField(null=True, blank=True)
     class Meta:
         verbose_name = "Language"
 
     def __str__(self):
-        return self.books_language
+        return self.language
 
 
 class OwnershipEvidence(models.Model):

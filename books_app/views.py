@@ -69,7 +69,7 @@ def index(request):
             if len(language) !=0:
                 texts_from_language = []
                 books_from_language = []
-                language_result = BooksLanguage.objects.filter(language__icontains=language)
+                language_result = Language.objects.filter(language__icontains=language)
                 for a in Text.objects.all():
                     if set(language_result) & set(a.laguages.all()):
                         texts_from_language.append(a)
@@ -580,7 +580,7 @@ def texts(request, text_id):
     # text_id is the title of a text
     text = Text.objects.get(title=text_id)
     books = Book.objects.filter(text=text)
-    languages = text.language.all()
+    languages = text.languages.all()
     authors = text.authors.all()
     translators = text.translators.all()
     tags = text.tags.all()
