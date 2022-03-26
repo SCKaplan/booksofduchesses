@@ -563,7 +563,7 @@ def texts(request, text_id):
     # text_id is the title of a text
     text = Text.objects.get(title=text_id)
     books = Book.objects.filter(text=text)
-    languages = text.languages.all()
+    languages = text.language.all()
     authors = text.authors.all()
     translators = text.translators.all()
     tags = text.tags.all()
