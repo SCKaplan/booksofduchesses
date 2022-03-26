@@ -71,7 +71,7 @@ def index(request):
                 books_from_language = []
                 language_result = Language.objects.filter(language__icontains=language)
                 for a in Text.objects.all():
-                    if set(language_result) & set(a.laguages.all()):
+                    if set(language_result) & set(a.languages.all()):
                         texts_from_language.append(a)
 
                 for text_obj_language in texts_from_language:
