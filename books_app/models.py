@@ -465,7 +465,7 @@ class Relative(models.Model):
         (BiL, "Brother-in-law"),
         (God_son, "God-son"),
         (God_parent, "God-parent"),
-        (God_daughter, "God-Daughter"),
+        (God_daughter, "God-daughter"),
         (Niece, "Niece"),
         (Nephew, "Nephew"),
         (Grandmother, "Grandmother"),
