@@ -64,7 +64,7 @@
       {% if text.parent_text.all %}
       <h4 class="w3-opacity">Parent Texts:</h4>
       {% for text in text.parent_text.all %}
-      <li>{{ text }}</li>
+	<li><a style="color:blue;" href="{{text.link}}">{{text}}</a></li>
       {% endfor %}
       {% endif%}
       {% if tags %}
