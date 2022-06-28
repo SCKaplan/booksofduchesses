@@ -205,7 +205,6 @@ class Text(models.Model):
 	#translator = models.ForeignKey('Translator', on_delete=models.CASCADE, blank=True, null=True, related_name='old_translator')
 	translators = models.ManyToManyField('Translator', blank=True)
 	parent_text = models.ManyToManyField('Text', blank=True)
-	child_text = models.ManyToManyField('Text', blank=True)
 	arlima_link = models.CharField(max_length=200, blank=True)
 	me_compendium_link = models.CharField(max_length=200, blank=True, verbose_name="ME Compendium Link")
 	ihrt_link = models.CharField(max_length=800, blank=True)
