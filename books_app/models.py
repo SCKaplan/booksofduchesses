@@ -5,12 +5,13 @@ import datetime
 
 def date_ranges(given_dates):
     from datetime import datetime, timedelta
-
     # Split on the dash into two dates
     if given_dates.find("post-") != -1:
         given_dates = given_dates.replace("post-", "post")
     if given_dates.find("pre-") != -1:
         given_dates = given_dates.replace("pre-", "pre")
+    if given_dates.find("s") != -1:
+        given_dates = given_dates.replace("s","")
     dates = given_dates.split("-")
     # Defaults
     month = "January"
@@ -95,7 +96,7 @@ def date_ranges(given_dates):
             year = date[0]
         stringIt = str(year) + "-" + month + "-" + str(day)
         # format for adding a datetime from a string
-        toAdd = datetime.strptime(stringIt, "%Y-%B-%d")
+        toAdd = datetime.strptime(stringIt.replace("pot", "").replace("Augut", "August"), "%Y-%B-%d")
         if uncertain and firstDate:
             toAdd = toAdd - timedelta(days=1826)
         if uncertain and not firstDate:
