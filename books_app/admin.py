@@ -162,7 +162,7 @@ class BookLocationAdmin(admin.ModelAdmin):
         "owner_at_time",
         "book_location",
         "date",
-        "date_range",
+       #  "date_range",
     )
 
     def get_form(self, request, obj=None, **kwargs):
