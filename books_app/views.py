@@ -633,16 +633,12 @@ def teach(request):
 
 # Inactive- to be used for autocomplete
 class BooksAutocomplete(autocomplete.Select2ListView):
-    def create(self, text):  # To create a new object
-        return text
-
-    def get_list(self):
-        list = [book.shelfmark for book in Book.objects.all()]
-
+    def get_queryset(self):
+        qs = Book.objects.all()
         if self.q:
-            filter_result = Book.objects.all().filter(shelfmark__icontains=self.q)
-            list = [book.shelfmark for book in filter_result]
-        return list
+            qs = qs.filter(shelfmark__istartswith=self.q)
+            
+        return qs
 
 
 def about(request):
