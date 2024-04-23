@@ -632,7 +632,7 @@ def teach(request):
 
 
 # Inactive- to be used for autocomplete
-class BooksAutocomplete(autocomplete.Select2QuerySetView):
+class BooksAutocomplete(autocomplete.Select2ListView):
     def get_queryset(self):
         qs = Book.objects.all()
         if self.q:
