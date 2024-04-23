@@ -106,17 +106,17 @@ class SearchForm(forms.Form):
     start_date = forms.CharField(label="Start Date", max_length=100, required=False)
     end_date = forms.CharField(label="End Date", max_length=100, required=False)
     owner = forms.CharField(label="Owner", max_length=100, required=False)
-    shelfmark = forms.CharField(label="Shelfmark", max_length=100, required=False)
+    # shelfmark = forms.CharField(label="Shelfmark", max_length=100, required=False)
     # shelfmark = forms.ModelChoiceField(
     #   queryset=Book.objects.all(),
     #  widget=autocomplete.ModelSelect2Multiple(url='books-autocomplete')
     # )
 
-    #    shelfmark = autocomplete.Select2ListCreateChoiceField(
-    #       choice_list = get_choice_list,
-    #      required=False,
-    #     widget=autocomplete.ListSelect2(url='books-autocomplete')
-    # )
+    shelfmark = autocomplete.Select2ListCreateChoiceField(
+        choice_list = get_choice_list,
+        required=False,
+        widget=autocomplete.ListSelect2(url='books-autocomplete')
+    )
     text = forms.CharField(label="Text", max_length=100, required=False)
     #language = forms.CharField(label="Language", max_length=100, required=False)
     author = forms.CharField(label="Author", max_length=100, required=False)
