@@ -4,16 +4,83 @@
 {% load static %}
 {% block content %}
 
+
+<!-- jQuery !-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"> </script>
+<!-- jQuery UI !-->
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+
 <!-- Leaflet imports, js for autocomplete -->
-<script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
 <!-- Style that overrides w3schools stylesheet-->
  <!-- Load Esri Leaflet from CDN -->
-  <script src="https://unpkg.com/esri-leaflet@2.5.3/dist/esri-leaflet.js"
-    integrity="sha512-K0Vddb4QdnVOAuPJBHkgrua+/A9Moyv8AQEWi0xndQ+fqbRfAFd47z4A9u1AW/spLO0gEaiE1z98PK1gl5mC5Q=="
-    crossorigin=""></script>
+<script src="https://unpkg.com/esri-leaflet@2.5.3/dist/esri-leaflet.js"
+  integrity="sha512-K0Vddb4QdnVOAuPJBHkgrua+/A9Moyv8AQEWi0xndQ+fqbRfAFd47z4A9u1AW/spLO0gEaiE1z98PK1gl5mC5Q=="
+  crossorigin="">
+</script>
+<script>
+  function autocomplete_string_search(url, select) {
+    return function (request, response) {
+      $.getJSON(url, request, function(data, status, xhr) {
+        if(typeof select === "string") {
+          const options = data.map((result) => result.fields[select])
+          response(options);
+        } else {
+          const options = data.map(select);
+          console.log("Options", options)
+          response(options)
+        }
+      })
+    };
+  }
+  $(function() {
+    $("#id_shelfmark").autocomplete({
+      source: autocomplete_string_search("{% url 'books-shelfmark-autocomplete' %}", "shelfmark"),
+      minLength: 1,
+    });
+  });
+  $(function() {
+    $("#id_owner").autocomplete({
+      source: autocomplete_string_search("{% url 'books-owner-autocomplete' %}", "name"),
+      minLength: 1,
+    });
+  });
+  $(function() {
+    $("#id_author").autocomplete({
+      source: autocomplete_string_search("{% url 'books-author-autocomplete' %}", "name"),
+      minLength: 1,
+    });
+  });
+  $(function() {
+    $("#id_text").autocomplete({
+      source: autocomplete_string_search(
+        "{% url 'books-text-autocomplete' %}", 
+        (result) => ({label: `${result.fields.title}, (${result.fields.name_eng})`, value: result.fields.title})
+      ),
+      minLength: 1,
+    });
+  });
+  $(function() {
+    $("#id_language").autocomplete({
+      source: autocomplete_string_search(
+        "{% url 'books-language-autocomplete' %}", 
+        "books_language"
+      ),
+      minLength: 1,
+    });
+  });
+  $(function() {
+    $("#id_genre").autocomplete({
+      source: autocomplete_string_search("{% url 'books-tag-autocomplete' %}", "tag"),
+      minLength: 1,
+    });
+  });
+</script>
+
 <style>
+  
 #greenAdd {display: none;}
 #purpleAdd {display: none;}
 #textsAdd {display: none;}
@@ -105,7 +172,7 @@
     <p>Owner:</p>{{ search_form.owner }}<br>
     <p>Shelfmark:</p>{{ search_form.shelfmark }}<br>
     <p>Text:</p>{{ search_form.text }}<br>
-    <p>Language:</p>{{search_form.language}}<br>
+    <p>Language:</p> {{ search_form.language }} <br>
     <p>Author:</p>{{ search_form.author }}<br>
     <p>Tag:</p>{{ search_form.genre }}<br>
     <br></br>
