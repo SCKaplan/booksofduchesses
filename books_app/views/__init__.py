@@ -66,8 +66,8 @@ def index(request):
     # if a GET (or any other method) we'll create a blank form
     else:
         # Default display is all female owners
-        owner_qs = Owner.objects.filter(gender__exact="Female")
-        owner_locations = list(set(location.the_place for owner in owner_qs for location in owner.owner_location.all()))
+        owner_places_qs = OwnerPlaceDateLived.objects.filter(owner__in=Owner.objects.filter(gender__exact="Female"))
+        owner_locations = list(set(location.the_place for location in owner_places_qs.all()))
         return render(
             request,
             "index.html",
