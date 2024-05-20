@@ -102,7 +102,6 @@ class OwnerLocationOrderForm(forms.Form):
 
 
 class SearchForm(forms.Form):
-    search = forms.CharField(label="Search", max_length=100, required=False)
     start_date = forms.CharField(label="Start Date", max_length=100, required=False)
     end_date = forms.CharField(label="End Date", max_length=100, required=False)
     owner = forms.CharField(label="Owner", max_length=100, required=False)
