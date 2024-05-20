@@ -436,17 +436,18 @@ function textsFunction() {
   <h3>Search Results:</h3>
     <p><strong> Your search returned {{books_search|length}} books, {{owners_search|length}} owners, and {{texts_search|length}} texts. For entries without geographical information, use <a href="https://booksofduchesses.com/search">Search</a></strong></p>
 
-  <h4>Books:</h4>
   <ul style="padding-left: 30px;display: inline-block; vertical-align: top; text-align:left;">
+  <h4>Books:</h4>
     {% if books_search %}
-      {% for b in books_search|slice:"0:5" %}
+      {% for book in books_search|slice:"0:5" %}
         <li style="font-size:12px;"><a href="https://booksofduchesses.com/books/{{b.shelfmark}}">{{b.shelfmark}}</a></li>
       {% endfor %}
       <span id="greenMore"></span><span id="greenAdd">
-      {% for book in books_search|slice:"5:"  %}
+      {% for book in books_search|slice:"5:" %}
         <li style="font-size:12px;"><a href="https://booksofduchesses.com/books/{{book.shelfmark}}">{{book.shelfmark}}</a></li>
       {% endfor %}
       </span>
+      <button onclick="greenFunction()" id="myBtn" style="border: 2px solid #4CAF50;font-size:10px;background-color:white">Show all {{book_len}} books</button>
     {% else %}
         <li style="font-size:12px;">No book locations were returned (did you select the books checkbox?)</li>
     {% endif %}
@@ -456,26 +457,27 @@ function textsFunction() {
   <h4>Owners:</h4>
     {% if owners_search %}
       {% for o in owners_search|slice:"0:5" %}
-	      {% if o.gender == "Male" %}
-          <li style="font-size:12px;">{{o.name}}</li>
+        {% if o.gender == "Male" %}
+            <li style="font-size:12px;">{{o.name}}</li>
           {% else %}
-          <li style="font-size:12px;"><a href="https://booksofduchesses.com/owners/{{o.name}}">{{o.name}}</a></li>
-  	    {% endif %}
+            <li style="font-size:12px;"><a href="https://booksofduchesses.com/owners/{{o.name}}">{{o.name}}</a></li>
+        {% endif %}
       {% endfor %}
       <span id="purpleMore"></span><span id="purpleAdd">
       {% for owner in owners_search|slice:"5:" %}
-	      {% if owner.gender == "Male" %}
-          <li style="font-size:12px;">{{owner.name}}</li>
-	      {% else %}        
-	        <li style="font-size:12px;"><a href="https://booksofduchesses.com/owners/{{owner.name}}">{{owner.name}}</a></li>
-	      {% endif %}
+        {% if owner.gender == "Male" %}
+                <li style="font-size:12px;">{{owner.name}}</li>
+        {% else %}        
+          <li style="font-size:12px;"><a href="https://booksofduchesses.com/owners/{{owner.name}}">{{owner.name}}</a></li>
+        {% endif %}
       {% endfor %}
       </span>
       <button onclick="purpleFunction()" id="theBtn" style="border: 2px solid #9400D3;font-size:10px;background-color:white">Show all {{owner_len}} owners</button>
     {% else %}
-      <li style="font-size:12px;">No owner locations were returned</li>
+        <li style="font-size:12px;">No owner locations were returned</li>
     {% endif %}
   </ul>
+
 
   <ul style="padding-left: 30px;display: inline-block; vertical-align: top; text-align:left;">
   <h4>Texts:</h4>
@@ -490,11 +492,10 @@ function textsFunction() {
       </span>
       <button onclick="textsFunction()" id="textsBtn" style="border: 2px solid yellow;font-size:10px;background-color:white">Show all {{ text_len }} texts</button>
     {% else %}
-      <li style="font-size:12px;">No texts were returned</li>
+        <li style="font-size:12px;">No texts were returned</li>
     {% endif %}
   </ul>
   {% endif %}
-
 </div>
 
 {% endblock %}
