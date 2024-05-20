@@ -21,12 +21,14 @@
   crossorigin="">
 </script>
 <script>
+  const MAX_OPTIONS_LENGTH = 5
+  const AUTOCOMPLETE_MIN_LENGTH = 3;
   function autocomplete_string_search(url, select) {
     return function (request, response) {
       $.getJSON(url, request, function(data, status, xhr) {
         if(typeof select === "string") {
           const options = data.map((result) => result.fields[select])
-          response(options);
+          response(options.slice(MAX_OPTIONS_LENGTH));
         } else {
           const options = data.map(select);
           response(options)
@@ -34,7 +36,7 @@
       })
     };
   }
-  const AUTOCOMPLETE_MIN_LENGTH = 1;
+
   $(function() {
     $("#id_shelfmark").autocomplete({
       source: autocomplete_string_search("{% url 'books-shelfmark-autocomplete' %}", "shelfmark"),
