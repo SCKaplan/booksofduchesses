@@ -243,7 +243,7 @@ def index(request):
     # if a GET (or any other method) we'll create a blank form
     else:
         # Default display is all female owners
-        owner_locations = [opdl.the_place for opdl in OwnerPlaceDateLived.objects.filter(owner__in=Owner.objects.filter(gender__exact="Female"))]
+        # owner_locations = [opdl.the_place for opdl in OwnerPlaceDateLived.objects.filter(owner__in=Owner.objects.filter(gender__exact="Female"))]
 
         return render(
             request,
@@ -251,7 +251,7 @@ def index(request):
             {
                 "books": [],
                 "search_form": SearchForm(),
-                "owners": owner_locations,
+                "owners": [],
                 "display_search": False,
                 "books_about": books_about,
                 "owners_about": owners_about,
