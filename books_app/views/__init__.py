@@ -39,9 +39,9 @@ def index(request):
         owners_qs = Owner.objects.filter(Q(name__icontains=owner) | Q(titles__icontains=owner))
         
         books_results = books_qs.filter(text__in=texts_qs).filter(owner_info__owner__in=owners_qs)
-        owners_results = [owner_info.book_owner for book in books_results for owner_info in book.owner_info.all()]
-        book_locations = [location.book_location for book in books_results for location in book.book_location.all()]
-        owner_locations = [location.the_place for owner in owners_results for location in owner.owner_location.all()]
+        owners_results = set(owner_info.book_owner for book in books_results for owner_info in book.owner_info.all())
+        book_locations = set(location.book_location for book in books_results for location in book.book_location.all())
+        owner_locations = set(location.the_place for owner in owners_results for location in owner.owner_location.all())
         display_search = True
         return render(
             request,
