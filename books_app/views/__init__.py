@@ -40,6 +40,7 @@ def index(request):
         
         books_results = sorted(set(books_qs.filter(text__in=texts_qs).filter(owner_info__owner__in=owners_qs)), key=lambda b: b.shelfmark)
         owners_results = sorted(set(owner_info.book_owner for book in books_results for owner_info in book.owner_info.all()), key=lambda o: "{} {}".format(o.name, o.titles))
+        texts_results = sorted(set(texts_qs), key=lambda t: "{} ({})".format(t.title, t.name_eng))
         book_locations = list(set(location.book_location for book in books_results for location in book.book_location.all()))
         owner_locations = list(set(location.the_place for owner in owners_results for location in owner.owner_location.all()))
         display_search = True
@@ -49,7 +50,7 @@ def index(request):
             {
             "books_search": books_results,
             "owners_search": owners_results,
-            "text_search": texts_qs.all(),
+            "texts_search": texts_results,
             "search_form": search_form,
             "display": display,
             "owners": owner_locations,
