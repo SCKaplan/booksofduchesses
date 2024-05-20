@@ -56,21 +56,6 @@ def index(request):
         else:
             searchRange.append(datetime.datetime(int(end_date), 1, 1))
 
-        # Date range search field- filtered by BookLocation and OwnerPlaceDateLived objects
-        books_final = []
-        for date in books_to_filter:
-            dateRange = date.date_range()
-            # decide to display each book or not by comparing list of datetimes for overlap
-            if not (dateRange[1] < searchRange[0] or dateRange[0] > searchRange[1]):
-                books_final.append(date)
-
-        # Same process for each OwnerPlaceDateLived
-        owners_final = []
-        for owner_date in owner_to_filter:
-            dateRange = owner_date.date_range()
-            if not (dateRange[1] < searchRange[0] or dateRange[0] > searchRange[1]):
-                owners_final.append(owner_date)
-
         return render(
             request,
             "index.html",
