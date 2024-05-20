@@ -440,7 +440,7 @@ function textsFunction() {
   <h4>Books:</h4>
     {% if books_search %}
       {% for book in books_search|slice:"0:5" %}
-        <li style="font-size:12px;"><a href="https://booksofduchesses.com/books/{{b.shelfmark}}">{{b.shelfmark}}</a></li>
+        <li style="font-size:12px;"><a href="https://booksofduchesses.com/books/{{book.shelfmark}}">{{book.shelfmark}}</a></li>
       {% endfor %}
       <span id="greenMore"></span><span id="greenAdd">
       {% for book in books_search|slice:"5:" %}
