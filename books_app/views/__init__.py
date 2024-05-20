@@ -38,7 +38,7 @@ def index(request):
         texts_qs = Text.objects.filter(authors__name__icontains=author,language__books_language__icontains=language).filter(Q(title__icontains=text) | Q(name_eng__icontains=text)).filter(tags__tag__icontains=tag)
         owners_qs = Owner.objects.filter(Q(name__icontains=owner) | Q(titles__icontains=owner))
         
-        books_results = books_qs.filter(text__in=texts_qs).filter(owner_info__owner__in=owners_qs)
+        books_results = set(books_qs.filter(text__in=texts_qs).filter(owner_info__owner__in=owners_qs))
         owners_results = set(owner_info.book_owner for book in books_results for owner_info in book.owner_info.all())
         book_locations = set(location.book_location for book in books_results for location in book.book_location.all())
         owner_locations = set(location.the_place for owner in owners_results for location in owner.owner_location.all())
