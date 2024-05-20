@@ -28,10 +28,14 @@
       $.getJSON(url, request, function(data, status, xhr) {
         if(typeof select === "string") {
           const options = data.map((result) => result.fields[select])
-          response(options.slice(MAX_OPTIONS_LENGTH));
+          const slice = options.slice(MAX_OPTIONS_LENGTH);
+          console.log("Slice", {slice});
+          response(slice);
         } else {
           const options = data.map(select);
-          response(options.slice(MAX_OPTIONS_LENGTH))
+          const slice = options.slice(MAX_OPTIONS_LENGTH);
+          console.log("Slice", {slice});
+          response(slice)
         }
       })
     };
