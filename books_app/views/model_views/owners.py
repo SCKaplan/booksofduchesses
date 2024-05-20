@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.db.models import Q
+from django.core.serializers import serialize
 from books_app.models import *
 from books_app.forms import *
 
@@ -282,3 +283,9 @@ def suggest_owner(request):
         return render(
             request, "suggest_owner.html", {"owner_form": owner_form, "failed": failed}
         )
+    
+
+def owners_name_autocomplete(request):
+    term = request.GET.get('term', '')
+    data = serialize('json', Owner.objects.filter(Q(name__icontains=term) | Q(titles__icontains=term)))
+    return HttpResponse(data, content_type='application/json')

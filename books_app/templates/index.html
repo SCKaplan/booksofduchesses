@@ -29,28 +29,34 @@
           response(options);
         } else {
           const options = data.map(select);
-          console.log("Options", options)
           response(options)
         }
       })
     };
   }
+  const AUTOCOMPLETE_MIN_LENGTH = 1;
   $(function() {
     $("#id_shelfmark").autocomplete({
       source: autocomplete_string_search("{% url 'books-shelfmark-autocomplete' %}", "shelfmark"),
-      minLength: 1,
+      minLength: AUTOCOMPLETE_MIN_LENGTH,
     });
   });
   $(function() {
     $("#id_owner").autocomplete({
-      source: autocomplete_string_search("{% url 'books-owner-autocomplete' %}", "name"),
-      minLength: 1,
+      source: autocomplete_string_search(
+        "{% url 'owners-name-autocomplete' %}", 
+        (result) => ({
+          label: `${result.fields.name}, (${result.fields.titles})`, 
+          value: result.fields.name
+        })
+      ),
+      minLength: AUTOCOMPLETE_MIN_LENGTH,
     });
   });
   $(function() {
     $("#id_author").autocomplete({
       source: autocomplete_string_search("{% url 'books-author-autocomplete' %}", "name"),
-      minLength: 1,
+      minLength: AUTOCOMPLETE_MIN_LENGTH,
     });
   });
   $(function() {
@@ -59,7 +65,7 @@
         "{% url 'books-text-autocomplete' %}", 
         (result) => ({label: `${result.fields.title}, (${result.fields.name_eng})`, value: result.fields.title})
       ),
-      minLength: 1,
+      minLength: AUTOCOMPLETE_MIN_LENGTH,
     });
   });
   $(function() {
@@ -68,13 +74,13 @@
         "{% url 'books-language-autocomplete' %}", 
         "books_language"
       ),
-      minLength: 1,
+      minLength: AUTOCOMPLETE_MIN_LENGTH,
     });
   });
   $(function() {
     $("#id_genre").autocomplete({
       source: autocomplete_string_search("{% url 'books-tag-autocomplete' %}", "tag"),
-      minLength: 1,
+      minLength: AUTOCOMPLETE_MIN_LENGTH,
     });
   });
 </script>

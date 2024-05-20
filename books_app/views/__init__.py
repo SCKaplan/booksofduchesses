@@ -10,9 +10,9 @@ from books_app.forms import *
 # Create your views here.
 # Disclaimer: this doesn't seem efficient but this version runs the fastest
 def index(request):
-    texts_about = len(Text.objects.all())
-    owners_about = len(Owner.objects.filter(gender="Female"))
-    books_about = len(Book.objects.filter(reviewed=True))
+    texts_about = Text.objects.all().count()
+    owners_about = Owner.objects.filter(gender="Female").count()
+    books_about = Book.objects.filter(reviewed=True).count()
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
         search_form = SearchForm(request.POST)
@@ -243,28 +243,16 @@ def index(request):
     # if a GET (or any other method) we'll create a blank form
     else:
         # Default display is all female owners
-        books = []
-        locations = Location.objects.all()
-        authors = Author.objects.all()
-        owners = Owner.objects.filter(gender="Female")
-        owners_default = []
-        for owner in owners:
-            toAdd = owner.owner_location.all()
-            for item in toAdd:
-                owners_default.append(item)
-        search_form = SearchForm()
-        display_search = False
+        owner_locations = [opdl.the_place for opdl in OwnerPlaceDateLived.objects.filter(owner__in=Owner.objects.filter(gender__exact="Female"))]
 
         return render(
             request,
             "index.html",
             {
-                "books": books,
-                "locations": locations,
-                "search_form": search_form,
-                "authors": authors,
-                "owners": owners_default,
-                "display_search": display_search,
+                "books": [],
+                "search_form": SearchForm(),
+                "owners": owner_locations,
+                "display_search": False,
                 "books_about": books_about,
                 "owners_about": owners_about,
                 "texts_about": texts_about,

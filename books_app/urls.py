@@ -25,11 +25,6 @@ urlpatterns = [
         name="books-shelfmark-autocomplete",
     ),
     path(
-        "books-owner-autocomplete/",
-        BookViews.books_owner_autocomplete,
-        name="books-owner-autocomplete",
-    ),
-    path(
         "books-author-autocomplete/",
         BookViews.books_author_autocomplete,
         name="books-author-autocomplete",
@@ -48,6 +43,11 @@ urlpatterns = [
         "books-language-autocomplete/",
         BookViews.books_language_autocomplete,
         name="books-language-autocomplete",
+    ),
+    path(
+        "owners-name-autocomplete/",
+        OwnerViews.owners_name_autocomplete,
+        name="owners-name-autocomplete",
     ),
     path("search", views.search, name="search"),
     path("about", views.about, name="about"),

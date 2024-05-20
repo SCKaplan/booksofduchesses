@@ -108,11 +108,6 @@ def books_shelfmark_autocomplete(request):
     data = serialize('json', Book.objects.filter(shelfmark__icontains=term))
     return HttpResponse(data, content_type='application/json')
 
-def books_owner_autocomplete(request):
-    term = request.GET.get('term', '')
-    owner_info = DateOwned.objects.filter(book_owner__name__icontains=term)
-    data = serialize('json', [owner.book_owner for owner in owner_info])
-    return HttpResponse(data, content_type='application/json')
 
 def books_author_autocomplete(request):
     term = request.GET.get('term', '')
