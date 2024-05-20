@@ -32,11 +32,11 @@ def index(request):
         owner = request.POST.get("owner", "")
         # Get books matching shelfmark search, all books if blank
         owners_qs = Owner.objects.filter(Q(name__icontains=owner) | Q(titles__icontains=owner))
-        books_qs = Book.objects.filter(shelfmark__icontains=shelfmark).filter(text__in=texts_qs).filter(owner_info__owner__in=owners_qs)
-    
         # Text Search Fields
         texts_qs = Text.objects.filter(authors__name__icontains=author,language__books_language__icontains=language).filter(Q(title__icontains=text) | Q(name_eng__icontains=text)).filter(tags__tag__icontains=tag)
-       
+        books_qs = Book.objects.filter(shelfmark__icontains=shelfmark).filter(text__in=texts_qs).filter(owner_info__owner__in=owners_qs)
+    
+        
         
         books_results = sorted(set(books_qs), key=lambda b: b.shelfmark)
         owners_results = sorted(set(owner_info.book_owner for book in books_results for owner_info in book.owner_info.all()), key=lambda o: "{} {}".format(o.name, o.titles))
