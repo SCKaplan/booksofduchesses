@@ -100,11 +100,13 @@ function textsFunction() {
     $("#id_owner").autocomplete({
       source: autocomplete_string_search(
         "{% url 'owners-name-autocomplete' %}", 
-        (result) => ({
-          label: `${result.fields.name}, (${result.fields.titles})`, 
+        (result) => {
+          const hasTitle = result.fields.titles && result.fields.titles.trim()
+          return {
+          label: hasTitle ? `${result.fields.name}, (${result.fields.titles})`: result.fields.name, 
           value: result.fields.name
-        })
-      ),
+        }
+      }),
       minLength: AUTOCOMPLETE_MIN_LENGTH,
     });
   });
@@ -118,7 +120,13 @@ function textsFunction() {
     $("#id_text").autocomplete({
       source: autocomplete_string_search(
         "{% url 'books-text-autocomplete' %}", 
-        (result) => ({label: `${result.fields.title}, (${result.fields.name_eng})`, value: result.fields.title})
+        (result) => {
+          const hasTranslatedTitle = result.fields.name_eng && result.fields.name_eng.trim()
+          return {
+            label: hasTranslatedTitle ? `${result.fields.title}, (${result.fields.name_eng})`: result.fields.title, 
+            value: result.fields.title
+          }
+        }
       ),
       minLength: AUTOCOMPLETE_MIN_LENGTH,
     });

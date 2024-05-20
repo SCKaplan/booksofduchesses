@@ -22,7 +22,6 @@ def index(request):
     books_about = Book.objects.filter(reviewed=True).count()
     search_form = to_valid_search_form(request)
     if search_form:
-        display = request.POST.getlist("display")
         author = request.POST.get("author", "")
         start_date = request.POST.get("start_date", "")
         end_date = request.POST.get("end_date", "")
@@ -32,18 +31,46 @@ def index(request):
         shelfmark = request.POST.get("shelfmark", "")
         owner = request.POST.get("owner", "")
         # Get books matching shelfmark search, all books if blank
-        books_qs = Book.objects.filter(shelfmark__icontains=shelfmark)
+        owners_qs = Owner.objects.filter(Q(name__icontains=owner) | Q(titles__icontains=owner))
+        books_qs = Book.objects.filter(shelfmark__icontains=shelfmark).filter(text__in=texts_qs).filter(owner_info__owner__in=owners_qs)
     
         # Text Search Fields
         texts_qs = Text.objects.filter(authors__name__icontains=author,language__books_language__icontains=language).filter(Q(title__icontains=text) | Q(name_eng__icontains=text)).filter(tags__tag__icontains=tag)
-        owners_qs = Owner.objects.filter(Q(name__icontains=owner) | Q(titles__icontains=owner))
+       
         
-        books_results = sorted(set(books_qs.filter(text__in=texts_qs).filter(owner_info__owner__in=owners_qs)), key=lambda b: b.shelfmark)
+        books_results = sorted(set(books_qs), key=lambda b: b.shelfmark)
         owners_results = sorted(set(owner_info.book_owner for book in books_results for owner_info in book.owner_info.all()), key=lambda o: "{} {}".format(o.name, o.titles))
         texts_results = sorted(set(texts_qs), key=lambda t: "{} ({})".format(t.title, t.name_eng))
         book_locations = list(set(location.book_location for book in books_results for location in book.book_location.all()))
         owner_locations = list(set(location.the_place for owner in owners_results for location in owner.owner_location.all()))
-        display_search = True
+        # Get a date range- a list of a start date and end date in datetime format
+        searchRange = []
+        # Check for non-year formatting, i.e. if not len(4) and if any numbers are in string
+        if len(start_date) != 4 or any(char.isalpha() for char in start_date):
+            # Default date otherwise
+            searchRange.append(datetime.datetime(1350, 1, 1))
+        else:
+            searchRange.append(datetime.datetime(int(start_date), 1, 1))
+        if len(end_date) != 4 or any(char.isalpha() for char in end_date):
+            searchRange.append(datetime.datetime(1500, 1, 1))
+        else:
+            searchRange.append(datetime.datetime(int(end_date), 1, 1))
+
+        # Date range search field- filtered by BookLocation and OwnerPlaceDateLived objects
+        books_final = []
+        for date in books_to_filter:
+            dateRange = date.date_range()
+            # decide to display each book or not by comparing list of datetimes for overlap
+            if not (dateRange[1] < searchRange[0] or dateRange[0] > searchRange[1]):
+                books_final.append(date)
+
+        # Same process for each OwnerPlaceDateLived
+        owners_final = []
+        for owner_date in owner_to_filter:
+            dateRange = owner_date.date_range()
+            if not (dateRange[1] < searchRange[0] or dateRange[0] > searchRange[1]):
+                owners_final.append(owner_date)
+
         return render(
             request,
             "index.html",
@@ -52,10 +79,9 @@ def index(request):
             "owners_search": owners_results,
             "texts_search": texts_results,
             "search_form": search_form,
-            "display": display,
             "owners": owner_locations,
             "books": book_locations,
-            "display_search": display_search,
+            "display_search": True,
             "books_about": books_about,
             "owners_about": owners_about,
             "texts_about": texts_about,
