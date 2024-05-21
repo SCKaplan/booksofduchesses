@@ -33,7 +33,13 @@ def index(request):
         # Get books matching shelfmark search, all books if blank
         owners_qs = Owner.objects.filter(Q(name__icontains=owner) | Q(titles__icontains=owner))
         # Text Search Fields
-        texts_qs = Text.objects.filter(authors__name__icontains=author,language__books_language__icontains=language).filter(Q(title__icontains=text) | Q(name_eng__icontains=text)).filter(tags__tag__icontains=tag)
+        texts_qs = Text.objects.filter(
+            authors__name__icontains=author,
+            language__books_language__icontains=language
+        ).filter(
+            Q(title__icontains=text) | Q(name_eng__icontains=text)
+        ).filter(tags__tag__icontains=tag)
+        
         books_qs = Book.objects.filter(shelfmark__icontains=shelfmark).filter(owner_info__owner__in=owners_qs).filter(text__in=texts_qs)
     
         
