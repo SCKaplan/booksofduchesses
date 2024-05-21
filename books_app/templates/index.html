@@ -22,7 +22,8 @@
 </script>
 <script>
   const MAX_OPTIONS_LENGTH = 5
-  const AUTOCOMPLETE_MIN_LENGTH = 3;
+  const AUTOCOMPLETE_MIN_LENGTH = 2;
+  const AUTOCOMPLETE_DELAY = 300;
   function autocomplete_string_search(url, select) {
     return function (request, response) {
       $.getJSON(url, request, function(data, status, xhr) {
@@ -94,6 +95,7 @@ function textsFunction() {
     $("#id_shelfmark").autocomplete({
       source: autocomplete_string_search("{% url 'books-shelfmark-autocomplete' %}", "shelfmark"),
       minLength: AUTOCOMPLETE_MIN_LENGTH,
+      delay: AUTOCOMPLETE_DELAY,
     });
   });
   $(function() {
@@ -108,12 +110,14 @@ function textsFunction() {
         }
       }),
       minLength: AUTOCOMPLETE_MIN_LENGTH,
+      delay: AUTOCOMPLETE_DELAY,
     });
   });
   $(function() {
     $("#id_author").autocomplete({
       source: autocomplete_string_search("{% url 'books-author-autocomplete' %}", "name"),
       minLength: AUTOCOMPLETE_MIN_LENGTH,
+      delay: AUTOCOMPLETE_DELAY,
     });
   });
   $(function() {
@@ -129,6 +133,7 @@ function textsFunction() {
         }
       ),
       minLength: AUTOCOMPLETE_MIN_LENGTH,
+      delay: AUTOCOMPLETE_DELAY,
     });
   });
   $(function() {
@@ -138,12 +143,14 @@ function textsFunction() {
         "books_language"
       ),
       minLength: AUTOCOMPLETE_MIN_LENGTH,
+      delay: AUTOCOMPLETE_DELAY,
     });
   });
   $(function() {
     $("#id_genre").autocomplete({
       source: autocomplete_string_search("{% url 'books-tag-autocomplete' %}", "tag"),
       minLength: AUTOCOMPLETE_MIN_LENGTH,
+      delay: AUTOCOMPLETE_DELAY,
     });
   });
 
@@ -254,7 +261,7 @@ function textsFunction() {
 
 
 <!-- Map Section -->
-<div class="column right" style="margin-top: 30px; padding-right:25px; padding-left:10px;">
+<div class="column right" style="margin-top: 30px; padding-right:25px; padding-left:10px; z-index: 10;">
   <div id="mapid" style="width: 100%; height:800px;">
     <script>
       // Define green icons, to represent books

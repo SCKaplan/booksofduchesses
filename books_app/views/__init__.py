@@ -34,28 +34,16 @@ def index(request):
         owners_qs = Owner.objects.filter(Q(name__icontains=owner) | Q(titles__icontains=owner))
         # Text Search Fields
         texts_qs = Text.objects.filter(authors__name__icontains=author,language__books_language__icontains=language).filter(Q(title__icontains=text) | Q(name_eng__icontains=text)).filter(tags__tag__icontains=tag)
-        books_qs = Book.objects.filter(shelfmark__icontains=shelfmark).filter(text__in=texts_qs).filter(owner_info__owner__in=owners_qs)
+        books_qs = Book.objects.filter(shelfmark__icontains=shelfmark).filter(owner_info__owner__in=owners_qs).filter(text__in=texts_qs)
     
         
         
         books_results = sorted(set(books_qs), key=lambda b: b.shelfmark)
         owners_results = sorted(set(owner_info.book_owner for book in books_results for owner_info in book.owner_info.all()), key=lambda o: "{} {}".format(o.name, o.titles))
-        texts_results = sorted(set(texts_qs), key=lambda t: "{} ({})".format(t.title, t.name_eng))
+        texts_results = sorted(set(texts_qs), key=lambda t: t.title)
         book_locations = list(set(location.book_location for book in books_results for location in book.book_location.all()))
         owner_locations = list(set(location.the_place for owner in owners_results for location in owner.owner_location.all()))
-        # Get a date range- a list of a start date and end date in datetime format
-        searchRange = []
-        # Check for non-year formatting, i.e. if not len(4) and if any numbers are in string
-        if len(start_date) != 4 or any(char.isalpha() for char in start_date):
-            # Default date otherwise
-            searchRange.append(datetime.datetime(1350, 1, 1))
-        else:
-            searchRange.append(datetime.datetime(int(start_date), 1, 1))
-        if len(end_date) != 4 or any(char.isalpha() for char in end_date):
-            searchRange.append(datetime.datetime(1500, 1, 1))
-        else:
-            searchRange.append(datetime.datetime(int(end_date), 1, 1))
-
+        
         return render(
             request,
             "index.html",
