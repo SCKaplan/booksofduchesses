@@ -174,7 +174,7 @@ function textsFunction() {
   padding-left:130px;
 }
 
-ul.scroll-menu-autocomplete {
+.scroll-menu-autocomplete {
 			padding: 1px;
 			max-height: 200px;
       max-width: 250px;
@@ -224,7 +224,6 @@ ul.scroll-menu-autocomplete {
 <div class="column left" style=" margin-top: 30px; font-family:Verdana,sans-serif; padding-left:25px;">
   <form action="#map" method="post" style="margin-top: 50px; padding 0px;" id="map">
     {% csrf_token %}
-    <p>Display:</p>{{ search_form.display }}
     <p>Dates:</p>{{ search_form.start_date }} to {{ search_form.end_date }}<br>
     <p>Owner:</p>{{ search_form.owner }}<br>
     <p>Shelfmark:</p>{{ search_form.shelfmark }}<br>

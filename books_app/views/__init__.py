@@ -40,13 +40,10 @@ def index(request):
             Q(title__icontains=text) | Q(name_eng__icontains=text)
         ).filter(tags__tag__icontains=tag)
         
-        books_qs = Book.objects.filter(shelfmark__icontains=shelfmark).filter(owner_info__owner__in=owners_qs).filter(text__in=texts_qs)
-    
-        
-        
-        books_results = sorted(set(books_qs), key=lambda b: b.shelfmark)
-        owners_results = sorted(set(owner_info.book_owner for book in books_results for owner_info in book.owner_info.all()), key=lambda o: "{} {}".format(o.name, o.titles))
-        texts_results = sorted(set(texts_qs), key=lambda t: t.title)
+        books_qs = Book.objects.filter(shelfmark__icontains=shelfmark)
+        books_results = books_qs.filter(owner_info__book_owner__in=owners_qs).filter(text__in=texts_qs).distinct()
+        texts_results = texts_qs.filter(book__in=books_results).distinct()
+        owners_results = owners_qs.filter(dateowned__book_owned__in=books_results).distinct()
         book_locations = list(set(location.book_location for book in books_results for location in book.book_location.all()))
         owner_locations = list(set(location.the_place for owner in owners_results for location in owner.owner_location.all()))
         
@@ -54,9 +51,9 @@ def index(request):
             request,
             "index.html",
             {
-            "books_search": books_results,
-            "owners_search": owners_results,
-            "texts_search": texts_results,
+            "books_search": sorted(books_results, key=lambda b: b.shelfmark),
+            "owners_search": sorted(owners_results, key=lambda o: "{} {}".format(o.name, o.titles)),
+            "texts_search": sorted(texts_results, key=lambda t: t.title),
             "search_form": search_form,
             "owners": owner_locations,
             "books": book_locations,
