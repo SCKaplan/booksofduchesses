@@ -21,23 +21,29 @@
   crossorigin="">
 </script>
 <script>
-  const MAX_OPTIONS_LENGTH = 5
-  const AUTOCOMPLETE_MIN_LENGTH = 2;
+  const AUTOCOMPLETE_MIN_LENGTH = 1;
   const AUTOCOMPLETE_DELAY = 300;
   function autocomplete_string_search(url, select) {
     return function (request, response) {
       $.getJSON(url, request, function(data, status, xhr) {
         if(typeof select === "string") {
-          const options = data.map((result) => result.fields[select])
-          const slice = options.slice(0, MAX_OPTIONS_LENGTH);
-          response(slice);
-        } else {
-          const options = data.map(select);
-          const slice = options.slice(0, MAX_OPTIONS_LENGTH);
-          response(slice)
+          response(data.map((result) => result.fields[select]));
+        } else {    
+          response(data.map(select))
         }
       })
     };
+  }
+
+  function bindAutocomplete(jquerySelector, url, dataSelector) {
+    $(function() {
+      $(jquerySelector).autocomplete({
+        source: autocomplete_string_search(url, dataSelector),
+        minLength: AUTOCOMPLETE_MIN_LENGTH,
+        delay: AUTOCOMPLETE_DELAY,
+      });
+      $(jquerySelector).autocomplete("widget").addClass('scroll-menu-autocomplete');
+    });
   }
 
   function greenFunction() {
@@ -92,66 +98,32 @@ function textsFunction() {
 }
 
   $(function() {
-    $("#id_shelfmark").autocomplete({
-      source: autocomplete_string_search("{% url 'books-shelfmark-autocomplete' %}", "shelfmark"),
-      minLength: AUTOCOMPLETE_MIN_LENGTH,
-      delay: AUTOCOMPLETE_DELAY,
-    });
-  });
-  $(function() {
-    $("#id_owner").autocomplete({
-      source: autocomplete_string_search(
-        "{% url 'owners-name-autocomplete' %}", 
-        (result) => {
+    bindAutocomplete("#id_shelfmark", "{% url 'books-shelfmark-autocomplete' %}", "shelfmark");
+    bindAutocomplete(
+      "#id_owner", 
+      "{% url 'owners-name-autocomplete' %}", 
+      (result) => {
           const hasTitle = result.fields.titles && result.fields.titles.trim()
           return {
           label: hasTitle ? `${result.fields.name}, (${result.fields.titles})`: result.fields.name, 
           value: result.fields.name
-        }
-      }),
-      minLength: AUTOCOMPLETE_MIN_LENGTH,
-      delay: AUTOCOMPLETE_DELAY,
-    });
-  });
-  $(function() {
-    $("#id_author").autocomplete({
-      source: autocomplete_string_search("{% url 'books-author-autocomplete' %}", "name"),
-      minLength: AUTOCOMPLETE_MIN_LENGTH,
-      delay: AUTOCOMPLETE_DELAY,
-    });
-  });
-  $(function() {
-    $("#id_text").autocomplete({
-      source: autocomplete_string_search(
-        "{% url 'books-text-autocomplete' %}", 
-        (result) => {
+          }
+      }
+    );
+    bindAutocomplete("#id_author", "{% url 'books-author-autocomplete' %}", "name");
+    bindAutocomplete(
+      "#id_text", 
+      "{% url 'books-text-autocomplete' %}", 
+      (result) => {
           const hasTranslatedTitle = result.fields.name_eng && result.fields.name_eng.trim()
           return {
             label: hasTranslatedTitle ? `${result.fields.title}, (${result.fields.name_eng})`: result.fields.title, 
             value: result.fields.title
           }
-        }
-      ),
-      minLength: AUTOCOMPLETE_MIN_LENGTH,
-      delay: AUTOCOMPLETE_DELAY,
-    });
-  });
-  $(function() {
-    $("#id_language").autocomplete({
-      source: autocomplete_string_search(
-        "{% url 'books-language-autocomplete' %}", 
-        "books_language"
-      ),
-      minLength: AUTOCOMPLETE_MIN_LENGTH,
-      delay: AUTOCOMPLETE_DELAY,
-    });
-  });
-  $(function() {
-    $("#id_genre").autocomplete({
-      source: autocomplete_string_search("{% url 'books-tag-autocomplete' %}", "tag"),
-      minLength: AUTOCOMPLETE_MIN_LENGTH,
-      delay: AUTOCOMPLETE_DELAY,
-    });
+      }
+    );
+    bindAutocomplete("#id_language", "{% url 'books-language-autocomplete' %}", "books_language")
+    bindAutocomplete("#id_genre", "{% url 'books-tag-autocomplete' %}", "tag")
   });
 
 </script>
@@ -202,6 +174,12 @@ function textsFunction() {
   padding-left:130px;
 }
 
+.scroll-menu-autocomplete {
+			padding: 1px;
+			max-height: 200px;
+			overflow: auto;
+		}
+
 
 @media screen and (max-width: 1000px) {
   .w3-image {
@@ -217,14 +195,7 @@ function textsFunction() {
     width: 90%;
   }
 }
-.ui-autocomplete {
-    max-height: 200px;
-    overflow-y: auto;
-    /* prevent horizontal scrollbar */
-    overflow-x: hidden;
-    /* add padding to account for vertical scrollbar */
-    padding-right: 20px;
-} 
+
 </style>
 
 <!-- Homepage setup, still needs modification for mobile -->
