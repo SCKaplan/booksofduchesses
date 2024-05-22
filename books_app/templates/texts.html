@@ -27,9 +27,11 @@
     <div class="w3-col l3 m6 w3-margin-bottom">
       <h3 style="text-align:center;"><strong>Overview</strong></h3>
       <h4 class="w3-opacity">Found in:</h4>
+      <ul>
       {% for book in books %}
         <li> <a href="http://booksofduchesses.com/books/{{book.shelfmark}}">{{book.shelfmark}}</a></li>
       {% endfor %}
+      </ul> 
       <hr></hr>
       {% if text.date_composed %}
         <p class="w3-opacity">Created in {{text.date_composed}}</p>
@@ -63,18 +65,32 @@
       <hr></hr>
       {% if text.parent_text.all %}
       <h4 class="w3-opacity">Parent Texts:</h4>
-      {% for text in text.parent_text.all %}
-	<li>{{text}}</li>
-      {% endfor %}
+      <ul>
+        {% for text in text.parent_text.all %}
+        <li style="list-style-position: inside"><a href="https://booksofduchesses.com/texts/{{text.title}}">{{text.title}}</a></li>
+        {% endfor %}
+      </ul>
       {% endif%}
+
+      {% if text.text_set.all %}
+      <h4 class="w3-opacity">Child Texts:</h4>
+      <ul>
+        {% for text in text.text_set.all %}
+        <li style="list-style-position: inside"><a href="https://booksofduchesses.com/texts/{{text.title}}">{{text.title}}</a></li>
+        {% endfor %}
+      </ul>
+      {% endif%}
+
       {% if tags %}
         <h4 class="w3-opacity">Tags:</h4>
       {% else %}
         <p class="w3-opacity">Tags: None</p>
       {% endif %}
+      <ul>
       {% for tag in tags %}
-        <li>{{tag}}</li>
+        <li style="list-style-position: inside">{{tag}}</li>
       {% endfor %}
+      </ul>
     </div>
 
     <!-- Map -->
