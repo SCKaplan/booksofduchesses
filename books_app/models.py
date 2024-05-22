@@ -2,6 +2,11 @@ from django.contrib.gis.db import models
 from django.forms import ModelForm
 import datetime
 
+    
+UNIVERSAL_DATE_RANGE = [
+    datetime.datetime(1300, 1, 1),
+    datetime.datetime(1600, 1, 1),
+]
 
 def date_ranges(given_dates):
     from datetime import datetime, timedelta
@@ -21,11 +26,7 @@ def date_ranges(given_dates):
     chop = 0
     firstDate = True
     if len(dates[0]) == 0 and len(dates[1]) == 0:
-        # If we just get a dash return the full possible date range
-        x = []
-        x.append(datetime(1300, 1, 1))
-        x.append(datetime(1600, 1, 1))
-        return x
+        return UNIVERSAL_DATE_RANGE
     # For start date and finish date
     for date in dates:
         # Take off white space
@@ -95,14 +96,17 @@ def date_ranges(given_dates):
             # e.g. 1443
             year = date[0]
         stringIt = str(year) + "-" + month + "-" + str(day)
-        # format for adding a datetime from a string
-        toAdd = datetime.strptime(stringIt.replace("pot", "").replace("Augut", "August"), "%Y-%B-%d")
-        if uncertain and firstDate:
-            toAdd = toAdd - timedelta(days=1826)
-        if uncertain and not firstDate:
-            toAdd = toAdd + timedelta(days=1824)
-        final.append(toAdd)
-        firstDate = False
+        try:
+            # format for adding a datetime from a string
+            toAdd = datetime.strptime(stringIt.replace("pot", "").replace("Augut", "August"), "%Y-%B-%d")
+            if uncertain and firstDate:
+                toAdd = toAdd - timedelta(days=1826)
+            if uncertain and not firstDate:
+                toAdd = toAdd + timedelta(days=1824)
+            final.append(toAdd)
+            firstDate = False
+        except ValueError:
+            return UNIVERSAL_DATE_RANGE
     # If there is no dash we extend the window to a whole year
     if len(final) == 1:
         final.append(final[0] + timedelta(days=364))

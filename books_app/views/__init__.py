@@ -18,11 +18,7 @@ def parseYear(year_string, defaultYear):
         return datetime.datetime(int(year_string), 1, 1)
     except ValueError:
         return datetime.datetime(defaultYear, 1, 1)
-    
-UNIVERSAL_SEARCH_RANGE = [
-    datetime.datetime(1300, 1, 1),
-    datetime.datetime(1600, 1, 1),
-]
+
 
 # Get a date range- a list of a start date and end date in datetime format
 def to_search_range(start_date_qry, end_date_qry):                
@@ -35,7 +31,7 @@ def in_search_range(search_range, range):
     return not (range[1] < search_range[0] or range[0] > search_range[1])
 
 def scope_books_to_timerange(search_range, books):
-    if(search_range == UNIVERSAL_SEARCH_RANGE):
+    if(search_range == UNIVERSAL_DATE_RANGE):
         return books
     return [book for book in books for owner_info in book.owner_info.all() if in_search_range(search_range, owner_info.date_range())]
 
