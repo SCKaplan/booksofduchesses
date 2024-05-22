@@ -13,9 +13,35 @@ def to_valid_search_form(request):
             return search_form
     return None
 
+def parseYear(year_string, defaultYear):
+    try:
+        return datetime.datetime(int(year_string), 1, 1)
+    except ValueError:
+        return datetime.datetime(defaultYear, 1, 1)
+    
+UNIVERSAL_SEARCH_RANGE = [
+    datetime.datetime(1300, 1, 1),
+    datetime.datetime(1600, 1, 1),
+]
+
+# Get a date range- a list of a start date and end date in datetime format
+def to_search_range(start_date_qry, end_date_qry):                
+    return [
+        parseYear(start_date_qry, 1300), 
+        parseYear(end_date_qry, 1600)
+    ]
+
+def in_search_range(search_range, range):
+    return not (range[1] < search_range[0] or range[0] > search_range[1])
+
+def scope_books_to_timerange(search_range, books):
+    if(search_range == UNIVERSAL_SEARCH_RANGE):
+        return books
+    return [book for book in books for owner_info in book.owner_info.all() if in_search_range(search_range, owner_info.date_range())]
+
+
 
 # Create your views here.
-# Disclaimer: this doesn't seem efficient but this version runs the fastest
 def index(request):
     texts_about = Text.objects.count()
     owners_about = Owner.objects.filter(gender="Female").count()
@@ -30,8 +56,13 @@ def index(request):
         language = request.POST.get("language", "")
         shelfmark = request.POST.get("shelfmark", "")
         owner = request.POST.get("owner", "")
+
         # Get books matching shelfmark search, all books if blank
-        owners_qs = Owner.objects.filter(Q(name__icontains=owner) | Q(titles__icontains=owner))
+        owners_qs = Owner.objects.filter(
+            Q(name__icontains=owner) | Q(titles__icontains=owner)
+        )
+        books_qs = Book.objects.filter(shelfmark__icontains=shelfmark)
+
         # Text Search Fields
         texts_qs = Text.objects.filter(
             authors__name__icontains=author,
@@ -39,9 +70,13 @@ def index(request):
         ).filter(
             Q(title__icontains=text) | Q(name_eng__icontains=text)
         ).filter(tags__tag__icontains=tag)
-        
-        books_qs = Book.objects.filter(shelfmark__icontains=shelfmark)
+
         books_results = books_qs.filter(owner_info__book_owner__in=owners_qs).filter(text__in=texts_qs).distinct()
+        
+        # This is hacky and slow but needed until we get real date data in the db
+        search_range = to_search_range(start_date, end_date)
+        books_results = scope_books_to_timerange(search_range, books_results)
+
         texts_results = texts_qs.filter(book__in=books_results).distinct()
         owners_results = owners_qs.filter(dateowned__book_owned__in=books_results).distinct()
         book_locations = list(set(location.book_location for book in books_results for location in book.book_location.all()))

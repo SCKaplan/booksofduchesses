@@ -16,15 +16,15 @@ def date_ranges(given_dates):
     # Defaults
     month = "January"
     day = 1
-    year = 1350
+    year = 1300
     final = []
     chop = 0
     firstDate = True
     if len(dates[0]) == 0 and len(dates[1]) == 0:
         # If we just get a dash return the full possible date range
         x = []
-        x.append(datetime(1350, 1, 1))
-        x.append(datetime(1500, 12, 31))
+        x.append(datetime(1300, 1, 1))
+        x.append(datetime(1600, 1, 1))
         return x
     # For start date and finish date
     for date in dates:
