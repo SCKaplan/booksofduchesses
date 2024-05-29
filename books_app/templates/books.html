@@ -146,7 +146,14 @@
       {% for bib in bibs %}
         <p style="text-align:left; font-size:11px;">{{bib.source}}{% if bib.page %}: {{ bib.page }}{% endif %}</p>
       {% endfor %}
+
+    {% if book.editor_credit %}
+      <h4>Editor credits</h4>
+      <p>{{ book.editor_credit }}</p>
+     {% endif %}
     </div>
+
+
 
   </div>
 
