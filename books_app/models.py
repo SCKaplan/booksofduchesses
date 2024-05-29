@@ -147,6 +147,7 @@ class Book(models.Model):
     bibliography = models.ManyToManyField("Bibliography", blank=True)
     reviewed = models.BooleanField(null=True, default=False)
     comments = models.TextField(blank=True, verbose_name="User Suggestion Comments")
+    editor_credit = models.TextField(blank=True, verbose_name="Editor Credit")
 
     def __str__(self):
         return self.shelfmark
@@ -183,6 +184,7 @@ class Owner(models.Model):
     relation = models.ManyToManyField("Relative", blank=True, verbose_name="Relatives")
     reviewed = models.BooleanField(null=True, default=False)
     comments = models.TextField(blank=True, verbose_name="User Suggestion Comments")
+    editor_credit = models.TextField(blank=True, verbose_name="Editor Credit")
 
     class Meta:
         ordering = ("name",)
